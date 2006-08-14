@@ -114,7 +114,7 @@ $completed = array("n","y");
 //table display loop
 foreach ($completed as $comp) {
 foreach ($type as $value) {
-
+	echo "<div class='reportsection'>\n";
 	if ($comp=="y") echo '<h2>Completed&nbsp;'.$typelabel[$value]."</h2>\n";
 	else echo '<h2><a href = "item.php?type='.$value.'&projectId='.$pId.'&pType='.$pType.'" title="Add new '.str_replace("s","",$typelabel[$value]).'">'.$typelabel[$value]."</a></h2>\n";
 
@@ -139,7 +139,7 @@ foreach ($type as $value) {
 			echo "	<tr>\n";
 
 			//if nextaction, add icon in front of action (* for now)
-			if ($key = array_search($row['itemId'],$nextactions)) echo '		<td><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</a></td>\n";
+			if ($key = array_search($row['itemId'],$nextactions)) echo '		<td class="nextaction"><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</a></td>\n";
 			else echo '		<td><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
 
 
@@ -181,7 +181,9 @@ foreach ($type as $value) {
 				echo 'No&nbsp;'.$typelabel[$value]."&nbsp;items\n";
 				}
 			}
-		else echo "None\n";
+		else echo "<p>None</p>\n";
+		
+		echo "</div>\n";
 	}
 }
 

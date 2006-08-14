@@ -1,12 +1,115 @@
-/* CSS global reset for all browsers - ensures consistency */ 
+/* CSS global reset - ensures consistency across all browsers*/
+/* http://leftjustified.net/journal/2004/10/19/global-ws-reset */
 * {	padding: 0px;	margin: 0px;}
+h1, h2, h3, h4, h5, h6, p, pre, blockquote, form, label, ul, ol, dl, fieldset, address {
+	margin: .5em 0;
+}
+select {
+	min-width: 1.5em;
+}li, dd, blockquote {
+	margin-left: .5em;
+}fieldset {
+	padding: 10px;
+}
+/* end of global CSS reset */
 
+
+
+/*===================================================================================*/
+/* Layout code - float/position, display, margin, padding, width, height, text-align */
+/*===================================================================================*/
 body {
 	text-align: left;
-	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
-	font-size: 11px;
 }
 
+#container {
+	width: auto;
+	padding 2px 0px 2px 20px;
+	margin: 10px;	
+}
+
+#header {
+	/*width: 90%;
+	padding: 2px 0px 2px 20px;
+	margin: 10px auto;*/
+}
+
+#sidebar {
+	float: left;
+	display: inline;
+	margin: 0 10px 0 0;
+	width: 150px;
+	text-align:left;
+}
+
+#main {
+	float: left;
+	clear: left;
+/*	width: 100%;*/
+/*	margin: 0 10px 0 210px;*/
+/*	margin: 10px;*/
+/*	padding: 5px;*/
+}
+
+#footer {
+	float: left;
+	clear: left;
+	width: 100%;
+	margin: 20px 0 10px 0;
+	text-align: right;
+}
+
+
+
+#filter {
+	margin: 4px 0;
+}
+
+
+
+select, input, textarea {
+	padding: 2px;
+}
+.button {
+	margin: 0px 10px;
+}
+
+
+table {
+	margin: 0 4px 10px 4px;
+}
+
+td {
+	padding: 4px;
+}
+
+
+.morelink,
+.footer {
+	text-align:right;
+}
+
+.byline {
+	text-align:left;
+}
+
+div.reportsection {
+	margin-bottom:20px;
+}
+
+
+
+
+
+
+
+/*===================================================================================================*/
+/* non-layout code - font family, font size, font-weight, color, border, background, text decoration */
+/*===================================================================================================*/
+body {
+	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, arial, sans-serif;
+	font-size: 11px;
+}
 
 h1 {
 	font-size: 16px;
@@ -20,12 +123,17 @@ h2 {
 	font-weight: bold;
 	background: none;
 	border-bottom: 2px solid #ccb;
-	width: 90%
 }
 
 h3 {
 	color: #998;
 	font-size: 12px;
+	font-weight: bold;
+	background: none;
+}
+
+h4 {
+	font-size: 11px;
 	font-weight: bold;
 	background: none;
 }
@@ -51,18 +159,13 @@ select, input, textarea {
 	color: #665;
 	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-size: 11px;
-	padding: 2px;
 	border: 2px solid #ccb;
 }
-.button {
-	margin: 0px 10px;
-}
-
 
 table {
 	border: 2px dotted #eed;
-	margin: 0 4px 10px 4px;
 }
+
 
 th {
 	border: 1px solid #998;
@@ -84,61 +187,42 @@ td {
 	border-bottom: 1px dotted #eed;
 	border-right: none;
 	border-left: none;
-	padding: 4px;
 	font-weight: normal;
 	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-size: 10px;
 }
 
+td.nextaction a {
+	font-weight: bold;
+	color: #F80;
+}
+
 #container {
-	width: 90%;
-	padding 2px 0px 2px 20px;
 	background: none;
-	margin: 10px;	
 }
 
 #header {
-	/*width: 90%;
-	padding: 2px 0px 2px 20px;
-	margin: 10px auto;*/
 	background: none;
 	/*border-bottom: 4px solid #eed;*/
 }
 
 #sidebar {
-	float: left;
-	display: inline;
 	border-right: 1px solid #eed;
-	margin: 0 10px 0 0;
-	width: 150px;
-	text-align:left;
 	font: 10px "Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 }
 
 #main {
-/*	float: left;*/
-	clear: left;
-	/*margin: 0 10px 0 210px;*/
-	margin: 10px 10px 10px 10px;
-	padding: 5px;
-   /* border-top: 12px solid #eed;*/
+/*	border-top: 12px solid #eed;*/
 }
 
 #footer {
 	color:#666;
 	border-top: 2px solid #eed;
-	clear: both;
-	width: 90%;
-	margin: 20px 0 10px 0;
-	text-align: right;
 }
-
 
 #menu a,
 #menu a:link,
 #menu a:visited {
-	display: block;
-/*	width: 98%; */ 
 	text-decoration: none;
 }
 #menu a:hover {
@@ -147,19 +231,9 @@ td {
 }
 
 
-/* using the dropdown method from http://alistapart.com/articles/dropdowns */
-/* implemented in CSS for all browsers except IE6, which requires a little Javascript to get it working */
-#hmenu {
-	margin: 10px 0;}
-
-#hmenu ul {	padding: 0;	list-style: none;	list-style-type: none;
-}#hmenu ul li { /* all menu list items */	float: left;	position: relative;	width: 10em;
-	border-bottom: 1px solid #eed;
-	list-style-type: none;
-}#hmenu ul li ul { /* second-level lists */	display: none;	position: absolute;	top: 1em;	left: 0;}#hmenu ul li>ul { /* to override top and left in browsers other than IE, which will position to the top right of the containing li, rather than bottom left */	top: auto;	left: auto;}
-#hmenu li:hover ul, #hmenu li.over ul { /* lists nested under hovered list items */	display: block;}
-
-
+#hmenu li li { /* second-level list items */
+	border-top: .1em solid #eed;
+}
 
 
 a.pageheading:hover {
@@ -174,22 +248,15 @@ a.subheading:hover {
 
 
 
-
-#filter {
-	margin: 4px 0;
-}
-
-
-
 .morelink,
 .footer {
 	text-align:right;
 	font-size: 10px;
-	}
+}
 
 .morelink {
 	color:#930
-	}
+}
 
 .byline {
 	text-align:left;

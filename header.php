@@ -58,7 +58,9 @@ window.onload=startList;
 
 <div id="container">
 <div id="header">
-	<h1 id="sitename"><a href="index.php">Getting Things Done</a></h1>
+<?php 
+echo "	<h1 id='sitename'><a href='index.php'>$title</a></h1>\n";
+?>
 </div>
 		
 <div id="hmenu">
