@@ -105,7 +105,7 @@
 		echo '<form action="processItem.php" method="post">'."\n";
 	}
 
-	echo '<table border="0">'."\n";
+	echo '<table>'."\n";
 	echo "	<tr>\n";
 	echo "		<td>".$pTypename."</td>\n";
 	echo '		<td><select name="projectId">'."\n";
@@ -122,7 +122,7 @@
 	echo "	</tr>\n";
 	echo "</table>\n";
 	
-	echo '<table border="0">'."\n";
+	echo '<table>'."\n";
 	echo "	<tr>\n";
 	echo "		<td>Type:&nbsp;\n";
 	echo '			<input type="radio" name="type" value="a"';
@@ -146,7 +146,7 @@
 	if ($currentrow['suppress']=="y") echo " CHECKED";
 	echo ">\n";
 	echo '		Tickle&nbsp;<input type="text" size="3" name="suppressUntil" value="'.$currentrow['suppressUntil'].'">';
-	echo '&nbsp;days before deadline</td>'";
+	echo "&nbsp;days before deadline</td>\n";
 
 	echo '		<td colspan=2">Deadline:&nbsp;'."\n";
 	echo '			<form action="#" method="get">'."\n";
@@ -212,8 +212,6 @@
 	echo '</tr>';
 	echo '</table>';
 	}
-
-	echo "<br />\n";
 
 	if ($itemId>0) {
 		echo '<input type="submit" class="button" value="Update '.$typename.'" name="submit">'."\n";

@@ -15,15 +15,15 @@
 
 	if (mysql_num_rows($result) > 0){
 		echo "<h2>Goals</h2>\n";
-		echo "<table>\n";
-		echo "	<tr>\n";
-		echo "		<th>Id</th>\n";
-		echo "		<th>Goal</th>\n";
-		echo "		<th>Project</th>\n";
-		echo "		<th>Type</th>\n";
-		echo "		<th>Date Created</th>\n";
-		echo "		<th>Deadline</th>\n";
-		echo "	</tr>\n";
+		echo "<table class='datatable'>\n";
+		echo "	<thead>\n";
+		echo "		<td>Id</td>\n";
+		echo "		<td>Goal</td>\n";
+		echo "		<td>Project</td>\n";
+		echo "		<td>Type</td>\n";
+		echo "		<td>Date Created</td>\n";
+		echo "		<td>Deadline</td>\n";
+		echo "	</thead>\n";
 		
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
 			if($row['completed'] == NULL or $row['completed'] =="0000-00-00"){
@@ -58,16 +58,16 @@
 		
 	if (mysql_num_rows($result) > 0){
 	
-		echo "<table>\n";
-		echo "	<tr>\n";
-		echo "		<th>ID</th>\n";
-		echo "		<th>Goal</th>\n";
-		echo "		<th>Project</th>\n";
-		echo "		<th>Type</th>\n";
-		echo "		<th>Date Created</th>\n";
-		echo "		<th>Deadline</th>\n";
-		echo "		<th>Completed</th>\n";
-		echo "	</tr>\n";
+		echo "<table class='datatable'>\n";
+		echo "	<thead>\n";
+		echo "		<td>ID</td>\n";
+		echo "		<td>Goal</td>\n";
+		echo "		<td>Project</td>\n";
+		echo "		<td>Type</td>\n";
+		echo "		<td>Date Created</td>\n";
+		echo "		<td>Deadline</td>\n";
+		echo "		<td>Completed</td>\n";
+		echo "	</tead>\n";
 		
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
 				echo "	<tr>\n";

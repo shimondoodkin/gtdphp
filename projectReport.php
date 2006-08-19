@@ -121,27 +121,30 @@ foreach ($type as $value) {
 	$result=doitemquery($pId,$value,$comp);
 	if (mysql_num_rows($result) > 0) {
 		$counter=0;
-		echo "<table>\n";
-		echo "	<tr>\n";
-		echo "		<th>".$typelabel[$value]."</th>\n";
-		echo "		<th>Description</th>\n";
-		echo "		<th>Context</th>\n";
-		echo "		<th>Date Created</th>\n";
+		echo "<table class='datatable'>\n";
+		echo "	<thead>\n";
+		echo "		<td>".$typelabel[$value]."</td>\n";
+		echo "		<td>Description</td>\n";
+		echo "		<td>Context</td>\n";
+		echo "		<td>Date Created</td>\n";
 		if ($comp=="n") {
-			echo "		<th>Deadline</th>\n";
-			echo "		<th>Repeat</th>\n";
-			echo "		<th>Suppress</th>\n";
-			echo "		<th>Completed</th>\n";
+			echo "		<td>Deadline</td>\n";
+			echo "		<td>Repeat</td>\n";
+			echo "		<td>Suppress</td>\n";
+			echo "		<td>Completed</td>\n";
 		}
-		echo "	</tr>\n";
+		echo "	</thead>\n";
 
 		while($row = mysql_fetch_assoc($result)) {
-			echo "	<tr>\n";
 
 			//if nextaction, add icon in front of action (* for now)
-			if ($key = array_search($row['itemId'],$nextactions)) echo '		<td class="nextaction"><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</a></td>\n";
-			else echo '		<td><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
-
+			if ($key = array_search($row['itemId'],$nextactions)) {
+				echo "	<tr class = 'nextactionrow'>\n";
+				echo '		<td class="nextactioncell"><a href="item.php?itemId='.$row['itemId'].'&pType='.$pType.'" class="nextactionlink" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'"><span class="nextActionMarker" title="Next Action">*</span>'.stripslashes($row['title'])."</a></td>\n";
+			} else {
+				echo "	<tr>\n";
+				echo '		<td><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
+			}
 
 			echo '		<td>'.nl2br(stripslashes($row['description']))."</td>\n";
 			echo '		<td><a href = "reportContext.php?contextId='.$row['contextId'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</a></td>\n";

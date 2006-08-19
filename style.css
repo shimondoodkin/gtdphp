@@ -1,15 +1,22 @@
 /* CSS global reset - ensures consistency across all browsers*/
 /* http://leftjustified.net/journal/2004/10/19/global-ws-reset */
-* {	padding: 0px;	margin: 0px;}
-h1, h2, h3, h4, h5, h6, p, pre, blockquote, form, label, ul, ol, dl, fieldset, address {
+* {/*	padding: 0; */    /* messes up select boxes in Firefox, for some reason */	margin: 0;}
+h1, h2, h3, h4, h5, h6, p, pre, blockquote, form, label, ul, ol, dl, address {
+	padding: 0;
 	margin: .5em 0;
 }
 select {
 	min-width: 1.5em;
-}li, dd, blockquote {
+}
+input {
 	margin-left: .5em;
+	margin-right: 0.25em;
+}li, dd, blockquote {
+	padding 0;
+	margin-left: 1.5em;
 }fieldset {
 	padding: 10px;
+	margin: .5em 0;
 }
 /* end of global CSS reset */
 
@@ -79,7 +86,11 @@ table {
 	margin: 0 4px 10px 4px;
 }
 
-td {
+thead td {
+	padding: 2px 3px;
+}
+
+tbody td {
 	padding: 4px;
 }
 
@@ -98,8 +109,15 @@ div.reportsection {
 }
 
 
+/* the ! preceding each project without a next action defined (in listProjects.php) */
+span.noNextAction { 
+	margin-right: .5em;
+}
 
-
+/* the * marking each next action (in projectReport.php) */
+span.nextActionMarker {
+	margin-right: .5em;
+}
 
 
 
@@ -157,44 +175,81 @@ a:hover{
 
 select, input, textarea {
 	color: #665;
-	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
+/*	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif; */
 	font-size: 11px;
 	border: 2px solid #ccb;
 }
 
 table {
-	border: 2px dotted #eed;
+/*	border: 2px dotted #eed;*/
+	border-spacing: 0;
+	border-collapse: collapse;
 }
 
 
-th {
-	border: 1px solid #998;
+thead td {
+	border: 1px solid #777;
+	border-bottom: 1px solid #777;
 	background: #bba;
 	color: #eed;
 	font-weight: bold;
-	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
+/*	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif; */
 	font-size: 10px;
 }
 
-tr {
-	border-bottom: 2px solid #ccb;
-}
-
-td {
+tbody tr {
 	background: #fcfcf0;
+}
+
+.datatable tbody tr:hover {
+	background: #EEE;
+}
+
+tbody td {
 	color: #666;
-	border-top: none;
-	border-bottom: 1px dotted #eed;
-	border-right: none;
-	border-left: none;
+	border: 1px dotted #ddd;
+/*	border-right: 1px dotted #ddd;
+	border-left: 1px dotted #ddd;*/
 	font-weight: normal;
-	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
+/*	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif; */
 	font-size: 10px;
 }
 
-td.nextaction a {
+.datatable tbody a {
+	display: block;
+}
+
+/* table rows with next actions (in projectReport.php) */
+tr.nextactionrow {
+/*	background: #CCE4EC; */
+}
+
+/* table cells with next actions (in projectReport.php) */
+td.nextactioncell {
+/*	font-weight: bold;
+	color: #F80; */
+}
+
+a.nextactionlink {
 	font-weight: bold;
 	color: #F80;
+}
+
+/* table rows with next actions (in projectReport.php) */
+tr.overdue { /* class not implemented yet in projectReport.php */
+/*	background: #C3D2DA;*/
+}
+
+/* table cells with next actions (in projectReport.php) */
+td.overdue { /* class not implemented yet in projectReport.php */
+/*	font-weight: bold;
+	color: #F80; */
+}
+
+/* table cells with next actions (in projectReport.php) */
+span.overdue { /* class not implemented yet in projectReport.php */
+	font-weight: bold;
+	color: #F00;
 }
 
 #container {
@@ -262,4 +317,17 @@ a.subheading:hover {
 	text-align:left;
 	font: 100% "Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-weight:bold;
+}
+
+
+/* the ! preceding each project without a next action defined (in listProjects.php) */
+.noNextAction {
+	font-weight: bold;
+	color: #F00;
+}
+
+/* the * marking each next action (in projectReport.php) */
+.nextActionMarker {
+	font-weight: bold;
+	color: #F80;
 }

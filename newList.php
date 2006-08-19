@@ -14,7 +14,7 @@ if (!isset($_POST['submit'])) {
 <h1>New List</h1>
 
 <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
-<table border=0">
+<table>
 <?php
 
 //SELECT categories.categoryId, categories.name FROM categories ORDER BY categories.name ASC

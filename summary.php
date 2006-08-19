@@ -57,7 +57,7 @@ include_once('config.php');
                 echo '<p>There are ' .$nNextActions. ' <a href="listItems.php?type=n">Next Actions</a> pending';
             }
     $nActions=getNumberOfActions();
-    echo ' out of a total of ' .$nActions. '<a href="listItems.php?type=a"> Actions</a>.';
+    echo ' out of a total of ' .$nActions. ' <a href="listItems.php?type=a">Actions</a>.';
 	echo "</p>\n";
 
     /* Do we need this anymore (sjr)?
@@ -129,7 +129,7 @@ include_once('config.php');
     }
 	echo "<br /><br />\n";
 	
-	$s='<table class="boldtable">'."\n";
+	$s='<table>'."\n";
 	$nr = count($c1);
 
 	for($i=0;$i<$nr;$i+=1){
@@ -141,7 +141,7 @@ include_once('config.php');
 		$s.="	</tr>\n";
 	}
 	
-	$s.="<table>\n";
+	$s.="</table>\n";
 	
 	echo $s;
 
@@ -157,7 +157,7 @@ include_once('config.php');
     }
 
 	
-	$t='<table class="boldtable">'."\n";
+	$t='<table>'."\n";
 	$nr = count($d1);
 
 	for($i=0;$i<$nr;$i+=1){

@@ -146,7 +146,6 @@ if ($projectId>0) {
 	echo "</table>\n";
 }
 
-echo "<br />\n";
 echo '<input type="hidden" name="type" value='.$type.'" />'."\n";
 
 if ($projectId>0) {

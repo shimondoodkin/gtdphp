@@ -1,12 +1,11 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
 <?php
 include_once('config.php');
-echo'	<title>'.$title.'</title>';
+echo'	<title>'.$title."</title>\n";
 ?>
 	<!-- main stylesheet --> 	 
 	<link rel="stylesheet" href="style.css" type="text/css"/>
@@ -64,7 +63,7 @@ echo "	<h1 id='sitename'><a href='index.php'>$title</a></h1>\n";
 </div>
 		
 <div id="hmenu">
-	 <ul id="menu">
+	<ul id="menu">
 
 	 	<li>Capture
 			<ul>
