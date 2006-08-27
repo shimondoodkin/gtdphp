@@ -1,6 +1,9 @@
 /* CSS global reset - ensures consistency across all browsers*/
 /* http://leftjustified.net/journal/2004/10/19/global-ws-reset */
-* {/*	padding: 0; */    /* messes up select boxes in Firefox, for some reason */	margin: 0;}
+* {
+/*	padding: 0; */    /* messes up select boxes in Firefox, for some reason */
+	margin: 0;
+}
 h1, h2, h3, h4, h5, h6, p, pre, blockquote, form, label, ul, ol, dl, address {
 	padding: 0;
 	margin: .5em 0;
@@ -8,13 +11,11 @@ h1, h2, h3, h4, h5, h6, p, pre, blockquote, form, label, ul, ol, dl, address {
 select {
 	min-width: 1.5em;
 }
-input {
-	margin-left: .5em;
-	margin-right: 0.25em;
-}li, dd, blockquote {
-	padding 0;
+li, dd, blockquote {
+	padding: 0;
 	margin-left: 1.5em;
-}fieldset {
+}
+fieldset {
 	padding: 10px;
 	margin: .5em 0;
 }
@@ -31,7 +32,7 @@ body {
 
 #container {
 	width: auto;
-	padding 2px 0px 2px 20px;
+/*	padding: 2px 0px 2px 10px;*/
 	margin: 10px;	
 }
 
@@ -50,7 +51,7 @@ body {
 }
 
 #main {
-	float: left;
+/*	float: left;*/
 	clear: left;
 /*	width: 100%;*/
 /*	margin: 0 10px 0 210px;*/
@@ -73,11 +74,12 @@ body {
 }
 
 
-
 select, input, textarea {
 	padding: 2px;
+	margin: auto 0.25em;
 }
-.button {
+
+input[type="submit"], input[type="reset"] {
 	margin: 0px 10px;
 }
 
@@ -118,6 +120,48 @@ span.noNextAction {
 span.nextActionMarker {
 	margin-right: .5em;
 }
+
+
+/* form styling */
+.form {
+	float: left;
+	padding: 1em;
+	margin-bottom: 1em;
+}
+.formrow {
+	float: left;
+	clear: left;
+	margin-bottom: .25em;
+}
+.formbuttons {
+	clear: left;
+	margin-bottom: 2em;
+}
+.formrow label, .formrow input, .formrow select, .formrow button, .formrow textarea {
+	float: left;
+}
+.formrow label.left {
+	margin-left: 2em;
+	text-align: right;
+}
+.formrow label.right {
+	text-align: left;
+}
+.formrow label.first {
+	width: 9em;
+	margin-left: 0;
+}
+.formrow input[type="checkbox"], .formrow input[type="radio"], .formbuttons input[type="checkbox"] {
+	margin-top: .6em;
+	margin-right: .5em;
+}
+.formrow input[type="radio"].notfirst {
+	margin-left: 1.5em;
+}
+.formrow textarea, .formrow #title, .formrow #name {
+	width: 50em;
+}
+
 
 
 
@@ -175,17 +219,16 @@ a:hover{
 
 select, input, textarea {
 	color: #665;
-/*	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif; */
+	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-size: 11px;
 	border: 2px solid #ccb;
 }
 
+
 table {
-/*	border: 2px dotted #eed;*/
 	border-spacing: 0;
 	border-collapse: collapse;
 }
-
 
 thead td {
 	border: 1px solid #777;
@@ -193,7 +236,6 @@ thead td {
 	background: #bba;
 	color: #eed;
 	font-weight: bold;
-/*	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif; */
 	font-size: 10px;
 }
 
@@ -208,10 +250,7 @@ tbody tr {
 tbody td {
 	color: #666;
 	border: 1px dotted #ddd;
-/*	border-right: 1px dotted #ddd;
-	border-left: 1px dotted #ddd;*/
 	font-weight: normal;
-/*	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif; */
 	font-size: 10px;
 }
 
@@ -315,7 +354,6 @@ a.subheading:hover {
 
 .byline {
 	text-align:left;
-	font: 100% "Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-weight:bold;
 }
 
@@ -330,4 +368,20 @@ a.subheading:hover {
 .nextActionMarker {
 	font-weight: bold;
 	color: #F80;
+}
+
+
+
+
+
+
+/* forms */
+div.form {
+	background: #FCFCF0;
+	border: 1px dotted #DDD;
+}
+span.detail {
+	color: #888;
+	float: left;
+	clear: left;
 }

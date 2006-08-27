@@ -128,7 +128,7 @@ if (mysql_num_rows($result) > 0){
 		echo "</td>\n";
 		if ($row['repeat']=="0") echo "		<td>--</td>\n";
 		else echo "		<td>".$row['repeat']."</td>\n";
-		echo '		<td><a href="project.php?projectIdt='.$row['projectId'].'" title="Edit '.htmlspecialchars(stripslashes($row['name'])).' project">Edit</a></td>'."\n";
+		echo '		<td><a href="project.php?projectId='.$row['projectId'].'" title="Edit '.htmlspecialchars(stripslashes($row['name'])).' project">Edit</a></td>'."\n";
         if ($completed!="y") echo '		<td align="center"><input type="checkbox" align="center" title="Mark '.htmlspecialchars(stripslashes($row['name'])).' project completed. Will hide incomplete associated items." name="completedProj[]" value="'.$row['projectId'].'" /></td>'."\n";
 		echo "	</tr>\n";
 		}
