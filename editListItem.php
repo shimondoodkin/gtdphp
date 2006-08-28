@@ -21,48 +21,51 @@
 	$listId = $currentrow[3];
 	$dateCompleted = $currentrow[4];
 	
-	echo "<h1>Edit List Item</h1>\n";
+	echo "<h2>Edit List Item</h2>\n";
 
 //SELECT listId, title, categoryId, description from list ORDER BY title
 
 	$query = "SELECT * from list ORDER BY title";
 	$result = mysql_query($query) or die ("Error in query");
 	echo '<form action="updateListItem.php?listItemId='.$listItemId.'" method="post">'."\n";
-	echo '<table border="0">'."\n";
-	echo "	<tr>\n";
-	echo "		<td>List</td>\n";
-	echo '		<td><select name="list">'."\n";
+?>
+
+	<div class='form'>		<div class='formrow'>
+			<label for='newitem' class='left first'>Title:</label>
+			<textarea rows="2" name="newitem" wrap=virtual"><?php echo $item; ?></textarea>
+		</div>
+
+		<div class='formrow'>			<label for='list' class='left first'>List:</label>			<select name='list' id='list'>
+<?php
 	while($row = mysql_fetch_row($result)){
 		if($row[0]==$listId){
-			echo "			<option selected value='" .$row[0] . "'>".stripslashes($row[1])."</option>\n";
+			echo "				<option selected value='" .$row[0] . "'>".stripslashes($row[1])."</option>\n";
 		}else{
-			echo "			<option value='" .$row[0] . "'>" .stripslashes($row[1])."</option>\n";
+			echo "				<option value='" .$row[0] . "'>" .stripslashes($row[1])."</option>\n";
 		}
 	}
-	echo "		</td>\n";
-	mysql_free_result($result);
+?>
+			</select>
+			<label for='newdateCompleted' class='left notfirst'>Date Completed:</label>
+			<input type='text' name='newdateCompleted' value='<?php echo $dateCompleted; ?>'>
+		</div>
 
-	echo "		<td>Date Completed:</td>\n";
-	echo '		<td><input type="text" name="newdateCompleted" size="13" value="';
-	echo $dateCompleted;
-	echo '"></td>'."\n";
-	echo "	</tr>\n";
-	echo "</table>\n\n";
+		<div class='formrow'>
+			<label for='newnotes' class='left first'>Description:</label>
+			<textarea rows='10' name='newnotes' id='newnotes' wrap='virtual'><?php echo $notes;?></textarea>
+		</div>
+	</div>
+	<div class='formbuttons'>
+		<input type='submit' value='Update List Item' name='submit' />
+		<input type='reset' value='Reset' />
+		<input type='checkbox' name='delete' id='delete' class='notfirst' value='delete' />
+		<label for='delete'>Delete&nbsp;List&nbsp;Item</label>
+	</div>
 
-	echo "<table>\n";
-	echo "	<tr><td>Title</td></tr>\n";
-	echo '	<tr><td><textarea cols="80" rows="2" name="newitem" wrap=virtual">';
-	echo $item;
-	echo "</textarea></td></tr>\n";
-	echo "	<tr><td>Description</td></tr>\n";
-	echo '	<tr><td><textarea cols="80" rows="4" name="newnotes" wrap=virtual">';
-	echo $notes;
-	echo "</textarea></td></tr>\n";
-	echo '	<tr><td>Delete List Item&nbsp;<input type="checkbox" name="delete" value="delete"></td></tr>'."\n";
-	echo "</table>\n";
-	echo "<br />\n";
-	echo '<input type="submit" value="Update List Item" name="submit">'."\n";
-	echo '<input type="reset" value="Reset">'."\n";
-	
+
+
+
+
+<?php	
 	include_once('footer.php');
 ?>

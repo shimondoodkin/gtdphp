@@ -155,7 +155,7 @@ span.nextActionMarker {
 	margin-top: .6em;
 	margin-right: .5em;
 }
-.formrow input[type="radio"].notfirst {
+.formrow input[type="radio"].notfirst, .formrow input[type="checkbox"].notfirst, .formbuttons input[type="checkbox"].notfirst {
 	margin-left: 1.5em;
 }
 .formrow textarea, .formrow #title, .formrow #name {
@@ -379,6 +379,9 @@ a.subheading:hover {
 div.form {
 	background: #FCFCF0;
 	border: 1px dotted #DDD;
+}
+.formrow label {
+	color: #665;
 }
 span.detail {
 	color: #888;
