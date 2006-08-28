@@ -94,6 +94,7 @@ function doquery($querylabel,$options=NULL,$values=NULL) {
             }
         $ii = 0;
         while ($mysql_result = mysql_fetch_array($reply)) {
+            /*populate array with result data */
             foreach ($fields as $value) {
                 $result[$ii][$value] = $mysql_result[$value];
                 }
@@ -142,18 +143,5 @@ if ($result!=-1) {
         }
     }
 else echo "Nothing found.";
-
-/*TO-DO prior to commit:
-sanitize input to function
-sanitize database output ?in display code.... (for faked database output)
-review all queries-- multipart queries? vs define in values/options
-condense and label all mysql queries
-*/
-
-//rewrite display pages to work directly with returned data (clean/protect data in display code)
-//$options array -- initialize at top of page, overwrite as necessary with query (sort, etc).
-//possible to reduce number of display pages with switches again? (insert/delete/update backend pages; possibly view?)
-//hide data in forms, sanitize, post vs get, etc.
-//eventually sessions/cookies
 
 ?>
