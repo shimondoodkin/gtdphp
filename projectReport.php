@@ -98,8 +98,8 @@ if(isset($previousId)){
 if(isset($nextId)){
     echo '[ <a href="projectReport.php?projectId='.$nextId.'" title="Next Project">Next</a> ]'."\n";
 }
-echo '<p>Created:'.$project['dateCreated']."<br />\n";
-echo 'Description:&nbsp;'.stripslashes($project['description'])."<br />\n";
+echo '<p>Created: '.$project['dateCreated']."<br />\n";
+echo 'Description: '.stripslashes($project['description'])."<br />\n";
 if ($project['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.stripslashes($project['desiredOutcome'])."<br />\n";
 if ($project['deadline']!=NULL && $project['deadline']!="0000-00-00") echo 'Deadline:&nbsp;'.$project['deadline']."<br />\n";
 if ($project['repeat']>0) echo 'Repeat every&nbsp;'.$project['repeat'].'&nbsp;days'."<br />\n";

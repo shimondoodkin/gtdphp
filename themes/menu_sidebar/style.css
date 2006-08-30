@@ -32,31 +32,19 @@ body {
 
 #container {
 	width: auto;
-/*	padding: 2px 0px 2px 10px;*/
 	margin: 10px;	
 }
 
 #header {
-	/*width: 90%;
-	padding: 2px 0px 2px 20px;
-	margin: 10px auto;*/
+	margin: 10px auto;
 }
 
-#sidebar {
+#menudiv {
 	float: left;
-	display: inline;
-	margin: 0 10px 0 0;
-	width: 150px;
-	text-align:left;
 }
 
 #main {
-/*	float: left;*/
-	clear: left;
-/*	width: 100%;*/
-/*	margin: 0 10px 0 210px;*/
-/*	margin: 10px;*/
-/*	padding: 5px;*/
+	margin-left: 11em;
 }
 
 #footer {
@@ -97,15 +85,6 @@ tbody td {
 }
 
 
-.morelink,
-.footer {
-	text-align:right;
-}
-
-.byline {
-	text-align:left;
-}
-
 div.reportsection {
 	margin-bottom:20px;
 }
@@ -133,6 +112,12 @@ span.nextActionMarker {
 	clear: left;
 	margin-bottom: .25em;
 }
+/* grrr... IE6 requires this, or things get ugly */		
+* html .formrow {
+	width: 60.5em;
+	height: 2.1em;
+}
+
 .formbuttons {
 	clear: left;
 	margin-bottom: 2em;
@@ -158,11 +143,12 @@ span.nextActionMarker {
 .formrow input[type="radio"].notfirst, .formrow input[type="checkbox"].notfirst, .formbuttons input[type="checkbox"].notfirst {
 	margin-left: 1.5em;
 }
-.formrow textarea, .formrow #title, .formrow #name {
+.formrow textarea, .formrow #name {
 	width: 50em;
 }
-
-
+.formrow #title {
+	width: 30em;
+}
 
 
 /*===================================================================================================*/
@@ -171,6 +157,15 @@ span.nextActionMarker {
 body {
 	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, arial, sans-serif;
 	font-size: 11px;
+}
+
+#header {
+	background: none;
+	border-bottom: 4px solid #eed;
+}
+
+#menudiv {
+	border-right: 1px solid #eed;
 }
 
 h1 {
@@ -221,6 +216,8 @@ select, input, textarea {
 	color: #665;
 	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-size: 11px;
+}
+select, input[type='text'], input[type='submit'], input[type='reset'], button, textarea {
 	border: 2px solid #ccb;
 }
 
@@ -260,13 +257,10 @@ tbody td {
 
 /* table rows with next actions (in projectReport.php) */
 tr.nextactionrow {
-/*	background: #CCE4EC; */
 }
 
 /* table cells with next actions (in projectReport.php) */
 td.nextactioncell {
-/*	font-weight: bold;
-	color: #F80; */
 }
 
 a.nextactionlink {
@@ -276,13 +270,10 @@ a.nextactionlink {
 
 /* table rows with next actions (in projectReport.php) */
 tr.overdue { /* class not implemented yet in projectReport.php */
-/*	background: #C3D2DA;*/
 }
 
 /* table cells with next actions (in projectReport.php) */
 td.overdue { /* class not implemented yet in projectReport.php */
-/*	font-weight: bold;
-	color: #F80; */
 }
 
 /* table cells with next actions (in projectReport.php) */
@@ -305,29 +296,13 @@ span.overdue { /* class not implemented yet in projectReport.php */
 	font: 10px "Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 }
 
-#main {
-/*	border-top: 12px solid #eed;*/
-}
-
 #footer {
 	color:#666;
 	border-top: 2px solid #eed;
 }
 
-#menu a,
-#menu a:link,
-#menu a:visited {
-	text-decoration: none;
-}
-#menu a:hover {
-	background: #eed;
-	text-decoration: none;
-}
 
 
-#hmenu li li { /* second-level list items */
-	border-top: .1em solid #eed;
-}
 
 
 a.pageheading:hover {
@@ -342,22 +317,6 @@ a.subheading:hover {
 
 
 
-.morelink,
-.footer {
-	text-align:right;
-	font-size: 10px;
-}
-
-.morelink {
-	color:#930
-}
-
-.byline {
-	text-align:left;
-	font-weight:bold;
-}
-
-
 /* the ! preceding each project without a next action defined (in listProjects.php) */
 .noNextAction {
 	font-weight: bold;
@@ -369,8 +328,6 @@ a.subheading:hover {
 	font-weight: bold;
 	color: #F80;
 }
-
-
 
 
 

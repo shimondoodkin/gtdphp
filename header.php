@@ -7,11 +7,15 @@
 include_once('config.php');
 echo'	<title>'.$title."</title>\n";
 ?>
-	<!-- main stylesheet --> 	 
-	<link rel="stylesheet" href="style.css" type="text/css"/>
 
-	<!-- screen stylesheet --> 	 
-	<link rel="stylesheet" href="style_screen.css" type="text/css" media="screen" />
+	<!-- theme main stylesheet -->
+	<link rel="stylesheet" href="themes/<?php echo $theme; ?>/style.css" type="text/css"/>
+
+	<!-- theme screen stylesheet (should check to see if this actually exists) -->
+	<link rel="stylesheet" href="themes/<?php echo $theme; ?>/style_screen.css" type="text/css" media="screen" />
+
+	<!-- theme script (should check to see if this actually exists) -->
+	<script type="text/javascript" src="themes/<?php echo $theme; ?>/theme.js"></script>
 
 
 	<!-- calendar stylesheet --> 	 
@@ -28,42 +32,16 @@ echo'	<title>'.$title."</title>\n";
 	<script type="text/javascript" src="calendar-setup.js"></script>
 
 
-
-<script type="text/javascript"><!--//--><![CDATA[//><!--
-startList = function() {
-	if (document.all&&document.getElementById) {
-		navRoot = document.getElementById("menu");
-		for (i=0; i<navRoot.childNodes.length; i++) {
-			node = navRoot.childNodes[i];
-			if (node.nodeName=="LI") {
-				node.onmouseover=function() {
-					this.className+=" over";
-				}
-				node.onmouseout=function() {
-					this.className=this.className.replace(" over", "");
-				}
-			}
-		}
-	}
-}
-window.onload=startList;
-
-//--><!]]></script>
-
-
-
 </head>
 <body>
 
 <div id="container">
 <div id="header">
-<?php 
-echo "	<h1 id='sitename'><a href='index.php'>$title</a></h1>\n";
-?>
+	<h1 id='sitename'><a href='index.php'><?php echo $title;?></a></h1>
 </div>
 		
-<div id="hmenu">
-	<ul id="menu">
+<div id="menudiv">
+	<ul id="menulist">
 
 	 	<li>Capture
 			<ul>

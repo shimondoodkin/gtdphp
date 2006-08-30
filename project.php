@@ -70,8 +70,11 @@ echo $cshtml;
 				</select>
 				<label for='deadline' class='left'>Deadline:</label>
 <?php
-if ($row['deadline']=="0000-00-00" || $row['deadline']==NULL || $row['deadline']>date("Y-m-d"))
+if ($row['deadline']=="0000-00-00" || $row['deadline']==NULL) {
+    echo "				<input type='text' size='10' name='deadline' id='deadline' value=''/>\n";
+} else {
     echo "				<input type='text' size='10' name='deadline' id='deadline' value='".$row['deadline']."'/>\n";
+}
 ?>
 				<button type='reset' id='f_trigger_b'>...</button>
 					<script type='text/javascript'>
@@ -86,8 +89,12 @@ if ($row['deadline']=="0000-00-00" || $row['deadline']==NULL || $row['deadline']
 					</script>
 				<label for='dateCompleted' class='left'>Completed:</label>
 <?php
-if ($row['dateCompleted']=="0000-00-00" || $row['dateCompleted']==NULL)
-    echo "				<input type='text' size='10' name='dateCompleted' id='dateCompleted' value='".$currentrow['dateCompleted']."'/>\n";
+if ($row['dateCompleted']=="0000-00-00" || $row['dateCompleted']==NULL) {
+	echo "				<input type='text' size='10' name='dateCompleted' id='dateCompleted' value=''/>\n";
+} else {
+	echo "				<input type='text' size='10' name='dateCompleted' id='dateCompleted' value='".$currentrow['dateCompleted']."'/>\n";
+}
+
 ?>
 				<button type='reset' id='f_trigger_c'>...</button>
 					<script type='text/javascript'>
