@@ -1,25 +1,23 @@
 <?php
 //INCLUDES
-	include_once('gtdfuncs.php');
 	include_once('header.php');
-	include_once('config.php');
 
 //RETRIEVE URL VARIABLES
-	$projectId= (int) $_GET["projectId"];
-	$itemId= (int) $_GET["itemId"];
-	$type=$_GET["type"]{0};
-	if ($type=="n") {
-		$type='a';
+	$values['projectId']= (int) $_GET["projectId"];
+	$values['itemId']= (int) $_GET["itemId"];
+	$values['type']=$_GET["type"]{0};
+	if ($values['type']=="n") {
+		$values['type']='a';
 		$nextactioncheck='true';
 	}
 
-	$pType=$_GET["pType"]{0};
+	$values['pType']=$_GET["pType"]{0};
 	if ($pType=="s") {
-		$isSomeday="y";
+		$values['isSomeday']="y";
 		$pTypename="Someday/Maybe";
 	}
 	else { 
-		$isSomeday="n";
+		$values['isSomeday']="n";
 		$pTypename="Project";
 	}
 
@@ -28,19 +26,18 @@
 	mysql_select_db($db) or die ("Unable to select database!");
 
 	//select item details
-	if ($itemId>0) {
-	$query= "SELECT items.itemId, itemattributes.projectId, itemattributes.contextId, itemattributes.type, itemattributes.timeframeId, items.title, 
-			items.description, itemstatus.dateCreated, itemattributes.deadline, itemstatus.dateCompleted, itemstatus.lastModified, 
-			itemattributes.repeat, itemattributes.suppress, itemattributes.suppressUntil FROM items, itemattributes, itemstatus 
-			WHERE itemstatus.itemId=items.itemId and itemattributes.itemId=items.itemId and items.itemId = '$itemId'";
-		$result = mysql_query($query) or die ("Error in query");
-		$currentrow = mysql_fetch_assoc($result);
-		mysql_free_result($result);
-		$type=$currentrow['type'];
+	if ($values['itemId']>0) {
+	   $result = query("selectitem",$config,$values,$options,$sort);
+           if ($result !=-1) {
+                foreach ($result as $row) {
+                $currentrow = $row;
+		$values['type']=$currentrow['type'];
+                }
+            }
 	}
 
 	//Test to see if nextaction
-	$query = "SELECT projectId, nextaction FROM nextactions where nextaction='$itemId'";
+	$query = "SELECT projectId, nextaction FROM nextactions where nextaction='{$values['itemId']}'";
 	$result = mysql_query($query) or die ("Error in query");
 	while ($nextactiontest = mysql_fetch_assoc($result)) {
 		if ($nextactiontest['nextaction']==$itemId) $nextactioncheck='true';
@@ -54,12 +51,12 @@
 		WHERE projectattributes.projectId = projects.projectId 
 		AND projectstatus.projectId=projects.projectId 
 		AND (projectstatus.dateCompleted IS NULL OR projectstatus.dateCompleted = '0000-00-00') 
-		AND projectattributes.isSomeday ='".$isSomeday."' ORDER BY projects.name";
+		AND projectattributes.isSomeday ='".$values['isSomeday']."' ORDER BY projects.name";
 	$result = mysql_query($query) or die ("Error in query");
 	$pshtml="";
 	while($row = mysql_fetch_assoc($result)){
 		$pshtml .= '			<option value="'.$row['projectId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-		if($row['projectId']==$currentrow['projectId'] || $row['projectId']==$projectId) $pshtml .= ' SELECTED';
+		if($row['projectId']==$currentrow['projectId'] || $row['projectId']==$values['projectId']) $pshtml .= ' SELECTED';
 		$pshtml .= '>'.stripslashes($row['name'])."</option>\n";
 	}
 	mysql_free_result($result);
@@ -90,14 +87,14 @@
 //PAGE DISPLAY CODE
 	
 	//determine item label
-	if ($type=="a") $typename="Action";
-	elseif ($type=="r") $typename="Reference";
-	elseif ($type=="w") $typename="Waiting On";
+	if ($values['type']=="a") $typename="Action";
+	elseif ($values['type']=="r") $typename="Reference";
+	elseif ($values['type']=="w") $typename="Waiting On";
  	else $typename="Item";
 
-	if ($itemId>0) {
+	if ($values['itemId']>0) {
 		echo "<h2>Edit ".$typename."</h2>";
-		echo '	<form action="updateItem.php?itemId='.$itemId.'" method="post">';
+		echo '	<form action="updateItem.php?itemId='.$values['itemId'].'" method="post">';
 	}
 	else {
 		echo "<h2>New ".$typename."</h2>\n";
@@ -158,9 +155,9 @@
 
 			<div class='formrow'>
 				<label class='left first'>Type:</label>
-	  			<input type='radio' name='type' id='action' value='a' class="first" <?php if ($type=='a') echo "CHECKED "; ?>/><label for='action' class='right'>Action</label>
-	  			<input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($type=='r') echo "CHECKED "; ?>/><label for='reference' class='right'>Reference</label>
-	  			<input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($type=='w') echo "CHECKED "; ?>/><label for='waiting' class='right'>Waiting</label>
+	  			<input type='radio' name='type' id='action' value='a' class="first" <?php if ($values['type']=='a') echo "CHECKED "; ?>/><label for='action' class='right'>Action</label>
+	  			<input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($values['type']=='r') echo "CHECKED "; ?>/><label for='reference' class='right'>Reference</label>
+	  			<input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($values['type']=='w') echo "CHECKED "; ?>/><label for='waiting' class='right'>Waiting</label>
 			</div>
 
 			<div class='formrow'>
@@ -181,7 +178,7 @@
 		</div> <!-- form div -->
 		<div class='formbuttons'>
 <?php
-	if ($itemId>0) {
+	if ($values['itemId']>0) {
 		echo "			<input type='submit' value='Update ".$typename."' name='submit'>\n";
 	} else echo "			<input type='submit' value='Add ".$typename."' name='submit'>\n";
 ?>		
@@ -190,7 +187,7 @@
 		</div>
 	</form>
 <?php
-	if ($itemId>0) {
+	if ($values['itemId']>0) {
 		echo "	<div class='details'>\n";
 		echo "		<span class='detail'>Date Added: ".$currentrow['dateCreated']."</span>\n";
 		echo "		<span class='detail'>Last Modified: ".$currentrow['lastModified']."</span>\n";

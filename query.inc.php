@@ -15,18 +15,22 @@ mysql_select_db($db) or die ("Unable to select database!");
 
 //query function, final file
 
-function query($querylabel,$config,$options=NULL,$values=NULL) {
+function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
+
+//for testing only--- testing data handling
 
     //testing passed variables
     echo "<p>Query label: ".$querylabel."<br />";
     echo "Config: ";
     print_r($config);
-    echo "<br />Options: ";
-    print_r($options);
+    echo "<br />Sort: ";
+    print_r($sort);
     echo "<br />Values: ";
     print_r($values);
+    echo "<br />Options: ";
+    print_r($options);
     echo "</p>";
-
+/*
     //sanitize input variables
     echo "<p>Sanitizing...</p>\n";
 
@@ -39,7 +43,7 @@ function query($querylabel,$config,$options=NULL,$values=NULL) {
     echo "<br />Values: ";
     print_r($values);
     echo "</p>";
-
+*/
     //parse options array (logic)
         //sort order
         //single NA or not?
@@ -47,17 +51,17 @@ function query($querylabel,$config,$options=NULL,$values=NULL) {
 
     //include correct SQL query library as chosen in config
     switch ($config['db']) {
-        case "frontbase":include_once("frontbase.inc.php");
+        case "frontbase":include("frontbase.inc.php");
         break;
-        case "msql":include_once("msql.inc.php");
+        case "msql":require("msql.inc.php");
         break;
-        case "mysql":include_once("mysql.inc.php");
+        case "mysql":require("mysql.inc.php");
         break;
-        case "mssql":include_once("mssql.inc.php");
+        case "mssql":require("mssql.inc.php");
         break;
-        case "postgres":include_once("postgres.inc.php");
+        case "postgres":require("postgres.inc.php");
         break;
-        case "sqlite":include_once("sqlite.inc.php");
+        case "sqlite":require("sqlite.inc.php");
         break;
         }
 
@@ -111,6 +115,8 @@ function query($querylabel,$config,$options=NULL,$values=NULL) {
         }
 
     else $result=-1;
+
+print_r($result);
 
     //need to return error-handler if query doesn't work, main script has to know and be able to adjust
     //error codes:

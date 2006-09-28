@@ -1,8 +1,6 @@
 <?php
 //INCLUDES
-	include_once('gtdfuncs.php');
 	include_once('header.php');
-	include_once('config.php');
 
 //RETRIEVE URL VARIABLES
 	$values['noteId']= (int) $_GET["noteId"];
@@ -13,15 +11,15 @@
 
 	//select note details
 	if ($values['noteId']>0) {
-	$result = query("selectnote",$config,$options,$values);
+	$result = query("selectnote",$config,$values,$sort,$options);
 
 	if ($result!=-1) {
 	    foreach ($result as $row) {
-	     $currentrow = $row;
-	        }
-	    }
-	else echo "Nothing found.";
-	}
+                $currentrow = $row;
+                }
+            }
+        else echo "Nothing found.";
+        }
 
 //PAGE DISPLAY CODE
 	
@@ -64,6 +62,7 @@ echo '		<td>Date:&nbsp;'."\n";
 	if ($values['noteId']>0) echo '<input type="submit" class="button" value="Update Note" name="submit">';
 	else echo '<input type="submit" class="button" value="Add Note" name="submit">';
 	echo '<input type="reset" class="button" value="Reset">';
+
 
 	include_once('footer.php');
 ?>

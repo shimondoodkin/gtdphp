@@ -1,34 +1,31 @@
 <?php
 //INCLUDES
 	include_once('header.php');
-	include_once('config.php');
 
 //RETRIEVE URL VARIABLES
-	$categoryId =(int) $_GET["categoryId"];
+	$values['categoryId'] =(int) $_GET["categoryId"];
 
 //SQL CODE
 	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
 	mysql_select_db($db) or die ("Unable to select database!");
 
-        //select all categories for selectbox (would make good function!)
-        $query = "SELECT categoryId, category, description FROM categories ORDER BY category ASC";
-        $result = mysql_query($query) or die("Error in query");
+        //get all categories
+        $result = query("getcategories",$config,$values,$options,$sort);
+
+        //parse to html
         $cshtml="";
-        while($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
 	        $cshtml .= '			<option value="'.$row['categoryId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
        		if($row['categoryId']==$categoryId) $cshtml .= ' SELECTED';
         	$cshtml .= '>'.stripslashes($row['category'])."</option>\n";
 	        }
-        mysql_free_result($result);
 
 	//Select category to edit
-	$query = "SELECT categoryId, category, description FROM categories WHERE categoryId = '$categoryId'";
-	$result = mysql_query($query) or die ("Error in query");
-	$row = mysql_fetch_assoc($result);
-
+        $result = query("selectcategory",$config,$values,$options,$sort);
+        foreach ($result as $row) {
 //PAGE DISPLAY CODE
 	echo "<h2>Edit Category</h2>\n";
-	echo '<form action="updateCategory.php?categoryId='.$categoryId.'" method="post">'."\n";
+	echo '<form action="updateCategory.php?categoryId='.$values['categoryId'].'" method="post">'."\n";
 	echo '<table border="0">'."\n";
 	echo '	<tr><td colspan="2">Category Name</td></tr>'."\n";
 	echo '	<tr><td colspan="2">';
@@ -53,6 +50,7 @@
 	echo '<input type="submit" class="button" value="Update category" name="submit">'."\n";
 	echo '<input type="reset" class="button" value="Reset">'."\n";
 	echo "</form>\n";
+    }
 
 	include_once('footer.php');
 ?>

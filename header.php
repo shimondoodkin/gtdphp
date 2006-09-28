@@ -4,7 +4,10 @@
 
 <head>
 <?php
-include_once('config.php');
+require_once("gtdfuncs.php");
+require_once("config.php");
+require_once("query.inc.php");
+
 echo'	<title>'.$title."</title>\n";
 ?>
 

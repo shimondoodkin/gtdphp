@@ -1,7 +1,7 @@
 
 <?php
 
-	require_once("query.inc.php");
+
 
     function DateDropDown($size=90,$datevar="dateCompleted",$default="DropDate") {
        // $size = the number of days to display in the drop down
