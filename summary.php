@@ -16,14 +16,14 @@ include_once('header.php');
 	
 //SQL Code
 	$values['isSomeday'] = "n";
-	$pres = query("getprojects_summary",$config,$values,$options,$sort);
+	$pres = query("projectssummary",$config,$values,$options,$sort);
 	$np = count($pres);
 
 	$values['isSomeday'] = "y";
-	$sm = query("getprojects_summary",$config,$values,$options,$sort);
+	$sm = query("projectssummary",$config,$values,$options,$sort);
 	$nsm = count($sm);
 
-	$result = query("getspacecontexts",$config,$values,$options,$sort);
+	$result = query("spacecontextselectbox",$config,$values,$options,$sort);
 	$ncon = count($result);
 	
     $nNextActions=getNumberOfNextActions();

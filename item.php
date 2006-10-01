@@ -29,63 +29,41 @@
 	if ($values['itemId']>0) {
 	   $result = query("selectitem",$config,$values,$options,$sort);
            if ($result !=-1) {
-                foreach ($result as $row) {
-                $currentrow = $row;
-		$values['type']=$currentrow['type'];
-                }
+            $currentrow = $result[0];
+            $values['type']=$currentrow['type'];
+
+            //Test to see if nextaction
+            $result = query("testnextaction",$config,$values,$options,$sort);
+	    if ($result[0]['nextaction']==$values['itemId']) $nextactioncheck='true';
             }
-	}
+        }
 
-	//Test to see if nextaction
-	$query = "SELECT projectId, nextaction FROM nextactions where nextaction='{$values['itemId']}'";
-	$result = mysql_query($query) or die ("Error in query");
-	while ($nextactiontest = mysql_fetch_assoc($result)) {
-		if ($nextactiontest['nextaction']==$itemId) $nextactioncheck='true';
-	}
-	mysql_free_result($result);
-
-
-	//select active or someday projects for selectbox (would make good function!)
-	$query="SELECT projects.projectId, projects.name, projects.description
-		FROM projects, projectattributes, projectstatus
-		WHERE projectattributes.projectId = projects.projectId 
-		AND projectstatus.projectId=projects.projectId 
-		AND (projectstatus.dateCompleted IS NULL OR projectstatus.dateCompleted = '0000-00-00') 
-		AND projectattributes.isSomeday ='".$values['isSomeday']."' ORDER BY projects.name";
-	$result = mysql_query($query) or die ("Error in query");
+	//select create projects, timecontext, and spacecontext selectboxes
+	$result = query("projectselectbox",$config,$values,$options,$sort);
 	$pshtml="";
-	while($row = mysql_fetch_assoc($result)){
+	foreach($result as $row) {
 		$pshtml .= '			<option value="'.$row['projectId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
 		if($row['projectId']==$currentrow['projectId'] || $row['projectId']==$values['projectId']) $pshtml .= ' SELECTED';
 		$pshtml .= '>'.stripslashes($row['name'])."</option>\n";
 	}
-	mysql_free_result($result);
-	
-	//select all contexts for selectbox (would make good function!)
-	$query = "SELECT contextId, name, description FROM context ORDER BY name ASC";
-	$result = mysql_query($query) or die("error in query: $query.  ".mysql_error());
-	$cshtml="";
 
-	while($row = mysql_fetch_assoc($result)) {
+        $result = query("spacecontextselectbox",$config,$values,$options,$sort);
+	$cshtml="";
+	foreach($result as $row) {
 		$cshtml .= '			<option value="'.$row['contextId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
 		if($row['contextId']==$currentrow['contextId']) $cshtml .= ' SELECTED';
 		$cshtml .= '>'.stripslashes($row['name'])."</option>\n";
 	}
-	mysql_free_result($result);
 
-	//select all itemtimeframes for selectbox (function candidate?)
-	$query = "SELECT timeframeId, timeframe, description FROM timeitems ORDER BY timeframe DESC";
-	$result = mysql_query($query) or die("error in query: $query.  ".mysql_error());
+        $result = query("timecontextselectbox",$config,$values,$options,$sort);
 	$tshtml="";
-	while($row = mysql_fetch_assoc($result)){
+        foreach($result as $row) {
 		$tshtml .= '			<option value="'.$row['timeframeId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
 		if($row['timeframeId']==$currentrow['timeframeId']) $tshtml .= ' SELECTED';
 		$tshtml .= '>'.stripslashes($row['timeframe'])."</option>\n";
 	}
-	mysql_free_result($result);
 
-//PAGE DISPLAY CODE
-	
+//PAGE DISPLAY CODE	
 	//determine item label
 	if ($values['type']=="a") $typename="Action";
 	elseif ($values['type']=="r") $typename="Reference";

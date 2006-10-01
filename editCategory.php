@@ -9,20 +9,19 @@
 	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
 	mysql_select_db($db) or die ("Unable to select database!");
 
-        //get all categories
-        $result = query("getcategories",$config,$values,$options,$sort);
-
-        //parse to html
+        //create category selectbox
+        $result = query("categoryselectbox",$config,$values,$options,$sort);
         $cshtml="";
-        foreach($result as $row) {
+        foreach ($result as $row) {
 	        $cshtml .= '			<option value="'.$row['categoryId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
        		if($row['categoryId']==$categoryId) $cshtml .= ' SELECTED';
         	$cshtml .= '>'.stripslashes($row['category'])."</option>\n";
-	        }
+        }
 
-	//Select category to edit
+        //Select category to edit
         $result = query("selectcategory",$config,$values,$options,$sort);
-        foreach ($result as $row) {
+        $row = $result[0];
+
 //PAGE DISPLAY CODE
 	echo "<h2>Edit Category</h2>\n";
 	echo '<form action="updateCategory.php?categoryId='.$values['categoryId'].'" method="post">'."\n";
@@ -50,7 +49,6 @@
 	echo '<input type="submit" class="button" value="Update category" name="submit">'."\n";
 	echo '<input type="reset" class="button" value="Reset">'."\n";
 	echo "</form>\n";
-    }
 
 	include_once('footer.php');
 ?>

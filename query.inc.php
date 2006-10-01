@@ -96,6 +96,8 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         }
 
     //parse result into multitdimensional array $result[row#][field name] = field value
+//?If no reply? "warning..."
+
     if (mysql_num_rows($reply)>0) {
         $i = 0;
        while ($field = mysql_fetch_field($reply)) {
