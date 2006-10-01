@@ -2,7 +2,6 @@
 
 //INCLUDES
 include_once('header.php');
-include_once('config.php');
 
 //RETRIEVE URL VARIABLES
 $pId = (int) $_GET['projectId'];
@@ -50,6 +49,9 @@ while ($nextactiontest = mysql_fetch_assoc($result)) {
         }
 
 //obtain all active item timeframes and count instances of each
+
+//choice of queries re $contextsummary all | nextaction
+
 $query="SELECT itemattributes.contextId, itemattributes.timeframeId, COUNT(*) AS count
 	FROM itemattributes, itemstatus, projectattributes, projectstatus, nextactions
 	WHERE itemstatus.itemId=itemattributes.itemId AND projectattributes.projectId=itemattributes.projectId
