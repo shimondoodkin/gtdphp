@@ -1,8 +1,6 @@
 <?php
 //INCLUDES
-include_once('gtdfuncs.php');
 include_once('header.php');
-include_once('config.php');
 
 //RETRIEVE URL VARIABLES
 $projectId =(int) $_GET["projectId"];

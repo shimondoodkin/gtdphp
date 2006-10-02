@@ -1,7 +1,6 @@
 <?php
 //INCLUDES
 include_once('header.php');
-include_once('config.php');
 
 //CONNECT TO DATABASE
 	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
@@ -19,12 +18,15 @@ if (!isset($_POST['submit'])) {
 <h1>New Checklist</h1>
 
 <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
-	<div class='form'>		<div class='formrow'>
+	<div class='form'>
+		<div class='formrow'>
 			<label for='title' class='left first'>Title:</label>
 			<input type="text" name="title" id="title">
 		</div>
 
-		<div class='formrow'>			<label for='category' class='left first'>Category:</label>			<select name='categoryId' id='category'>
+		<div class='formrow'>
+			<label for='category' class='left first'>Category:</label>
+			<select name='categoryId' id='category'>
 <?php
 	while($row = mysql_fetch_row($result)){
 			echo "			<option value='" .$row[0] . "'>" . stripslashes($row[1]) . "</option>\n";

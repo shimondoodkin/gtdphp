@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////
 
 	include_once('header.php');
-	include_once('config.php');
+        
 	$checklistId = (int) $_GET['checklistId'];
 	$checklistTitle =(string) $_GET['checklistTitle'];
  

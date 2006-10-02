@@ -1,7 +1,6 @@
 <?php
 	include_once('header.php');
-	include_once('gtdfuncs.php');
-	include_once('config.php');
+
 	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
 
 	mysql_select_db($db) or die ("unable to select database!");

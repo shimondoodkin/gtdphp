@@ -2,7 +2,6 @@
 
 //INCLUDES
 	include_once('header.php');
-	include_once('config.php');
 
 //CONNECT TO DATABASE
 	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
@@ -19,7 +18,8 @@
 ?>
 <h2>New Checklist Item</h2>
 <form action="processChecklistItem.php" method="POST">
-	<div class='form'>		<div class='formrow'>
+	<div class='form'>
+		<div class='formrow'>
 			<label for='checklist' class='left first'>Checklist:</label>
 			<select name='checklistId' id='checklist'>
 <?php

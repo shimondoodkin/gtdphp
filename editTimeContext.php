@@ -1,7 +1,6 @@
 <?php
 //INCLUDES
 	include_once('header.php');
-	include_once('config.php');
 
 //RETRIEVE URL VARIABLES
 	$tcId =(int) $_GET["tcId"];

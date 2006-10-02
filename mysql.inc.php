@@ -62,9 +62,39 @@ $sql = array(
 
         "reassigntimecontext"   =>  "UPDATE `itemattributes` SET `timeframeId`='{$values['ntcId']}' WHERE `timeframeId`='{$values['tcId']}'",
 
-        "deletetimecontext"      =>  "DELETE FROM `timeitems` WHERE `timeframeId`='{$values['tcId']}'",
+        "deletetimecontext"      => "DELETE FROM `timeitems` WHERE `timeframeId`='{$values['tcId']}'",
+
+   "updateproject"              => "UPDATE `projects` SET `projects`.`description` = '{$values['description']}', `projects`.`name` = '{$values['name']}', `projects`.`desiredOutcome` = '{$values['desiredOutcome']}' WHERE `projects`.`projectId` = '{$values['projectId']}'",
+
+       "updateprojectattributes"       => "UPDATE `projectattributes` SET `projectattributes`.`categoryId` = '{$values['categoryId']}', `projectattributes`.`isSomeday` = '{$values['isSomeday']}', `projectattributes`.`deadline` = '{$values['deadline']}', `projectattributes`.`repeat` = '{$values['repeat']}', `projectattributes`.`suppress`='{$values['suppress']}', `projectattributes`.`suppressUntil`='{$values['suppressUntil']}' WHERE `projectattributes`.`projectId` = {$values['projectId']}",
+
+       "updateprojectstatus"              => "UPDATE `projectstatus` SET  `projectstatus`.`dateCompleted`='{$values['dateCompleted']}' WHERE `projectstatus`.`projectId` ='{$values['projectId']}'",
+
+       "deleteproject"              =>"DELETE FROM `projects` WHERE `projects`.`projectId`='{$values['projectId']}'",
+
+       "deleteprojectattributes"              =>"DELETE FROM `projectattributes` WHERE `projectattributes`.`projectId`='{$values['projectId']}'",
+
+        "deleteprojectstatus"              =>"DELETE FROM `projectstatus` WHERE `projectstatus`.`projectId`='{$values['projectId']}'",
+
+        "removeitems"              => "DELETE `itemattributes` FROM `itemattributes`, `items`, `itemstatus` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemstatus`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId` = '{$values['projectId']}'",
+
+/*
+
+"DELETE `items` FROM `items`, `itemattributes` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId`='{$values['projectId']}'",
+
+        "removeitemstatus"              => "DELETE `itemstatus` FROM `items`, `itemstatus` WHERE `itemstatus`.`itemId`=`itemstatus`.`itemId` AND `itemstatus`.`projectId`='{$values['projectId']}'",
+
+        "removeitemattributes"              => "DELETE FROM `itemattributes` WHERE `itemattributes`.`projectId`='{$values['projectId']}'",
+
+*/
+
 
 //In process
+
+
+        "selectactiveprojects"              =>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, `projectattributes`.`categoryId`, `categories`.`category`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM `projects`, `projectattributes`, `projectstatus`, `categories` WHERE `projectattributes`.`projectId`=`projects`.`projectId` AND `projectattributes`.`categoryId`=`categories`.`categoryId` AND `projectstatus`.`projectId`=`projects`.`projectId` AND `projectattributes`.`isSomeday` = '{$values['isSomeday']}' AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND (((CURDATE()>=DATE_ADD(`projectattributes`.`deadline`, INTERVAL -(`projectattributes`.`suppressUntil`) DAY)) OR `projectattributes`.`suppress`='n')) ORDER BY {$sort['selectactiveprojects']}",
+
+
 
 
 
@@ -101,8 +131,8 @@ $sql = array(
         "getgoals"              =>"SELECT * FROM goals ORDER BY type ASC",
         "getactivegoals"              =>"SELECT * FROM goals WHERE completed IS NOT NULL AND completed != '0000-00-00' ORDER BY created DESC, type DESC",
         "selectgoal"              =>"SELECT * FROM goals WHERE id = '{$values['$goalId']}'",
-        "newgoal"              =>"INSERT INTO goals  VALUES (NULL, '{$values['goal']}', '{$values['description']}','{$values['date']}', '{$values['deadline']}',  NULL, '{$values['type']}', '{$values['`projectId`']}')",
-        "updategoal"              =>"UPDATE goals SET goal = '{$values['goal']}', description = '{$values['description']}', created = '{$values['created']}', deadline = '{$values['deadline']}', completed = ''{$values['completed']}'', type='{$values['type']}', `projectId` = '{$values['`projectId`']}' WHERE id = '{$values['gid']}'",
+        "newgoal"              =>"INSERT INTO goals  VALUES (NULL, '{$values['goal']}', '{$values['description']}','{$values['date']}', '{$values['deadline']}',  NULL, '{$values['type']}', '{$values['projectId']}')",
+        "updategoal"              =>"UPDATE goals SET goal = '{$values['goal']}', description = '{$values['description']}', created = '{$values['created']}', deadline = '{$values['deadline']}', completed = ''{$values['completed']}'', type='{$values['type']}', `projectId` = '{$values['projectId']}' WHERE id = '{$values['gid']}'",
         "deletegoal"              =>"",
 //Projects
         //Filtered queries??
@@ -124,7 +154,7 @@ function doitemquery($projectId,$type,$completed='n') {
         if ('{$values['completed']}'=="y") $compq = "itemstatus`.`dateCompleted > 0";
         else $compq = "itemstatus`.`dateCompleted IS NULL OR itemstatus`.`dateCompleted = '0000-00-00'";
 
-        $query => "SELECT `items`.`itemId`, `items`.`title`, `items`.`description`, `itemstatus`.`dateCreated`, `itemstatus`.`dateCompleted`, `context`.`contextId`, `context`.`name` AS `cname`, `itemattributes`.`deadline`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil` FROM `items`, `itemattributes`, `itemstatus`, `context` WHERE `itemstatus`.`itemId` = `items`.`itemId` AND `itemattributes`.`itemId` = `items`.`itemId` AND `itemattributes`.`contextId` = `context`.`contextId` AND `itemattributes`.`projectId` = '{$values['`projectId`']}' AND `itemattributes`.`type` = '{$values['type']}' AND ("`.`$compq`.`") ORDER BY `items`.`title` ASC, `cname` ASC";
+        $query => "SELECT `items`.`itemId`, `items`.`title`, `items`.`description`, `itemstatus`.`dateCreated`, `itemstatus`.`dateCompleted`, `context`.`contextId`, `context`.`name` AS `cname`, `itemattributes`.`deadline`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil` FROM `items`, `itemattributes`, `itemstatus`, `context` WHERE `itemstatus`.`itemId` = `items`.`itemId` AND `itemattributes`.`itemId` = `items`.`itemId` AND `itemattributes`.`contextId` = `context`.`contextId` AND `itemattributes`.`projectId` = '{$values['projectId']}' AND `itemattributes`.`type` = '{$values['type']}' AND ("`.`$compq`.`") ORDER BY `items`.`title` ASC, `cname` ASC";
         $result = mysql_query($query) OR die ("Error in query");
         return $result;
         }
@@ -134,22 +164,20 @@ $query=>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`descripti
 	
 "SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, `projectattributes`.`categoryId`, `categories`.`category`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM projects, projectattributes, projectstatus, categories WHERE projectattributes`.``projectId`=`projects`.`projectId` AND `projectattributes`.`categoryId`=categories`.`categoryId AND projectstatus`.``projectId`=`projects`.`projectId` AND projectattributes`.`isSomeday = '{$values['isSomeday']}' AND "`.`$compq`.`" ORDER BY `categories`.`category`, `projects`.`name` ASC",
 */
-        "selectproject"              =>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, projects`.`desiredOutcome, `projectstatus`.`dateCreated`, `projectstatus`.`dateCompleted`, `projectattributes`.`categoryId`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil`, projectattributes`.`isSomeday FROM projects, projectattributes, projectstatus WHERE projectstatus`.``projectId`=`projects`.`projectId` AND projectattributes`.``projectId`=`projects`.`projectId` AND `projects`.`projectId` = '{$values['`projectId`']}'",
-        "selectactiveprojects"              =>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, `projectattributes`.`categoryId`, `categories`.`category`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM `projects`, `projectattributes`, `projectstatus`, `categories` WHERE `projectattributes`.`projectId`=`projects`.`projectId` AND `projectattributes`.`categoryId`=`categories`.`categoryId` AND `projectstatus`.`projectId`=`projects`.`projectId` AND `projectattributes`.`isSomeday` = 'n' AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND (((CURDATE()>=DATE_ADD(`projectattributes`.`deadline`, INTERVAL -(`projectattributes`.`suppressUntil`) DAY)) OR `projectattributes`.`suppress`='n')) ORDER BY `categories`.`category`, `projectattributes`.`deadline`, `projects`.`name` ASC",
+        "selectproject"              =>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, projects`.`desiredOutcome, `projectstatus`.`dateCreated`, `projectstatus`.`dateCompleted`, `projectattributes`.`categoryId`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil`, projectattributes`.`isSomeday FROM projects, projectattributes, projectstatus WHERE projectstatus`.``projectId`=`projects`.`projectId` AND projectattributes`.``projectId`=`projects`.`projectId` AND `projects`.`projectId` = '{$values['projectId']}'",
+
+
+
+
         "newproject"              =>"INSERT INTO projects (name,description,desiredOutcome) VALUES ('{$values['name']}','{$values['description']}','{$values['desiredOutcome']}')",
-        "newprojectattributes" =>"INSERT INTO projectattributes (`projectId`,categoryId,isSomeday,deadline,`repeat`,suppress,suppressUntil) VALUES ('{$values['`projectId`']}','{$values['categoryId']}','{$values['isSomeday']}','{$values['deadline']}','{$values['repeat']}','{$values['suppress']}','{$values['suppressUntil']}')",
-        "newprojectstatus" => "INSERT INTO projectstatus (`projectId`,dateCreated) VALUES ('{$values['`projectId`']}',CURRENT_DATE)",
-        "updateproject"              =>"UPDATE `projects`, `projectattributes`, `projectstatus` SET `projects`.`description` = '{$values['description']}', `projects`.`name` = '{$values['name']}', `projects`.`desiredOutcome` = '{$values['desiredOutcome']}',  `projectattributes`.`categoryId` = '{$values['categoryId']}', `projectattributes`.`isSomeday` = '{$values['isSomeday']}', `projectattributes`.`deadline` ='{$values['deadline']}', `projectattributes`.`repeat` = '{$values['repeat']}', `projectattributes`.`suppress`='{$values['suppress']}', `projectattributes`.`suppressUntil`='{$values['suppressUntil']}', `projectstatus`.`dateCompleted`='{$values['dateCompleted']}' WHERE `projectId` ='{$values['`projectId`']}'",
-        "updateprojectattributes"       => "UPDATE `projectattributes` SET `projectattributes`.`categoryId` = '{$values['categoryId']}', `projectattributes`.`isSomeday` = '{$values['isSomeday']}', `projectattributes`.`deadline` ='{$values['deadline']}', `projectattributes`.`repeat` = '{$values['repeat']}', `projectattributes`.`suppress`='{$values['suppress']}', `projectattributes`.`suppressUntil`='{$values['suppressUntil']}'",
-        "updateprojectstatus"              =>"UPDATE `projectstatus` SET  `projectstatus`.`dateCompleted`='{$values['dateCompleted']}' WHERE `projectstatus`.`projectId` ='{$values['`projectId`']}'",
-        "deleteproject"              =>"DELETE FROM  `projects` WHERE `projects`.`projectId`='{$values['`projectId`']}'",
-        "deleteprojectattributes"              =>"DELETE FROM  `projectattributes` WHERE `projectattributes`.`projectId`='{$values['`projectId`']}'",
-        "deleteprojectstatus"              =>"DELETE FROM  `projectstatus` WHERE `projectstatus`.`projectId`='{$values['`projectId`']}'",
+        "newprojectattributes" =>"INSERT INTO projectattributes (`projectId`,categoryId,isSomeday,deadline,`repeat`,suppress,suppressUntil) VALUES ('{$values['projectId']}','{$values['categoryId']}','{$values['isSomeday']}','{$values['deadline']}','{$values['repeat']}','{$values['suppress']}','{$values['suppressUntil']}')",
+        "newprojectstatus" => "INSERT INTO projectstatus (`projectId`,dateCreated) VALUES ('{$values['projectId']}',CURRENT_DATE)",
+
         "completeproject"              =>"UPDATE projectstatus SET dateCompleted='{$values['date']}' WHERE `projectId`='{$values['completedPr']}'",
         "doesprojectrepeat"              =>"SELECT `projectattributes`.`repeat` FROM projectattributes WHERE projectattributes`.``projectId`='{$values['completedPr']}'",
         "selectprojectbynextaction"              =>"SELECT `projectId`, nextaction FROM nextactions WHERE nextaction='{$values['itemId']}'",
         "selectprojectdetails"              =>"",
-        "selectprojectname"              =>"SELECT name FROM projects WHERE `projectId`='{$values['`projectId`']}'",
+        "selectprojectname"              =>"SELECT name FROM projects WHERE `projectId`='{$values['projectId']}'",
         //can fold into  regular selectitem query for copying
         "selectprojectforcopy"    => "SELECT `projects`.`name`, `projects`.`description` FROM projects WHERE `projects`.`projectId`='{$values['completedPr']}'",
         "selectprojectattributesforcopy" => "SELECT projectattributes`.``projectId`, `projectattributes`.`categoryId`, projectattributes`.`isSomeday, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM projectattributes WHERE projectattributes`.``projectId`='{$values['completedPr']}'",
@@ -158,8 +186,8 @@ $query=>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`descripti
 //nextactions
         "getnextactions"              =>"SELECT `projectId`, nextaction FROM nextactions",
 
-        "newnextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['`projectId`']}','{$values['itemId']}')",
-        "updatenextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['`projectId`']}','{$values['itemId']}') ON DUPLICATE KEY UPDATE `nextaction`='{$values['itemId']}'",
+        "newnextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}')",
+        "updatenextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}') ON DUPLICATE KEY UPDATE `nextaction`='{$values['itemId']}'",
         "deletenextaction"              =>"DELETE FROM `nextactions` WHERE `nextAction`='{$values['itemId']}'",
         "removenextaction"              =>"",
         "completenextaction"        =>"DELETE FROM nextactions WHERE nextAction=''{$values['completedNa']}'",
@@ -173,19 +201,17 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
 */
 
         "newitem"              => "INSERT INTO `items` (title,description) VALUES ('{$values['title']}','{$values['description']}')",
-        "newitemattributes"     => "INSERT INTO `itemattributes` (itemId,type,`projectId`,contextId,timeframeId,deadline,`repeat`,suppress,suppressUntil) VALUES ('{$values['itemId']}','{$values['type']}','{$values['`projectId`']}','{$values['contextId']}','{$values['timeframeId']}','{$values['deadline']}','{$values['repeat']}','{$values['suppress']}','{$values['suppressUntil']}')",
+        "newitemattributes"     => "INSERT INTO `itemattributes` (itemId,type,`projectId`,contextId,timeframeId,deadline,`repeat`,suppress,suppressUntil) VALUES ('{$values['itemId']}','{$values['type']}','{$values['projectId']}','{$values['contextId']}','{$values['timeframeId']}','{$values['deadline']}','{$values['repeat']}','{$values['suppress']}','{$values['suppressUntil']}')",
         //INSERT INTO `itemstatus` (itemId,dateCreated) VALUES ('$newitemId','{$values['date']}') for repeated  items to preserve date-- move date calculation to php
         "newitemstatus"         => "INSERT INTO `itemstatus` (itemId,dateCreated) VALUES ('{$values['itemId']}',CURRENT_DATE)",
         "updateitem"              =>"UPDATE items SET description = '{$values['description']}', title = '{$values['title']}'  WHERE itemId = '{$values['itemId']}'",
-        "updateitemattributes"  =>"UPDATE `itemattributes` SET `type` = '{$values['type']}', `projectId` = '{$values['`projectId`']}', `contextId` = '{$values['contextId']}', timeframeId = '{$values['timeframeId']}', `deadline` ='{$values['deadline']}', `repeat` = '{$values['repeat']}', `suppress`='{$values['suppress']}', `suppressUntil`='{$values['suppressUntil']}' WHERE `itemId` = '{$values['itemId']}'",
+        "updateitemattributes"  =>"UPDATE `itemattributes` SET `type` = '{$values['type']}', `projectId` = '{$values['projectId']}', `contextId` = '{$values['contextId']}', timeframeId = '{$values['timeframeId']}', `deadline` ='{$values['deadline']}', `repeat` = '{$values['repeat']}', `suppress`='{$values['suppress']}', `suppressUntil`='{$values['suppressUntil']}' WHERE `itemId` = '{$values['itemId']}'",
         "updateitemstatus"      =>"UPDATE `itemstatus` SET `dateCompleted` = '{$values['dateCompleted']}' WHERE `itemId` = '{$values['itemId']}'",
         "deleteitem"              =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
         "deleteitemattributes"  =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
         "deleteitemstatus"      =>"DELETE FROM `itemattributes` WHERE `itemId`='{$values['itemId']}'",
         "completeitem"              =>"UPDATE itemstatus SET dateCompleted='{$values['date']}' WHERE itemId='{$values['completedNa']}'",
-        "removeitems"              => "DELETE `items` FROM `items`, `itemattributes` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId`='{$values['`projectId`']}'",
-        "removeitemstatus"              => "DELETE `itemstatus` FROM `items`, `itemstatus` WHERE `itemstatus`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId`='{$values['`projectId`']}'",
-        "removeitemattributes"              => "DELETE FROM `itemattributes` WHERE `itemattributes`.`projectId`='{$values['`projectId`']}'",
+
         "getitemsbycontext"     => "SELECT `itemattributes`.`projectId`, `projects`.`name` AS `pname`, `items`.`title`, `items`.`description`, `itemstatus`.`dateCreated`, `items`.`itemId`, `itemstatus`.`dateCompleted`, `itemattributes`.`deadline`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil` FROM `items`, `itemattributes`, `itemstatus`, `projects`, `projectattributes`, `projectstatus`, `nextactions` WHERE `itemstatus`.`itemId` = `items`.`itemId` AND `itemattributes`.`itemId` = `items`.`itemId` AND `itemattributes`.`projectId` = `projects`.`projectId` AND `projectattributes`.`projectId`=`itemattributes`.`projectId` AND `projectstatus`.`projectId` = `itemattributes`.`projectId` AND `nextactions`.`nextaction`=`items`.`itemId` AND `itemattributes`.`type` = 'a' AND `itemattributes`.`timeframeId`='{$values['timeframeId']}' AND `projectattributes`.`isSomeday`='n' AND `itemattributes`.`contextId`='{$values['contextId']}' AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND ((CURDATE() >= DATE_ADD(`itemattributes`.`deadline`, INTERVAL -(`itemattributes`.`suppressUntil`) DAY)) OR `projectattributes`.`suppress`='n' OR (CURDATE() >= DATE_ADD(`projectattributes`.`deadline`, INTERVAL -(`projectattributes`.`suppressUntil`) DAY))) ORDER BY `projects`.`name`",
         "getactiveitems"              =>"SELECT `itemattributes`.`contextId`, `itemattributes`.`timeframeId`, COUNT(*) AS `count`FROM `itemattributes`, `itemstatus`, `projectattributes`, `projectstatus`, `nextactions` WHERE `itemstatus`.`itemId`=`itemattributes`.`itemId` AND `projectattributes`.`projectId`=`itemattributes`.`projectId` AND `nextactions`.`nextaction` = `itemstatus`.`itemId` AND `projectstatus`.`projectId`=`projectattributes`.`projectId` AND `itemattributes`.`type`='a' AND `projectattributes`.`isSomeday`='n' AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted`='0000-00-00') AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted`='0000-00-00') AND ((CURDATE() >= DATE_ADD(`itemattributes`.`deadline`, INTERVAL -(`itemattributes`.`suppressUntil`) DAY)) OR `projectattributes`.`suppress`='n' OR (CURDATE() >= DATE_ADD(`projectattributes`.`deadline`, INTERVAL -(`projectattributes`.`suppressUntil`) DAY))) GROUP BY `itemattributes`.`contextId`, `itemattributes`.`timeframeId`",
         "getsuppresseditems"              =>"SELECT `itemattributes`.`projectId`, `projects`.`name` AS `pname`, `items`.`title`, `items`.`description`, `itemstatus`.`dateCreated`, `context`.`contextId`, `context`.`name` AS `cname`, `items`.`itemId`, `itemstatus`.`dateCompleted`, `itemattributes`.`deadline`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil`, `itemattributes`.`type` FROM `items`, `itemattributes`, `itemstatus`, `projects`, `projectstatus`, `context` WHERE `itemstatus`.`itemId` = `items`.`itemId` AND `itemattributes`.`itemId` = `items`.`itemId` AND `itemattributes`.`contextId` = `context`.`contextId` AND `itemattributes`.`projectId` = `projects`.`projectId` AND `projectstatus`.`projectId` = `itemattributes`.`projectId` AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND (`itemattributes`.`suppress`='y') ORDER BY `itemattributes`.`deadline`, `cname`, `pname`",

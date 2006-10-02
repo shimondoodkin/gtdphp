@@ -2,8 +2,6 @@
 <?php
 //INCLUDES
 	include_once('header.php');
-	include_once('config.php');
-	include_once('gtdfuncs.php');
 
 //CONNECT TO DATABASE
 	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
@@ -11,16 +9,8 @@
 
 //SQL CODE AREA
 //select active projects
-        $query="SELECT projects.projectId, projects.name, projects.description, projectattributes.categoryId, categories.category, 
-			projectattributes.deadline, projectattributes.repeat, projectattributes.suppress, projectattributes.suppressUntil
-			FROM projects, projectattributes, projectstatus, categories 
-			WHERE projectattributes.projectId=projects.projectId AND projectattributes.categoryId=categories.categoryId
-			AND projectstatus.projectId=projects.projectId AND projectattributes.isSomeday = 'n'
-			AND (projectstatus.dateCompleted IS NULL OR projectstatus.dateCompleted = '0000-00-00')
-			AND (((CURDATE()>=DATE_ADD(projectattributes.deadline, INTERVAL -(projectattributes.suppressUntil) DAY)) 
-			OR projectattributes.suppress='n')) ORDER BY categories.category, projectattributes.deadline, projects.name ASC";
-
-        $result = mysql_query($query) or die ("Error in query");
+        $values['isSomeday']="n";
+        $result = query(selectactiveprojects,$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
 	echo "<h2>The Weekly Review</h2>
@@ -41,7 +31,7 @@
 	echo "		<p><ul>Projects without Next Actions defined:\n";
 	
 
-	while($row = mysql_fetch_assoc($result)) {
+	foreach($result as $row) {
 		$nonext=nonext($row['projectId']);
 		if ($nonext=="true") echo '			<li><a href="projectReport.php?projectId='.$row['projectId'].'" title="Go to '.htmlspecialchars(stripslashes($row['name'])).'  project report">'.stripslashes($row['name'])."</a></li>\n";
 	}

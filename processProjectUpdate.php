@@ -1,7 +1,6 @@
 <?php
 //INCLUDES
 include_once('header.php');
-include_once('config.php');
 
 //GET URL VARIABLES
 $categoryId=(int) $_POST['categoryId'];

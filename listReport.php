@@ -1,6 +1,6 @@
 <?php
 	include_once('header.php');
-	include_once('config.php');
+
 	$listId = (int) $_GET['listId'];
 	$listTitle = (string) $_GET['listTitle'];
  

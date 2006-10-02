@@ -1,6 +1,6 @@
 <?php
 	include_once('header.php');
-	include_once('config.php');
+
 	$checklistId =(int) $_GET["checklistId"];
 	$checklistTitle =(string) $_GET['checklistTitle'];
 
@@ -16,12 +16,16 @@
 	echo '<form action="updateChecklist.php?checklistId='.$checklistId.'" method="post">';
 ?>
 
-	<div class='form'>		<div class='formrow'>
+	<div class='form'>
+		<div class='formrow'>
 			<label for='title' class='left first'>Checklist Title:</label>
 			<input type='text' name='newchecklistTitle' id='title' value='<?php echo $row[0]; ?>'>
 		</div>
 
-		<div class='formrow'>			<label for='category' class='left first'>Category:</label>			<select name='newcategoryId' id='category'>	
+		<div class='formrow'>
+			<label for='category' class='left first'>Category:</label>
+			<select name='newcategoryId' id='category'>
+	
 <?php
 		$catquery = "select * from categories";
 		$catresult = mysql_query($catquery) or die("error in query: $catquery.  ".mysql_error());

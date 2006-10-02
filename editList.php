@@ -1,6 +1,5 @@
 <?php
 	include_once('header.php');
-	include_once('config.php');
 
 	$listId =(int) $_GET["listId"];
 	$listTitle =(string) $_GET['listTitle'];
@@ -16,12 +15,15 @@
 	echo '<form action="updateList.php?listId='.$listId.'" method="POST">'."\n";
 ?>
 
-	<div class='form'>		<div class='formrow'>
+	<div class='form'>
+		<div class='formrow'>
 			<label for='title' class='left first'>List Title:</label>
 			<input type='text' name='newlistTitle' id='title' value='<?php echo $row[0]; ?>'>
 		</div>
 
-		<div class='formrow'>			<label for='category' class='left first'>Category:</label>			<select name='newcategoryId' id='category'>
+		<div class='formrow'>
+			<label for='category' class='left first'>Category:</label>
+			<select name='newcategoryId' id='category'>
 <?php
 //SELECT categoryId, category, description from categories
 		$catquery = "select * from categories";

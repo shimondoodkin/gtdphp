@@ -1,7 +1,6 @@
 <?php
 //INCLUDES
 include_once('header.php');
-include_once('config.php');
 
 //CONNECT TO DATABASE
 	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
@@ -21,7 +20,8 @@ if (!isset($_POST['submit'])) {
 	$query = "select * from categories";
 	$result = mysql_query($query) or die("Error in query");
 ?>
-	<div class='form'>		<div class='formrow'>
+	<div class='form'>
+		<div class='formrow'>
 			<label for='title' class='left first'>Title:</label>
 			<input type="text" name="title" id="title">
 		</div>

@@ -2,7 +2,6 @@
 
 //INCLUDES
 	include_once('header.php');
-	include_once('config.php');
 
 //RETRIEVE URL VARIABLES
 	$listItemId =(int) $_GET["listItemId"];

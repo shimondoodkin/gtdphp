@@ -11,15 +11,10 @@
 
 	//select note details
 	if ($values['noteId']>0) {
-	$result = query("selectnote",$config,$values,$sort,$options);
-
-	if ($result!=-1) {
-	    foreach ($result as $row) {
-                $currentrow = $row;
-                }
+            $result = query("selectnote",$config,$values,$sort,$options);
+	    if ($result!=-1) $currentrow = $row[0];
+            else echo "Nothing found.";
             }
-        else echo "Nothing found.";
-        }
 
 //PAGE DISPLAY CODE
 	

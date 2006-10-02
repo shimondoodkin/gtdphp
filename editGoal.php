@@ -1,6 +1,5 @@
 <?php
 	include_once('header.php');
-	include_once('config.php');
 
 //CONNECT TO DATABASE
 	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");

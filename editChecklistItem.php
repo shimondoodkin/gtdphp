@@ -1,6 +1,6 @@
 <?php
 	include_once('header.php');
-	include_once('config.php');
+
 	$checklistItemId =$_GET["checklistItemId"];
 
 	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
@@ -24,7 +24,8 @@
 	$result = mysql_query($query) or die ("Error in query: $query.  ".mysql_error());
 	echo '<form action="updateChecklistItem.php?checklistItemId='.$checklistItemId.'" method="post">'."\n";
 ?>
-	<div class='form'>		<div class='formrow'>
+	<div class='form'>
+		<div class='formrow'>
 			<label for='checklist' class='left first'>Checklist:</label>
 			<select name='checklistId' id='checklist'>
 <?php
