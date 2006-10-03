@@ -14,7 +14,7 @@ $completedLis = $_POST['completedLis'];
 
 if(isset($completedLis)){
 	$date=date('Y-m-d');
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listReport.php?listId='.$listId.'&listTitle='.$listTitle.'">';
+        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$listId.'&listTitle='.$listTitle.'">';
         foreach ($completedLis as $completedLi){
         //        echo "Updating List Item: ";
         //        echo $completedLi.'<br>';
@@ -28,7 +28,7 @@ if(isset($completedLis)){
         $row=mysql_fetch_row($result);
         $listId=$row[0];
 }
-echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listReport.php?listId='.$listId.'&listTitle='.$listTitle.'">';
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$listId.'&listTitle='.$listTitle.'">';
 mysql_close($connection);
 include_once('footer.php');
 ?>

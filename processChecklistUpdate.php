@@ -15,7 +15,7 @@ $checkedClis = $_POST['checkedClis'];
 $clear = $_POST['clear']{0};
 $date=date('Y-m-d');
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=checklistReport.php?checklistId='.$checklistId.'&checklistTitle='.$checklistTitle.'">';
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=checklistReport.php?checklistId='.$checklistId.'&checklistTitle='.$checklistTitle.'">';
 
 $query= "UPDATE checklistItems SET checked='n' where checklistId='$checklistId'";
 $result = mysql_query($query) or die ("Error in query");

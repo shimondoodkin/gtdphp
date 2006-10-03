@@ -19,7 +19,7 @@ $delete=$_POST['delete']{0};
 if($delete=="y") {
         $query= "delete from checklistItems where checklistItemId='$checklistItemId'";
         $result = mysql_query($query) or die ("Error in query: $query. ".mysql_error());
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=checklistReport.php?checklistId='.$checklistId.'">';
+        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=checklistReport.php?checklistId='.$checklistId.'">';
         echo "<p>Number of Records Deleted: ";
         echo mysql_affected_rows();
 	}
@@ -32,7 +32,7 @@ else {
 	set notes = '$newnotes', item = '$newitem', checklistId = '$checklistId', completed='$newcompleted'
 	where checklistItemId ='$checklistItemId'";
 	$result = mysql_query($query) or die ("Error in query: $query. ".mysql_error());
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=checklistReport.php?checklistId='.$checklistId.'&checklistTitle='.$title.'">';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=checklistReport.php?checklistId='.$checklistId.'&checklistTitle='.$title.'">';
 	echo "Number of Records Updated: ";
 	echo mysql_affected_rows();
 	}

@@ -35,7 +35,7 @@ if (!isset($_POST['submit'])) {
 	$result = mysql_query($query) or die ("Error in query: $query. ".mysql_error());
 
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=newTimeContext.php"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=newTimeContext.php"';
 	mysql_close($connection);
 }
 include_once('footer.php');

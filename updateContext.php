@@ -12,11 +12,11 @@ $values['delete']           = $_POST['delete']{0};
 $values['newContextId']     = (int) $_POST['newContextId'];
 
 if ($values['delete']=="y") {
-        query("reassignspacecontext",$config,$values,$options,$sort);
-        query("deletespacecontext",$config,$values,$options,$sort);
+        query("reassignspacecontext",$config,$values);
+        query("deletespacecontext",$config,$values);
 	}
 
-else query("updatespacecontext",$config,$values,$options,$sort);
+else query("updatespacecontext",$config,$values);
 
 echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=reportContext.php"';
 //echo "Number of Records Updated: ";

@@ -58,7 +58,7 @@ if (!isset($_POST['submit'])) {
 	$result = mysql_query($query) or die ("Error in query");
 
 	echo "New checklist inserted with ID ".mysql_insert_id();
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=checklistReport.php?checklistId='.$mysql_insert_id.'&checklistTitle='.urlencode($title).'"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=checklistReport.php?checklistId='.$mysql_insert_id.'&checklistTitle='.urlencode($title).'"';
 	mysql_close($connection);
 }
 include_once('footer.php');

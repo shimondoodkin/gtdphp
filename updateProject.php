@@ -35,10 +35,11 @@ $values['suppressUntil'] = (int) $_POST['suppressUntil'];
 //SQL CODE AREA
 if($values['delete']=="y"){
 
-    query("deleteproject",$config,$values,$options,$sort);
-    query("deleteprojectattributes",$config,$values,$options,$sort);
-    query("deleteprojectstatus",$config,$values,$options,$sort);
-    query("removeitems",$config,$values,$options,$sort);
+    query("deleteproject",$config,$values);
+    query("deleteprojectattributes",$config,$values);
+    query("deleteprojectstatus",$config,$values);
+    query("removeitems",$config,$values);
+    query("removenextaction",$config,$values);
 
     echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listProjects.php" />';
 //        echo "<p>Number of Items also deleted: ";
@@ -46,9 +47,9 @@ if($values['delete']=="y"){
     }
 
 else {
-    query("updateproject",$config,$values,$options,$sort);
-    query("updateprojectattributes",$config,$values,$options,$sort);
-    query("updateprojectstatus",$config,$values,$options,$sort);
+    query("updateproject",$config,$values);
+    query("updateprojectattributes",$config,$values);
+    query("updateprojectstatus",$config,$values);
 
     echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=projectReport.php?projectId='.$values['projectId'].'" />';
     }

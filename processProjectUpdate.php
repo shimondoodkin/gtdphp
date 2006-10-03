@@ -68,19 +68,19 @@ if(isset($completedProj)){
 	}
 
 if ($referrer=="p") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=projectReport.php?projectId='.$projectId.'">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=projectReport.php?projectId='.$projectId.'">';
 	}
 
 elseif ($referrer=="l") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listProjects.php?pType='.$type.'">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listProjects.php?pType='.$type.'">';
 	}
 
 elseif ($referrer=="c") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=reportContext.php">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=reportContext.php">';
 	}
 
 elseif ($referrer=="t") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=tickler.php">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=tickler.php">';
 	}
 
 mysql_close($connection);

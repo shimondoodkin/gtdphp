@@ -18,7 +18,7 @@ $delete=$_POST['delete']{0};
 //SQL CODE AREA
 if($delete=="y") {
 
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listList.php"';
+        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listList.php"';
         $query= "delete from list where listId='$listId'";
         $result = mysql_query($query) or die ("Error in query");
         //echo "<p>Number of lists deleted: ";
@@ -32,7 +32,7 @@ if($delete=="y") {
 
 else {
 
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listList.php"';
+        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listList.php"';
 	$query = "update list
 	set title = '$newlistTitle', description = '$newdescription', categoryId = '$newcategoryId' 
 	where listId ='$listId'";

@@ -25,7 +25,7 @@ $addquery = "INSERT INTO `tickler` (date,title,note) VALUES ('$date','$title','$
 
 mysql_close($connection);
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=tickler.php">';
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=tickler.php">';
 
 include_once('footer.php');
 ?>

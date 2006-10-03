@@ -40,7 +40,7 @@ if (!isset($_POST['submit'])) {
 
     //brainstorming mode would have user want to add new categories in
     //bunches?
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=newCategory.php"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=newCategory.php"';
 	mysql_close($connection);
 }
 include_once('footer.php');

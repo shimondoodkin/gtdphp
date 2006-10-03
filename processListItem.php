@@ -12,7 +12,7 @@
 	$notes=mysql_real_escape_string($_POST['notes']);
 
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listReport.php?listId='.$listId.'"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$listId.'"';
 
 	# don't forge null
 	$query = "INSERT into listItems values (NULL, '$item', '$notes', '$listId', 'n')";

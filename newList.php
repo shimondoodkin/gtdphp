@@ -59,7 +59,7 @@ if (!isset($_POST['submit'])) {
 	$query = "INSERT into list values (NULL, '$title', '$categoryId', '$description')";
 	$result = mysql_query($query) or die ("Error in query");
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listReport.php?listID='.mysql_insert_id().'&listTitle='.$title.'">';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listID='.mysql_insert_id().'&listTitle='.$title.'">';
 	mysql_close($connection);
 }
 include_once('footer.php');

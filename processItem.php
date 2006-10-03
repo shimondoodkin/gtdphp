@@ -47,7 +47,7 @@ if($nextAction=='y') {
 	$result = mysql_query($query) or die ("Error in query.");
 	}
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=projectReport.php?projectId='.$projectId.'">';
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=projectReport.php?projectId='.$projectId.'">';
 
 mysql_close($connection);
 include_once('footer.php');

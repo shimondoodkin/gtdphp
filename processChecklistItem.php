@@ -11,7 +11,7 @@
 	$item=mysql_real_escape_string($_POST['item']);
 	$notes=mysql_real_escape_string($_POST['notes']);
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=checklistReport.php?checklistId='.$checklistId.'"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=checklistReport.php?checklistId='.$checklistId.'"';
 	echo '<p>New checklist item added at ';
 	echo date('H:i, jS F');
 	echo '</p>';

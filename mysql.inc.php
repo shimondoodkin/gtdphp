@@ -78,6 +78,7 @@ $sql = array(
 
         "removeitems"              => "DELETE `itemattributes` FROM `itemattributes`, `items`, `itemstatus` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemstatus`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId` = '{$values['projectId']}'",
 
+
 /*
 
 "DELETE `items` FROM `items`, `itemattributes` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId`='{$values['projectId']}'",
@@ -87,6 +88,51 @@ $sql = array(
         "removeitemattributes"              => "DELETE FROM `itemattributes` WHERE `itemattributes`.`projectId`='{$values['projectId']}'",
 
 */
+
+
+        "updatenote"              =>"UPDATE `tickler` SET `date` = '{$values['date']}', `note` = '{$values['note']}', `title` = '{$values['title']}' WHERE `ticklerId` = '{$values['noteId']}'",
+        
+        "deletenote"              =>"DELETE FROM `tickler` WHERE `ticklerId`='{$values['noteId']}'",
+
+        "deletenextaction"              =>"DELETE FROM `nextactions` WHERE `nextAction`='{$values['itemId']}'",
+        
+        "removenextaction"              =>"DELETE FROM `nextactions` WHERE `projectId`='{$values['projectId']}'",
+
+        "deleteitem"              =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
+        
+        "deleteitemattributes"  =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
+        
+        "deleteitemstatus"      =>"DELETE FROM `itemattributes` WHERE `itemId`='{$values['itemId']}'",
+
+       "updatechecklist"              =>"UPDATE checklist SET title = '{$values['newchecklistTitle']}', description = '{$values['newdescription']}', categoryId = '{$values['newcategoryId']}' WHERE checklistId ='{$values['checklistId']}'",
+        
+        "deletechecklist"              =>"DELETE FROM checklist WHERE checklistId='{$values['checklistId']}'",
+
+       "updatechecklistitem"              =>"UPDATE checklistItems SET notes = '{$values['newnotes']}', item = '{$values['newitem']}', checklistId = '{$values['checklistId']}', checked='{$values['newchecked']}' WHERE checklistItemId ='{$values['checklistItemId']}'",
+        
+        "deletechecklistitem"              =>"DELETE FROM checklistItems WHERE checklistItemId='{$values['checklistItemId']}'",
+        
+        "removechecklistitems"              =>"DELETE FROM checklistItems WHERE checklistId='{$values['checklistId']}'",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //In process
@@ -188,7 +234,7 @@ $query=>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`descripti
 
         "newnextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}')",
         "updatenextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}') ON DUPLICATE KEY UPDATE `nextaction`='{$values['itemId']}'",
-        "deletenextaction"              =>"DELETE FROM `nextactions` WHERE `nextAction`='{$values['itemId']}'",
+
         "removenextaction"              =>"",
         "completenextaction"        =>"DELETE FROM nextactions WHERE nextAction=''{$values['completedNa']}'",
 //items
@@ -207,9 +253,7 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
         "updateitem"              =>"UPDATE items SET description = '{$values['description']}', title = '{$values['title']}'  WHERE itemId = '{$values['itemId']}'",
         "updateitemattributes"  =>"UPDATE `itemattributes` SET `type` = '{$values['type']}', `projectId` = '{$values['projectId']}', `contextId` = '{$values['contextId']}', timeframeId = '{$values['timeframeId']}', `deadline` ='{$values['deadline']}', `repeat` = '{$values['repeat']}', `suppress`='{$values['suppress']}', `suppressUntil`='{$values['suppressUntil']}' WHERE `itemId` = '{$values['itemId']}'",
         "updateitemstatus"      =>"UPDATE `itemstatus` SET `dateCompleted` = '{$values['dateCompleted']}' WHERE `itemId` = '{$values['itemId']}'",
-        "deleteitem"              =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
-        "deleteitemattributes"  =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
-        "deleteitemstatus"      =>"DELETE FROM `itemattributes` WHERE `itemId`='{$values['itemId']}'",
+
         "completeitem"              =>"UPDATE itemstatus SET dateCompleted='{$values['date']}' WHERE itemId='{$values['completedNa']}'",
 
         "getitemsbycontext"     => "SELECT `itemattributes`.`projectId`, `projects`.`name` AS `pname`, `items`.`title`, `items`.`description`, `itemstatus`.`dateCreated`, `items`.`itemId`, `itemstatus`.`dateCompleted`, `itemattributes`.`deadline`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil` FROM `items`, `itemattributes`, `itemstatus`, `projects`, `projectattributes`, `projectstatus`, `nextactions` WHERE `itemstatus`.`itemId` = `items`.`itemId` AND `itemattributes`.`itemId` = `items`.`itemId` AND `itemattributes`.`projectId` = `projects`.`projectId` AND `projectattributes`.`projectId`=`itemattributes`.`projectId` AND `projectstatus`.`projectId` = `itemattributes`.`projectId` AND `nextactions`.`nextaction`=`items`.`itemId` AND `itemattributes`.`type` = 'a' AND `itemattributes`.`timeframeId`='{$values['timeframeId']}' AND `projectattributes`.`isSomeday`='n' AND `itemattributes`.`contextId`='{$values['contextId']}' AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND ((CURDATE() >= DATE_ADD(`itemattributes`.`deadline`, INTERVAL -(`itemattributes`.`suppressUntil`) DAY)) OR `projectattributes`.`suppress`='n' OR (CURDATE() >= DATE_ADD(`projectattributes`.`deadline`, INTERVAL -(`projectattributes`.`suppressUntil`) DAY))) ORDER BY `projects`.`name`",
@@ -251,15 +295,12 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
 //getchecklistsincategory        SELECT checklist`.`checklistId, checklist`.`title, checklist`.`description, checklist`.`categoryId, `categories`.`category` FROM checklist, categories WHERE checklist`.`categoryId=categories`.`categoryId AND checklist`.`categoryId='{$values['categoryId']}' ORDER BY `categories`.`category` ASC
         "selectchecklist"              =>"SELECT title,category, description FROM checklist WHERE checklistId='{$values['checklistId']}'",
         "newchecklist"              =>"INSERT INTO checklist VALUES (NULL, '{$values['title']}', '{$values['categoryId']}', '{$values['description']}')",
-        "updatechecklist"              =>"UPDATE checklist SET title = '{$values['newchecklistTitle']}', description = '{$values['newdescription']}', categoryId = '{$values['newcategoryId']}' WHERE checklistId ='{$values['checklistId']}'",
-        "deletechecklist"              =>"DELETE FROM checklist WHERE checklistId='{$values['checklistId']}'",
+
 //checklistitems
         "getchecklistitems"              =>"SELECT checklistItems`.`checklistitemId, checklistItems`.`item, checklistItems`.`notes, checklistItems`.`checklistId, checklistItems`.`checked FROM checklistItems LEFT JOIN checklist on checklistItems`.`checklistId = checklist`.`checklistId WHERE checklist`.`checklistId = '{$values['checklistId']}' ORDER BY checklistItems`.`checked DESC, checklistItems`.`item ASC",
         "selectchecklistitem"              =>"SELECT checklistItemId, item, notes, checklistId, checked FROM checklistItems WHERE checklistItemId = '{$values['$checklistItemId']}'",
         "newchecklistitem"              =>"INSERT INTO checklistItems  VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['checklistId']}', 'n')",
-        "updatechecklistitem"              =>"UPDATE checklistItems SET notes = '{$values['newnotes']}', item = '{$values['newitem']}', checklistId = '{$values['checklistId']}', checked='{$values['newchecked']}' WHERE checklistItemId ='{$values['checklistItemId']}'",
-        "deletechecklistitem"              =>"DELETE FROM checklistItems WHERE checklistItemId='{$values['checklistItemId']}'",
-        "removechecklistitems"              =>"DELETE FROM checklistItems WHERE checklistId='{$values['checklistId']}'",
+
         "checkchecklistitem"              =>"",
         "uncheckchecklistitem"              =>"UPDATE checklistItems SET checked='n' WHERE checklistId='{$values['checklistId']}'",
         //filtered queries?
@@ -269,6 +310,5 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
 
 
         "newnote"              =>"INSERT INTO `tickler` (date,title,note) VALUES ('{$values['date']}','{$values['title']}','{$values['note']}')",
-        "updatenote"              =>"UPDATE `tickler` SET `date` = '{$values['date']}', `note` = '{$values['note']}', `title` = '{$values['title']}' WHERE `ticklerId` = '{$values['noteId']}'",
-        "deletenote"              =>"DELETE FROM `tickler` WHERE `ticklerId`='{$values['noteId']}'",
+
 );

@@ -6,7 +6,7 @@
 function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
 
 //for testing only--- testing data handling
-
+/*
     //testing passed variables
     echo "<p>Query label: ".$querylabel."<br />";
     echo "Config: ";
@@ -18,7 +18,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
     echo "<br />Options: ";
     print_r($options);
     echo "</p>";
-/*
+
     //sanitize input variables
     echo "<p>Sanitizing...</p>\n";
 
@@ -56,6 +56,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
     //grab correct query string from query library array
     //values automatically inserted into array
 
+// for testing only: display fully-formed query    
     $query = $sql[$querylabel];
     echo "<p>Query: ".$query."</p>";
 
@@ -98,6 +99,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
 
     else $result=-1;
 
+//for testing only, print result array
 print_r($result);
 
     //need to return error-handler if query doesn't work, main script has to know and be able to adjust

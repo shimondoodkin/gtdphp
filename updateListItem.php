@@ -18,14 +18,14 @@ $delete=$_POST['delete']{0};
 if($delete=="y") {
         $query= "delete from listItems where listItemId='$listItemId'";
         $result = mysql_query($query) or die ("Error in query");
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listReport.php?listId='.$listId.'">';
+        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$listId.'">';
 	}
 else {
 	$query = "update listItems
 	set notes = '$newnotes', item = '$newitem', listId = '$listId', dateCompleted='$newdateCompleted'
 	where listItemId ='$listItemId'";
 	$result = mysql_query($query) or die ("Error in query");
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listReport.php?listId='.$listId.'">';
+        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$listId.'">';
 	}
 
 mysql_close($connection);

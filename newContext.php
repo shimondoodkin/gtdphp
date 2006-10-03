@@ -36,7 +36,7 @@ if (!isset($_POST['submit'])) {
 
 //	echo "New context inserted with ID ".mysql_insert_id();
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=newContext.php"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=newContext.php"';
 	mysql_close($connection);
 }
 include_once('footer.php');
