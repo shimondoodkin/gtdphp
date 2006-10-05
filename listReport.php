@@ -1,20 +1,24 @@
 <?php
 	include_once('header.php');
 
-	$listId = (int) $_GET['listId'];
-	$listTitle = (string) $_GET['listTitle'];
- 
+	$values['listId'] = (int) $_GET['listId'];
+
 	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
 
 	mysql_select_db($db) or die ("Unable to select database!");
 
-	echo "<h1>List Report: $listTitle</h1>\n";
-	echo '<form action="processListUpdate.php?listId='.$listId.'" method="POST">'."\n";
-	
-	echo '[ <a href="editList.php?listId='.$listId.'&listTitle='.$listTitle.'">Edit List</a> ]'."\n";
+    $result = query("selectlist",$config,$values,$options,$sort);
+    if ($result!="-1") {
+        $row=$result[0];
+        }
+
+	echo "<h1>List Report: {$row['title']}</h1>\n";
+	echo '<form action="processListUpdate.php?listId='.$row['listId'].'" method="POST">'."\n";
+
+	echo '[ <a href="editList.php?listId='.$row['listId'].'&listTitle='.$row['listTitle'].'">Edit List</a> ]'."\n";
 	echo "<br />\n";
 
-	echo '<h2><a href = "newListItem.php?listId='.$listId.'" style="text-decoration:none">List Items</a></h2>'."\n";
+	echo '<h2><a href = "newListItem.php?listId='.$row['listId'].'" style="text-decoration:none">List Items</a></h2>'."\n";
 
 	$query = "SELECT listItems.listItemId, listItems.item, listItems.notes, listItems.listId
 		FROM listItems
@@ -24,14 +28,14 @@
 
 	if (mysql_num_rows($result) > 0){
 		$counter=0;
-		
+
 		echo "<table class='datatable'>\n";
 		echo "	<thead>\n";
 		echo "		<td>Item</td>\n";
-		echo "		<td>Description</td>\n"; 
+		echo "		<td>Description</td>\n";
 		echo "		<td>Completed</td>\n";
 		echo "	</thead>\n";
-		
+
 		while($row = mysql_fetch_row($result)){
                 echo "	<tr>\n";
                 $listItemId = $row[0];

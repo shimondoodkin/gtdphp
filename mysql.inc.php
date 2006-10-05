@@ -79,6 +79,7 @@ $sql = array(
         "removeitems"              => "DELETE `itemattributes` FROM `itemattributes`, `items`, `itemstatus` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemstatus`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId` = '{$values['projectId']}'",
 
 
+
 /*
 
 "DELETE `items` FROM `items`, `itemattributes` WHERE `items`.`itemId`=`itemattributes`.`itemId` AND `itemattributes`.`projectId`='{$values['projectId']}'",
@@ -91,30 +92,58 @@ $sql = array(
 
 
         "updatenote"              =>"UPDATE `tickler` SET `date` = '{$values['date']}', `note` = '{$values['note']}', `title` = '{$values['title']}' WHERE `ticklerId` = '{$values['noteId']}'",
-        
+
         "deletenote"              =>"DELETE FROM `tickler` WHERE `ticklerId`='{$values['noteId']}'",
 
         "deletenextaction"              =>"DELETE FROM `nextactions` WHERE `nextAction`='{$values['itemId']}'",
-        
+
         "removenextaction"              =>"DELETE FROM `nextactions` WHERE `projectId`='{$values['projectId']}'",
 
         "deleteitem"              =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
-        
+
         "deleteitemattributes"  =>"DELETE FROM `items` WHERE `itemId`='{$values['itemId']}'",
-        
+
         "deleteitemstatus"      =>"DELETE FROM `itemattributes` WHERE `itemId`='{$values['itemId']}'",
 
-       "updatechecklist"              =>"UPDATE checklist SET title = '{$values['newchecklistTitle']}', description = '{$values['newdescription']}', categoryId = '{$values['newcategoryId']}' WHERE checklistId ='{$values['checklistId']}'",
-        
-        "deletechecklist"              =>"DELETE FROM checklist WHERE checklistId='{$values['checklistId']}'",
+       "updatechecklist"              =>"UPDATE `checklist` SET `title` = '{$values['newchecklistTitle']}', `description` = '{$values['newdescription']}', `categoryId` = '{$values['newcategoryId']}' WHERE `checklistId` ='{$values['checklistId']}'",
 
-       "updatechecklistitem"              =>"UPDATE checklistItems SET notes = '{$values['newnotes']}', item = '{$values['newitem']}', checklistId = '{$values['checklistId']}', checked='{$values['newchecked']}' WHERE checklistItemId ='{$values['checklistItemId']}'",
-        
-        "deletechecklistitem"              =>"DELETE FROM checklistItems WHERE checklistItemId='{$values['checklistItemId']}'",
-        
-        "removechecklistitems"              =>"DELETE FROM checklistItems WHERE checklistId='{$values['checklistId']}'",
+        "deletechecklist"              =>"DELETE FROM `checklist` WHERE `checklistId`='{$values['checklistId']}'",
 
+       "updatechecklistitem"              =>"UPDATE `checklistItems` SET `notes` = '{$values['newnotes']}', `item` = '{$values['newitem']}', `checklistId` = '{$values['checklistId']}', `checked`='{$values['newchecked']}' WHERE `checklistItemId` ='{$values['checklistItemId']}'",
 
+        "deletechecklistitem"              =>"DELETE FROM `checklistItems` WHERE `checklistItemId`='{$values['checklistItemId']}'",
+
+        "removechecklistitems"              =>"DELETE FROM `checklistItems` WHERE `checklistId`='{$values['checklistId']}'",
+
+        "updatelistitem"              =>"UPDATE `listItems` SET `notes` = '{$values['newnotes']}', `item` = '{$values['newitem']}', `listId` = '{$values['listId']}', `dateCompleted`='{$values['newdateCompleted']}' WHERE `listItemId` ='{$values['listItemId']}'",
+
+        "deletelistitem"              =>"DELETE FROM `listItems` WHERE `listItemId`='{$values['listItemId']}'",
+
+        "removelistitems"              =>"DELETE FROM `listItems` WHERE `listId`='{$values['listId']}'",
+
+        "deletelist"              =>"DELETE FROM `list` WHERE `listId`='{$values['listId']}'",
+
+        "updatelist"              =>"UPDATE `list` SET `title` = '{$values['newlistTitle']}', `description` = '{$values['newdescription']}', `categoryId` = '{$values['newcategoryId']}' WHERE `listId` ='{$values['listId']}'",
+
+        "selectlist"              =>"SELECT `title`, `description`, `categoryId` FROM `list` WHERE `listId` = '{$values['listId']}'",
+
+        "selectchecklist"              =>"SELECT `title`, `categoryId`, `description` FROM `checklist` WHERE `checklistId`='{$values['checklistId']}'",
+
+       "updateitem"              =>"UPDATE `items` SET `description` = '{$values['description']}', `title` = '{$values['title']}'  WHERE `itemId` = '{$values['itemId']}'",
+
+        "updateitemattributes"  =>"UPDATE `itemattributes` SET `type` = '{$values['type']}', `projectId` = '{$values['projectId']}', `contextId` = '{$values['contextId']}', `timeframeId` = '{$values['timeframeId']}', `deadline` ='{$values['deadline']}', `repeat` = '{$values['repeat']}', `suppress`='{$values['suppress']}', `suppressUntil`='{$values['suppressUntil']}' WHERE `itemId` = '{$values['itemId']}'",
+
+        "updateitemstatus"      =>"UPDATE `itemstatus` SET `dateCompleted` = '{$values['dateCompleted']}' WHERE `itemId` = '{$values['itemId']}'",
+
+        "updatenextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}') ON DUPLICATE KEY UPDATE `nextaction`='{$values['itemId']}'",
+
+        "updatecategory"              =>"UPDATE `categories` SET `category` ='{$values['category']}', `description` ='{$values['description']}' WHERE `categoryId` ='{$values['categoryId']}'",
+
+        "reassigncategory"              =>"UPDATE `projectattributes` SET `categoryId`='{$values['newCategoryId']}' WHERE `categoryId`='{$values['categoryId']}'",
+
+        "deletecategory"              =>"DELETE FROM `categories` WHERE `categoryId`='{$values['categoryId']}'",
+
+        "updategoal"              => "UPDATE `goals` SET `goal` = '{$values['goal']}', `description` = '{$values['description']}', `created` = '{$values['created']}', `deadline` = '{$values['deadline']}', `completed` = '{$values['completed']}', `type`='{$values['type']}', `projectId` = '{$values['projectId']}' WHERE `id` = '{$values['gid']}'",
 
 
 
@@ -157,7 +186,7 @@ $sql = array(
 //Need testing
 
 //SpaceContexts
-      
+
         "selectspacecontext"          =>"SELECT contextId, name, description FROM context WHERE contextId = '{$values['contextId']}'",
         "newspacecontext"           => "INSERT INTO context  VALUES (NULL, '{$values['name']}', '{$values['description']}')",
 
@@ -170,15 +199,13 @@ $sql = array(
 
 
         "newcategory"                   =>"INSERT INTO categories VALUES (NULL, '{$values['name']}', '{$values['description']}')",
-        "updatecategory"              =>"UPDATE categories SET category ='{$values['category']}', description='{$values['description']}' WHERE categoryId ='{$values['categoryId']}'",
-        "reassigncategory"              =>"UPDATE projectattributes SET categoryId='$newCategoryId' WHERE categoryId='{$values['categoryId']}'",
-        "deletecategory"              =>"DELETE FROM categories WHERE categoryId='{$values['categoryId']}'",
+
 //Goals
         "getgoals"              =>"SELECT * FROM goals ORDER BY type ASC",
         "getactivegoals"              =>"SELECT * FROM goals WHERE completed IS NOT NULL AND completed != '0000-00-00' ORDER BY created DESC, type DESC",
         "selectgoal"              =>"SELECT * FROM goals WHERE id = '{$values['$goalId']}'",
         "newgoal"              =>"INSERT INTO goals  VALUES (NULL, '{$values['goal']}', '{$values['description']}','{$values['date']}', '{$values['deadline']}',  NULL, '{$values['type']}', '{$values['projectId']}')",
-        "updategoal"              =>"UPDATE goals SET goal = '{$values['goal']}', description = '{$values['description']}', created = '{$values['created']}', deadline = '{$values['deadline']}', completed = ''{$values['completed']}'', type='{$values['type']}', `projectId` = '{$values['projectId']}' WHERE id = '{$values['gid']}'",
+
         "deletegoal"              =>"",
 //Projects
         //Filtered queries??
@@ -186,8 +213,8 @@ $sql = array(
 
 
         "getsuppressedprojects"              =>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, `projectstatus`.`dateCreated`, `categories`.`categoryId`, `categories`.`category` AS `cname`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM `projects`, `projectattributes`, `projectstatus`, `categories` WHERE `projectstatus`.`projectId` = `projects`.`projectId` AND `projectattributes`.`projectId` = `projects`.`projectId` AND `categories`.`categoryId`=`projectattributes`.`categoryId` AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND (`projectattributes`.`suppress`='y') ORDER BY `projectattributes`.`deadline`, `cname`, `projects`.`name`",
-       
-        
+
+
         // getprojects/someday        SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description` FROM projects, projectattributes, projectstatus WHERE projectattributes`.``projectId` = `projects`.`projectId` AND projectstatus`.``projectId`=`projects`.`projectId` AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND projectattributes`.`isSomeday ='{$values['isSomeday']}' ORDER BY `projects`.`name`
         "getcompletedprojects"              =>"",
 /*
@@ -207,7 +234,7 @@ function doitemquery($projectId,$type,$completed='n') {
 $query => "SELECT `projectId`, `nextaction` FROM `nextactions`";
 $compq => "(`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND (((CURDATE()>=DATE_ADD(`projectattributes`.`deadline`, INTERVAL -(`projectattributes`.`suppressUntil`) DAY)) OR `projectattributes`.`suppress`='n'))";
 $query=>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, `projectattributes`.`categoryId`, `categories`.`category`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM projects, projectattributes, projectstatus, categories WHERE projectattributes`.``projectId`=`projects`.`projectId` AND `projectattributes`.`categoryId`=categories`.`categoryId AND projectstatus`.``projectId`=`projects`.`projectId` AND projectattributes`.`isSomeday = '{$values['isSomeday']}' AND "`.`$compq`.`" ORDER BY `categories`.`category`, `projects`.`name` ASC";
-	
+
 "SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, `projectattributes`.`categoryId`, `categories`.`category`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil` FROM projects, projectattributes, projectstatus, categories WHERE projectattributes`.``projectId`=`projects`.`projectId` AND `projectattributes`.`categoryId`=categories`.`categoryId AND projectstatus`.``projectId`=`projects`.`projectId` AND projectattributes`.`isSomeday = '{$values['isSomeday']}' AND "`.`$compq`.`" ORDER BY `categories`.`category`, `projects`.`name` ASC",
 */
         "selectproject"              =>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description`, projects`.`desiredOutcome, `projectstatus`.`dateCreated`, `projectstatus`.`dateCompleted`, `projectattributes`.`categoryId`, `projectattributes`.`deadline`, `projectattributes`.`repeat`, `projectattributes`.`suppress`, `projectattributes`.`suppressUntil`, projectattributes`.`isSomeday FROM projects, projectattributes, projectstatus WHERE projectstatus`.``projectId`=`projects`.`projectId` AND projectattributes`.``projectId`=`projects`.`projectId` AND `projects`.`projectId` = '{$values['projectId']}'",
@@ -233,7 +260,7 @@ $query=>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`descripti
         "getnextactions"              =>"SELECT `projectId`, nextaction FROM nextactions",
 
         "newnextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}')",
-        "updatenextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}') ON DUPLICATE KEY UPDATE `nextaction`='{$values['itemId']}'",
+
 
         "removenextaction"              =>"",
         "completenextaction"        =>"DELETE FROM nextactions WHERE nextAction=''{$values['completedNa']}'",
@@ -250,9 +277,6 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
         "newitemattributes"     => "INSERT INTO `itemattributes` (itemId,type,`projectId`,contextId,timeframeId,deadline,`repeat`,suppress,suppressUntil) VALUES ('{$values['itemId']}','{$values['type']}','{$values['projectId']}','{$values['contextId']}','{$values['timeframeId']}','{$values['deadline']}','{$values['repeat']}','{$values['suppress']}','{$values['suppressUntil']}')",
         //INSERT INTO `itemstatus` (itemId,dateCreated) VALUES ('$newitemId','{$values['date']}') for repeated  items to preserve date-- move date calculation to php
         "newitemstatus"         => "INSERT INTO `itemstatus` (itemId,dateCreated) VALUES ('{$values['itemId']}',CURRENT_DATE)",
-        "updateitem"              =>"UPDATE items SET description = '{$values['description']}', title = '{$values['title']}'  WHERE itemId = '{$values['itemId']}'",
-        "updateitemattributes"  =>"UPDATE `itemattributes` SET `type` = '{$values['type']}', `projectId` = '{$values['projectId']}', `contextId` = '{$values['contextId']}', timeframeId = '{$values['timeframeId']}', `deadline` ='{$values['deadline']}', `repeat` = '{$values['repeat']}', `suppress`='{$values['suppress']}', `suppressUntil`='{$values['suppressUntil']}' WHERE `itemId` = '{$values['itemId']}'",
-        "updateitemstatus"      =>"UPDATE `itemstatus` SET `dateCompleted` = '{$values['dateCompleted']}' WHERE `itemId` = '{$values['itemId']}'",
 
         "completeitem"              =>"UPDATE itemstatus SET dateCompleted='{$values['date']}' WHERE itemId='{$values['completedNa']}'",
 
@@ -275,25 +299,23 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
         "getlists"              =>"SELECT list`.`listId, list`.`title, list`.`description,list`.`categoryId, `categories`.`category` FROM list, categories WHERE list`.`categoryId=categories`.`categoryId ORDER BY `categories`.`category` ASC",
         //find  wayto merge  with above (generic problem)
         "getlistsincategory"              =>"SELECT list`.`listId, list`.`title, list`.`description, list`.`categoryId, `categories`.`category` FROM list, categories WHERE list`.`categoryId=categories`.`categoryId AND list`.`categoryId='{$values['categoryId']}' ORDER BY `categories`.`category` ASC",
-        "selectlist"              =>"SELECT title, description, categoryId FROM list WHERE listId = '{$values['listId']}'",
+
         "newlist"              =>"",
-        "updatelist"              =>"UPDATE `list` SET `title` = '{$values['newlistTitle']}', `description` = '{$values['newdescription']}', `categoryId` = '{$values['newcategoryId']}' WHERE `listId` ='{$values['listId']}'",
-        "deletelist"              =>"DELETE FROM `list` WHERE `listId`='{$values['listId']}'",
+
         "getlistidfromitem"   =>"SELECT `listId` FROM `listItems` WHERE `listItemId`='{$values['completedLi']}'",
 //listitems
         "getlistitems"              =>"SELECT listItems`.`listItemId, listItems`.`item, listItems`.`notes, listItems`.`listId FROM listItems LEFT JOIN list on listItems`.`listId = list`.`listId WHERE list`.`listId = '{$values['listId']}' AND (listItems`.`dateCompleted is not null AND listItems`.`dateCompleted='0000-00-00')",
         "selectlistitem"              =>"SELECT listItemId, item, notes, listId, dateCompleted FROM listItems WHERE listItemId = '{$values['$listItemId']}'",
         "newlistitem"              =>"INSERT INTO listItems VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['listId']}', 'n')",
-        "updatelistitem"              =>"UPDATE `listItems` SET `notes` = '{$values['newnotes']}', `item` = '{$values['newitem']}', `listId` = '{$values['listId']}', `dateCompleted`='{$values['newdateCompleted']}' WHERE `listItemId` ='{$values['listItemId']}'",
-        "deletelistitem"              =>"DELETE FROM `listItems` WHERE `listItemId`='{$values['listItemId']}'",
-        "removelistitems"              =>"DELETE FROM `listItems` WHERE `listId`='{$values['listId']}'",
+
+
         "completelistitem"              =>"UPDATE `listItems` SET `dateCompleted`='{$values['date']}' WHERE `listItemId`='{$values['completedLi']}",
         "getcompletedlistitems"              =>"SELECT listItems`.`listItemId, listItems`.`item, listItems`.`notes, listItems`.`listId FROM listItems LEFT JOIN list on listItems`.`listId = list`.`listId WHERE list`.`listId = '{$values['listId']}' AND (listItems`.`dateCompleted!='0000-00-00' AND listItems`.`dateCompleted is not null)",
 //checklists
         //"listchecklists"              =>"SELECT checklistId, title FROM checklist ORDER BY title",
         "getchecklists"            =>"SELECT checklist`.`checklistId, checklist`.`title, checklist`.`description, checklist`.`categoryId, `categories`.`category` FROM checklist, categories WHERE checklist`.`categoryId=categories`.`categoryId ORDER BY `categories`.`category` ASC",
 //getchecklistsincategory        SELECT checklist`.`checklistId, checklist`.`title, checklist`.`description, checklist`.`categoryId, `categories`.`category` FROM checklist, categories WHERE checklist`.`categoryId=categories`.`categoryId AND checklist`.`categoryId='{$values['categoryId']}' ORDER BY `categories`.`category` ASC
-        "selectchecklist"              =>"SELECT title,category, description FROM checklist WHERE checklistId='{$values['checklistId']}'",
+
         "newchecklist"              =>"INSERT INTO checklist VALUES (NULL, '{$values['title']}', '{$values['categoryId']}', '{$values['description']}')",
 
 //checklistitems

@@ -15,7 +15,7 @@
 	$notes = $currentrow[2];
 	$checklistId = $currentrow[3];
 	$completed = $currentrow[4];
-	
+
 	echo "<h2>Edit Checklist Item</h2>\n";
 
 //SELECT checklistId, title, categoryId, description from checklist ORDER BY title
@@ -47,10 +47,10 @@
 			<label for='newitem' class='left first'>Item:</label>
 			<textarea rows='2' name='newitem' wrap='virtual'><?php echo $item; ?></textarea>
 		</div>
-		
+
 		<div class='formrow'>
 			<label for='notes' class='left first'>Notes:</label>
-			<textarea rows="3" name="notes" id="notes" wrap="virtual"><?php echo $notes; ?></textarea>
+			<textarea rows="3" name="newnotes" id="notes" wrap="virtual"><?php echo $notes; ?></textarea>
 		</div>
 	</div>
 	<div class='formbuttons'>

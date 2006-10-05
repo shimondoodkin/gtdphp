@@ -24,16 +24,16 @@ if($values['delete']=="y") {
     //echo "<p>Number of checklist items deleted: ";
     //echo mysql_affected_rows();
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listChecklist.php"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listChecklist.php?checklistId='.$values['checklistId'].'">';
     }
 
 else {
-    
+
     query("updatechecklist",$config,$values);
     //echo "<p>Number of Records Updated: ";
     //echo mysql_affected_rows();
-        
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listChecklist.php"';
+
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listChecklist.php?checklistId='.$values['checklistId'].'">';
     }
 
 mysql_close($connection);
