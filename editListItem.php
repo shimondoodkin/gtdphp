@@ -4,14 +4,14 @@
 	include_once('header.php');
 
 //RETRIEVE URL VARIABLES
-	$listItemId =(int) $_GET["listItemId"];
+	$values['listItemId'] =(int) $_GET["listItemId"];
 
 //CONNECT TO DATABASE
 	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
 	mysql_select_db($db) or die ("unable to select database!");
 
 //SQL CODE AREA
-	$query = "SELECT listItemId, item, notes, listId, dateCompleted from listItems where listItemId = $listItemId";
+	$query = "SELECT listItemId, item, notes, listId, dateCompleted from listItems where listItemId = {$values['listItemId']}";
 	$result = mysql_query($query) or die ("Error in query");
 	$currentrow = mysql_fetch_row($result);
 	$listItemId = $currentrow[0];
@@ -26,7 +26,7 @@
 
 	$query = "SELECT * from list ORDER BY title";
 	$result = mysql_query($query) or die ("Error in query");
-	echo '<form action="updateListItem.php?listItemId='.$listItemId.'" method="post">'."\n";
+	echo '<form action="updateListItem.php?listItemId='.$values['listItemId'].'" method="post">'."\n";
 ?>
 
 	<div class='form'>

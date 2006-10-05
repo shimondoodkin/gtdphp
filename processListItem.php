@@ -7,16 +7,14 @@
 	mysql_select_db($db) or die ("Unable to select database!");
 
 //RETRIEVE URL AND FORM VARIABLES
-	$listId=(int) $_POST['listId'];
-	$item=mysql_real_escape_string($_POST['item']);
-	$notes=mysql_real_escape_string($_POST['notes']);
+	$values['listId']=(int) $_POST['listId'];
+	$values['item']=mysql_real_escape_string($_POST['item']);
+	$values['notes']=mysql_real_escape_string($_POST['notes']);
 
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$listId.'"';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$values['listId'].'"';
 
-	# don't forge null
-	$query = "INSERT into listItems values (NULL, '$item', '$notes', '$listId', 'n')";
-	$result = mysql_query($query) or die ("Error in query");
+query("newlistitem",$config,$values);
 
 	mysql_close($connection);
 	include_once('footer.php');

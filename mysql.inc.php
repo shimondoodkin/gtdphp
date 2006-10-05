@@ -125,9 +125,9 @@ $sql = array(
 
         "updatelist"              =>"UPDATE `list` SET `title` = '{$values['newlistTitle']}', `description` = '{$values['newdescription']}', `categoryId` = '{$values['newcategoryId']}' WHERE `listId` ='{$values['listId']}'",
 
-        "selectlist"              =>"SELECT `title`, `description`, `categoryId` FROM `list` WHERE `listId` = '{$values['listId']}'",
+        "selectlist"              =>"SELECT `listId`, `title`, `description`, `categoryId` FROM `list` WHERE `listId` = '{$values['listId']}'",
 
-        "selectchecklist"              =>"SELECT `title`, `categoryId`, `description` FROM `checklist` WHERE `checklistId`='{$values['checklistId']}'",
+        "selectchecklist"              =>"SELECT `checklistId`, `title`, `categoryId`, `description` FROM `checklist` WHERE `checklistId`='{$values['checklistId']}'",
 
        "updateitem"              =>"UPDATE `items` SET `description` = '{$values['description']}', `title` = '{$values['title']}'  WHERE `itemId` = '{$values['itemId']}'",
 
@@ -145,15 +145,17 @@ $sql = array(
 
         "updategoal"              => "UPDATE `goals` SET `goal` = '{$values['goal']}', `description` = '{$values['description']}', `created` = '{$values['created']}', `deadline` = '{$values['deadline']}', `completed` = '{$values['completed']}', `type`='{$values['type']}', `projectId` = '{$values['projectId']}' WHERE `id` = '{$values['gid']}'",
 
+        "newchecklistitem"              =>"INSERT INTO `checklistItems`  VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['checklistId']}', 'n')",
 
+        "newlistitem"              => "INSERT INTO `listItems` VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['listId']}', 'n')",
 
+        "newnote"              => "INSERT INTO `tickler` (date,title,note) VALUES ('{$values['date']}','{$values['title']}','{$values['note']}')",
 
+        "getlistitems"              =>"SELECT `listItems`.`listItemId`, `listItems`.`item`, `listItems`.`notes`, `listItems`.`listId` FROM `listItems` LEFT JOIN `list` on `listItems`.`listId` = `list`.`listId` WHERE `list`.`listId` = '{$values['listId']}' AND (`listItems`.`dateCompleted` is not null AND `listItems`.`dateCompleted`='0000-00-00') ORDER BY {$sort['getlistitems']}",
 
+        "getcompletedlistitems"              =>"SELECT `listItems`.`listItemId`, `listItems`.`item`, `listItems`.`notes`, `listItems`.`listId` FROM `listItems` LEFT JOIN `list` on `listItems`.`listId` = `list`.`listId` WHERE `list`.`listId` = '{$values['listId']}' AND (`listItems`.`dateCompleted`!='0000-00-00' AND `listItems`.`dateCompleted` is not null) ORDER BY {$sort['getcompletedlistitems']}",
 
-
-
-
-
+        "completelistitem"              =>"UPDATE `listItems` SET `dateCompleted`='{$values['date']}' WHERE `listItemId`='{$values['completedLi']}'",
 
 
 
@@ -304,13 +306,11 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
 
         "getlistidfromitem"   =>"SELECT `listId` FROM `listItems` WHERE `listItemId`='{$values['completedLi']}'",
 //listitems
-        "getlistitems"              =>"SELECT listItems`.`listItemId, listItems`.`item, listItems`.`notes, listItems`.`listId FROM listItems LEFT JOIN list on listItems`.`listId = list`.`listId WHERE list`.`listId = '{$values['listId']}' AND (listItems`.`dateCompleted is not null AND listItems`.`dateCompleted='0000-00-00')",
         "selectlistitem"              =>"SELECT listItemId, item, notes, listId, dateCompleted FROM listItems WHERE listItemId = '{$values['$listItemId']}'",
-        "newlistitem"              =>"INSERT INTO listItems VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['listId']}', 'n')",
 
 
-        "completelistitem"              =>"UPDATE `listItems` SET `dateCompleted`='{$values['date']}' WHERE `listItemId`='{$values['completedLi']}",
-        "getcompletedlistitems"              =>"SELECT listItems`.`listItemId, listItems`.`item, listItems`.`notes, listItems`.`listId FROM listItems LEFT JOIN list on listItems`.`listId = list`.`listId WHERE list`.`listId = '{$values['listId']}' AND (listItems`.`dateCompleted!='0000-00-00' AND listItems`.`dateCompleted is not null)",
+
+
 //checklists
         //"listchecklists"              =>"SELECT checklistId, title FROM checklist ORDER BY title",
         "getchecklists"            =>"SELECT checklist`.`checklistId, checklist`.`title, checklist`.`description, checklist`.`categoryId, `categories`.`category` FROM checklist, categories WHERE checklist`.`categoryId=categories`.`categoryId ORDER BY `categories`.`category` ASC",
@@ -321,7 +321,7 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
 //checklistitems
         "getchecklistitems"              =>"SELECT checklistItems`.`checklistitemId, checklistItems`.`item, checklistItems`.`notes, checklistItems`.`checklistId, checklistItems`.`checked FROM checklistItems LEFT JOIN checklist on checklistItems`.`checklistId = checklist`.`checklistId WHERE checklist`.`checklistId = '{$values['checklistId']}' ORDER BY checklistItems`.`checked DESC, checklistItems`.`item ASC",
         "selectchecklistitem"              =>"SELECT checklistItemId, item, notes, checklistId, checked FROM checklistItems WHERE checklistItemId = '{$values['$checklistItemId']}'",
-        "newchecklistitem"              =>"INSERT INTO checklistItems  VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['checklistId']}', 'n')",
+
 
         "checkchecklistitem"              =>"",
         "uncheckchecklistitem"              =>"UPDATE checklistItems SET checked='n' WHERE checklistId='{$values['checklistId']}'",
@@ -331,6 +331,6 @@ if ($timeId !=NULL) $timequery => "AND `itemattributes``.`timeframeId ='$timeId'
         "getnotes"              =>"SELECT ticklerId, title, note, date FROM tickler WHERE (date IS NULL OR date = '0000-00-00') OR (CURDATE()<= date)",
 
 
-        "newnote"              =>"INSERT INTO `tickler` (date,title,note) VALUES ('{$values['date']}','{$values['title']}','{$values['note']}')",
+
 
 );

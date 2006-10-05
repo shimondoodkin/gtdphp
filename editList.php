@@ -10,7 +10,7 @@
 	$result = mysql_query($query) or die ("Error in query: $query.  ".mysql_error());
 	$row = mysql_fetch_array($result);
 
-	echo "<h2>Edit List: $values['listTitle']</h2>\n";
+	echo "<h2>Edit List: {$values['listTitle']}</h2>\n";
 	echo '<form action="updateList.php?listId='.$values['listId'].'" method="POST">'."\n";
 ?>
 
