@@ -113,8 +113,8 @@ include_once('header.php');
 		#$s.='<tr><td><a href="projectReport.php?projectId=1">Test</a></td>';
 		$s.="	<tr>\n";
 		$s.='		<td><a href="projectReport.php?projectId='.$i1[$i].'" title="'.$q1[$i].'">'.$c1[$i]."</a></td>\n";
-		$s.='		<td><a href="projectReport.php?projectId='.$i2[$i].'" title="'.$q2[$i].'">'.$c2[$i]."</a></td>\n";
-		$s.='		<td><a href="projectReport.php?projectId='.$i3[$i].'" title="'.$q3[$i].'">'.$c3[$i]."</a></td>\n";
+		if ($i2[$i]!="" || $nr>1) $s.='		<td><a href="projectReport.php?projectId='.$i2[$i].'" title="'.$q2[$i].'">'.$c2[$i]."</a></td>\n";
+		if ($i3[$i]!="" || $nr>1) $s.='		<td><a href="projectReport.php?projectId='.$i3[$i].'" title="'.$q3[$i].'">'.$c3[$i]."</a></td>\n";
 		$s.="	</tr>\n";
 	}
 	
@@ -140,8 +140,8 @@ include_once('header.php');
 		#$t.='<tr><td><a href="projectReport.php?projectId=1">Test</a></td>';
 		$t.="	<tr>\n";
 		$t.='		<td><a href="projectReport.php?projectId='.$j1[$i].'" title="'.$k1[$i].'">'.$d1[$i]."</a></td>\n";
-		$t.='		<td><a href="projectReport.php?projectId='.$j2[$i].'" title="'.$k2[$i].'">'.$d2[$i]."</a></td>\n";
-		$t.='		<td><a href="projectReport.php?projectId='.$j3[$i].'" title="'.$k3[$i].'">'.$d3[$i]."</a></td>\n";
+		if ($j2[$i]!="" || $nr>1) $t.='		<td><a href="projectReport.php?projectId='.$j2[$i].'" title="'.$k2[$i].'">'.$d2[$i]."</a></td>\n";
+		if ($j3[$i]!="" || $nr>1) $t.='		<td><a href="projectReport.php?projectId='.$j3[$i].'" title="'.$k3[$i].'">'.$d3[$i]."</a></td>\n";
 		$t.="	</tr>\n";
 	}
 
