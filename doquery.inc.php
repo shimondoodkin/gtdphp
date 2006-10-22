@@ -113,33 +113,40 @@ function doquery($querylabel,$options=NULL,$values=NULL) {
 
 
 //test function
+//sample code for pages
 
-
+//set options; some  from config file, can dynamically set $options[sort] as needed
+//also could split into $config[db], $config[debug] and $options[sort]
 $options=array(
 "db" => "mysql",
 "debug" => 1,
 "sort" => "category ASC"
 );
 
+//set values for query
 $values=array(
-"categoryId" => 1000,
-"category" => "Test",
-"description" => "Test category"
+"itemId" => 2
 );
 
-//doquery("updatecategory",$values,$options);
-$result = doquery("categorybox",$options,$values);
+//perform query
+$result = doquery("selectitem",$options,$values);
 
+
+//testing code
 echo "<hr /><p>Result Array: <br />";
 print_r($result);
 echo "</p><hr />";
+
+
+//page display code with empty result handler
+//need error handler? (vs in function)
 
 if ($result!=-1) {
     //replace while (mysql_fetch_assoc) statement with foreach
     foreach ($result as $row) {
 
         //use expected field names (no changes needed to current code)
-        echo $row['categoryId']."->".$row['category']." (".$row['description'].")<br />";
+        echo $row['itemId']."->".$row['title']." (".$row['description'].")<br />";
         }
     }
 else echo "Nothing found.";
