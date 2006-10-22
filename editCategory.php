@@ -2,13 +2,14 @@
 //INCLUDES
 	include_once('header.php');
 
+//CONNECT TO DATABASE
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
+
 //RETRIEVE URL VARIABLES
 	$values['categoryId'] =(int) $_GET["categoryId"];
 
 //SQL CODE
-	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
-	mysql_select_db($db) or die ("Unable to select database!");
-
         //create category selectbox
         $result = query("categoryselectbox",$config,$values,$options,$sort);
         $cshtml="";
@@ -33,7 +34,7 @@
 	echo '"></td></tr>'."\n";
 	echo '	<tr><td colspan="2">Description</td></tr>'."\n";
 	echo '	<tr><td colspan="2">';
-	echo '<textarea cols="80" rows="10" name="description" wrap=virtual">';  
+	echo '<textarea cols="80" rows="10" name="description" wrap=virtual">';
 	echo stripslashes($row['description']);
 	echo "</textarea></td></tr>\n";
 	echo "	<tr>\n";

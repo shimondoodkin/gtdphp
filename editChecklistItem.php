@@ -3,9 +3,8 @@
 
 	$checklistItemId =$_GET["checklistItemId"];
 
-	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
-
-	mysql_select_db($db) or die ("unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 	$query = "SELECT checklistItemId, item, notes, checklistId, checked from checklistItems where checklistItemId = $checklistItemId";
 	$result = mysql_query($query) or die ("Error in query: $query.  ".mysql_error());

@@ -143,6 +143,9 @@ $sql = array(
 
         "deletecategory"              =>"DELETE FROM `categories` WHERE `categoryId`='{$values['categoryId']}'",
 
+        "newcategory"                   =>"INSERT INTO categories VALUES (NULL, '{$values['category']}', '{$values['description']}')",
+
+
         "updategoal"              => "UPDATE `goals` SET `goal` = '{$values['goal']}', `description` = '{$values['description']}', `created` = '{$values['created']}', `deadline` = '{$values['deadline']}', `completed` = '{$values['completed']}', `type`='{$values['type']}', `projectId` = '{$values['projectId']}' WHERE `id` = '{$values['gid']}'",
 
         "newchecklistitem"              =>"INSERT INTO `checklistItems`  VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['checklistId']}', 'n')",
@@ -156,7 +159,6 @@ $sql = array(
         "getcompletedlistitems"              =>"SELECT `listItems`.`listItemId`, `listItems`.`item`, `listItems`.`notes`, `listItems`.`listId` FROM `listItems` LEFT JOIN `list` on `listItems`.`listId` = `list`.`listId` WHERE `list`.`listId` = '{$values['listId']}' AND (`listItems`.`dateCompleted`!='0000-00-00' AND `listItems`.`dateCompleted` is not null) ORDER BY {$sort['getcompletedlistitems']}",
 
         "completelistitem"              =>"UPDATE `listItems` SET `dateCompleted`='{$values['date']}' WHERE `listItemId`='{$values['completedLi']}'",
-
 
 
 
@@ -200,7 +202,7 @@ $sql = array(
 //Categories
 
 
-        "newcategory"                   =>"INSERT INTO categories VALUES (NULL, '{$values['name']}', '{$values['description']}')",
+
 
 //Goals
         "getgoals"              =>"SELECT * FROM goals ORDER BY type ASC",

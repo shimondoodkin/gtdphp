@@ -1,8 +1,8 @@
 <?php
 include_once('header.php');
 
-$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
-mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 //GET URL AND FORM DATA
 $values['contextId']        = (int) $_GET['contextId'];

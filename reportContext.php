@@ -3,13 +3,13 @@
 //INCLUDES
 include_once('header.php');
 
+//SQL CODE AREA
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
+
 //RETRIEVE URL VARIABLES
 $pId = (int) $_GET['projectId'];
 $pName = (string) $_GET['projectName'];
- 
-//SQL CODE AREA
-$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
-mysql_select_db($db) or die ("Unable to select database!");
 
 //obtain all project names
 $query = "SELECT projectId, name FROM projects";
@@ -58,10 +58,10 @@ $query="SELECT itemattributes.contextId, itemattributes.timeframeId, COUNT(*) AS
     AND nextactions.nextaction = itemstatus.itemId
 	AND projectstatus.projectId=projectattributes.projectId AND itemattributes.type='a' AND projectattributes.isSomeday='n'
 	AND (itemstatus.dateCompleted is null OR itemstatus.dateCompleted='0000-00-00')
-	AND (projectstatus.dateCompleted is null OR projectstatus.dateCompleted='0000-00-00') 
+	AND (projectstatus.dateCompleted is null OR projectstatus.dateCompleted='0000-00-00')
 	AND ((CURDATE() >= DATE_ADD(itemattributes.deadline, INTERVAL -(itemattributes.suppressUntil) DAY))
 		OR projectattributes.suppress='n'
-		OR (CURDATE() >= DATE_ADD(projectattributes.deadline, INTERVAL -(projectattributes.suppressUntil) DAY))) 
+		OR (CURDATE() >= DATE_ADD(projectattributes.deadline, INTERVAL -(projectattributes.suppressUntil) DAY)))
 	GROUP BY itemattributes.contextId, itemattributes.timeframeId";
 
 $itemResults = mysql_query($query) or die ("Error in query");
@@ -111,7 +111,7 @@ foreach ($timeframeNames as $timeframeId => $tname) {
 		if ($contextArray[$contextId][$timeframeId]!="") {
 			$count=$contextArray[$contextId][$timeframeId];
 			$timeframeCount=$timeframeCount+$count;
-			}		
+			}
 		}
 	echo "		<td>".$timeframeCount."</td>\n";
 	}
@@ -145,7 +145,7 @@ foreach ($contextArray as $contextId => $timeframe) {
                         AND (projectstatus.dateCompleted IS NULL OR projectstatus.dateCompleted = '0000-00-00')
 			AND ((CURDATE() >= DATE_ADD(itemattributes.deadline, INTERVAL -(itemattributes.suppressUntil) DAY))
 				OR projectattributes.suppress='n'
-				OR (CURDATE() >= DATE_ADD(projectattributes.deadline, INTERVAL -(projectattributes.suppressUntil) DAY))) 
+				OR (CURDATE() >= DATE_ADD(projectattributes.deadline, INTERVAL -(projectattributes.suppressUntil) DAY)))
                         ORDER BY projects.name";
 
 

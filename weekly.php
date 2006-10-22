@@ -4,8 +4,8 @@
 	include_once('header.php');
 
 //CONNECT TO DATABASE
-	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
-	mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 //SQL CODE AREA
 //select active projects
@@ -27,9 +27,9 @@
 	<tr><td>Review upcoming calendar</td><td>Capture actions about arrangements and preparations for any upcoming events</td></tr>
 	<tr><td>Empty your head</td><td>Put in writing any new <a href=\"project.php?type=p\" title=\"Add project\">projects</a>, <a href=\"item.php?type=a\" title=\"Add action\">actions</a>, <a href=\"item.php?type=w\" title=\"Add waitingOn\">waitingOn</a>, <a href=\"item.php?type=r\" title=\"Add reference\">references</a>, and <a href=\"project.php?type=s\" title=\"Add Someday/Maybe\">someday/maybes</a> that are not yet in the system.</td></tr>
 	<tr><td>Review <a href=\"listProjects.php?pType=p\">Projects list</a></td><td>Evaluate status of each project, goals, outcomes, one by one, ensuring that at least one next action exists for each.\n";
-	
+
 	echo "		<p><ul>Projects without Next Actions defined:\n";
-	
+
 
 	foreach($result as $row) {
 		$nonext=nonext($row['projectId']);

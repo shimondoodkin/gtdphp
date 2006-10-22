@@ -11,7 +11,7 @@ if (!isset($_POST['submit'])) {
 				<label for='name' class='left first'>Context Name:</label>
 				<input type="text" name="name" id="name">
 			</div>
-			
+
 			<div class='formrow'>
 				<label for='description' class='left first'>Description:</label>
 				<textarea rows="10" name="description" id="description" wrap="virtual"></textarea>
@@ -24,8 +24,8 @@ if (!isset($_POST['submit'])) {
 	</form>
 	<?php
 }else{
-	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
-	mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 	$name = empty($_POST['name']) ? die("Error: Enter a context name") : mysql_real_escape_string($_POST['name']);
 	$description = empty($_POST['description']) ? die("Error: Enter a description") : mysql_real_escape_string($_POST['description']);

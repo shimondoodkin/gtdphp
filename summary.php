@@ -4,16 +4,16 @@
 include_once('header.php');
 
 //CONNECT TO DATABASE
-	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
-	mysql_select_db($db) or die ("unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 //RETRIEVE FORM AND URL VARIABLES
 	$values['pId'] = (int) $_GET['projectId'];
 	$values['pName'] =(string) $_GET['projectName'];
- 
+
 	echo "<h2>GTD Summary</h2>\n";
 	echo '<h4>Today is '.date("l, F jS, Y").'. (Week '.date("W").'/52 & Day '.date("z").'/'.(365+date("L")).')</h4>'."\n";
-	
+
 //SQL Code
 	$values['isSomeday'] = "n";
 	$pres = query("projectssummary",$config,$values,$options,$sort);
@@ -25,7 +25,7 @@ include_once('header.php');
 
 	$result = query("spacecontextselectbox",$config,$values,$options,$sort);
 	$ncon = count($result);
-	
+
     $nNextActions=getNumberOfNextActions();
     echo "<div class='reportsection'>\n";
 	echo "<h3>Next Actions</h3>\n";
@@ -38,7 +38,7 @@ include_once('header.php');
     echo ' out of a total of ' .$nActions. ' <a href="listItems.php?type=a">Actions</a>.';
 	echo "</p>\n";
 	echo "</div>\n";
-	
+
     echo "<div class='reportsection'>\n";
 	echo "<h3>Contexts</h3>\n";
     if($ncon==1){
@@ -105,7 +105,7 @@ include_once('header.php');
     }else{
         echo '<p>There are ' .$np. ' <a href="listProjects.php?type=p">Projects</a>.<p>'."\n";
     }
-	
+
 	$s='<table>'."\n";
 	$nr = count($c1);
 
@@ -117,9 +117,9 @@ include_once('header.php');
 		if ($i3[$i]!="" || $nr>1) $s.='		<td><a href="projectReport.php?projectId='.$i3[$i].'" title="'.$q3[$i].'">'.$c3[$i]."</a></td>\n";
 		$s.="	</tr>\n";
 	}
-	
+
 	$s.="</table>\n";
-	
+
 	echo $s;
 	echo "</div>\n";
 
@@ -132,7 +132,7 @@ include_once('header.php');
         echo '<p>There are ' .$nsm. ' <a href="listProjects.php?type=s">Someday/Maybes</a>.</p>'."\n";
     }
 
-	
+
 	$t='<table>'."\n";
 	$nr = count($d1);
 

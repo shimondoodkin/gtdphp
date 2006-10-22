@@ -5,20 +5,25 @@
 
 function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
 
-//for testing only--- testing data handling
-/*
-    //testing passed variables
-    echo "<p>Query label: ".$querylabel."<br />";
-    echo "Config: ";
-    print_r($config);
-    echo "<br />Sort: ";
-    print_r($sort);
-    echo "<br />Values: ";
-    print_r($values);
-    echo "<br />Options: ";
-    print_r($options);
-    echo "</p>";
+//connect to database
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
+    //for developer testing only--- testing data handling
+    //testing passed variables
+    if ($config['debug']=="developer") {
+        echo "<p>Query label: ".$querylabel."<br />";
+        echo "Config: ";
+        print_r($config);
+        echo "<br />Sort: ";
+        print_r($sort);
+        echo "<br />Values: ";
+        print_r($values);
+        echo "<br />Options: ";
+        print_r($options);
+        echo "</p>";
+    }
+/*
     //sanitize input variables
     echo "<p>Sanitizing...</p>\n";
 
@@ -31,14 +36,16 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
     echo "<br />Values: ";
     print_r($values);
     echo "</p>";
-*/
+
     //parse options array (logic)
         //sort order
         //single NA or not?
         //others
 
+*/
+
     //include correct SQL query library as chosen in config
-    switch ($config['db']) {
+    switch ($config['dbtype']) {
         case "frontbase":include("frontbase.inc.php");
         break;
         case "msql":require("msql.inc.php");
@@ -55,13 +62,13 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
 
     //grab correct query string from query library array
     //values automatically inserted into array
-
-// for testing only: display fully-formed query    
     $query = $sql[$querylabel];
-    echo "<p>Query: ".$query."</p>";
+
+    // for testing only: display fully-formed query
+    if ($config['debug']=="true" || $config['debug']=="developer") echo "<p>Query: ".$query."</p>";
 
     //perform query
-    switch($config['db']){
+    switch($config['dbtype']){
         case "frontbase":$reply = fbsql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
         break;
         case "msql":$reply = msql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
@@ -77,34 +84,38 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         }
 
     //parse result into multitdimensional array $result[row#][field name] = field value
-//?If no reply? "warning..."
+    $info = mysql_info();
 
-    if (mysql_num_rows($reply)>0) {
-        $i = 0;
-       while ($field = mysql_fetch_field($reply)) {
-            /* Create an array $fields which contains all of the column names */
-            $fields[$i] = $field->name;
-            $i++;
-            }
-        $ii = 0;
-        while ($mysql_result = mysql_fetch_array($reply)) {
-            /*populate array with result data */
-            foreach ($fields as $value) {
-                $result[$ii][$value] = $mysql_result[$value];
+        print "Info: ".$info;
+        ereg("Rows matched: ([0-9]*)", $info, $rows_matched);
+        print_r($rows_matched);
+
+//        if (mysql_num_rows($reply)>0) {
+        if ($rows_matched[1]=="") {
+            $i = 0;
+           while ($field = mysql_fetch_field($reply)) {
+                /* Create an array $fields which contains all of the column names */
+                $fields[$i] = $field->name;
+                $i++;
                 }
-            $ii++;
+            $ii = 0;
+            while ($mysql_result = mysql_fetch_array($reply)) {
+                /*populate array with result data */
+                foreach ($fields as $value) {
+                    $result[$ii][$value] = $mysql_result[$value];
+                    }
+                $ii++;
+                }
             }
 
-        }
+    //always included; text/codes shown in errors on individual pages as warranted...
+    $result['ecode'] = mysql_errno();
+    $result['etext'] = mysql_error();
 
-    else $result=-1;
+    //for developer testing only, print result array
+    if ($config['debug']=="developer") print_r($result);
 
-//for testing only, print result array
-print_r($result);
-
-    //need to return error-handler if query doesn't work, main script has to know and be able to adjust
-    //error codes:
-    //-1: empty result set
+    mysql_close($connection);
     return $result;
     }
 

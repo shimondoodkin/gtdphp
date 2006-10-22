@@ -4,8 +4,8 @@
 include_once('header.php');
 
 //CONNECT TO DATABASE
-$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
-mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 //RETRIEVE URL AND FORM VARIABLES
 $values['checklistId'] = (int) $_GET['checklistId'];

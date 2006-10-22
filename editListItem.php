@@ -7,8 +7,8 @@
 	$values['listItemId'] =(int) $_GET["listItemId"];
 
 //CONNECT TO DATABASE
-	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
-	mysql_select_db($db) or die ("unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 //SQL CODE AREA
 	$query = "SELECT listItemId, item, notes, listId, dateCompleted from listItems where listItemId = {$values['listItemId']}";

@@ -1,10 +1,5 @@
 <?php
-	$host = 'localhost';
-	$db = 'gtd';
-	$user = '<change>';
-	$pass = '<change>';
-	$title = 'GTD';
-
+// turn into a $connect array
         $theme = "default";
 
 
@@ -12,13 +7,21 @@
 //Configuration settings
 
         $config = array(
-                "db"                  => "mysql",
-                "debug"               => "true",
-                "contextsummary"      => "all"  //all | nextaction
 
-//Other configuration settings....
+            //connection information
+                "host" = 'localhost';
+                "db" = 'testgtd';
+                "user" = 'taskman';
+                "pass" = '90qaXPQ1Z71';
+
+            //database information
+                "dbtype"                  => "mysql",
+
+            //user preferences
+                "debug"               => 'developer',  // false | true |  developer
+                "theme" = 'default',
+                "contextsummary"      => 'all',  //all | nextaction
                 );
-
 
 
 //Default sort order for each query (can be easily overridden within each page...)
@@ -32,9 +35,10 @@
             "spacecontextselectbox"          => "`context`.`name` ASC",
             "categoryselectbox"             => "`categories`.`category` ASC",
             "projectselectbox"          => "`projects`.`name` ASC",
-            "timecontextselectbox"       => "`timeitems`.`timeframe` DESC"
-
+            "timecontextselectbox"       => "`timeitems`.`timeframe` DESC",
+            "selectactiveprojects"      => "`categories`.`category`, `projectattributes`.`deadline`, `projects`.`name` ASC",
+            "getlistitems"                  => "`listItems`.`item` ASC",
+            "getcompletedlistitems" => "`listItems`.`dateCompleted` ASC",
 
                 );
-?> 
-
+?>

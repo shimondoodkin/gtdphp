@@ -3,8 +3,8 @@
 
 	include_once('header.php');
 
-	$connection = mysql_connect($host, $user, $pass) or die ("unable to connect");
-	mysql_select_db($db) or die ("unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 	$query = "SELECT * from projects order by name";
 	$result = mysql_query($query) or die ("Error in query: $query.  ".mysql_error());
@@ -12,9 +12,9 @@
 
 	if (mysql_num_rows($result) > 0){
 		echo "<h2>New Goal</h2>\n";
-		
+
 		echo '<form action="processGoal.php" method="post">'."\n";
-		
+
 		echo "<table>\n";
 		echo "	<tr>\n";
 		echo "		<td>Project</td>\n";
@@ -24,9 +24,9 @@
 			echo "			<option value='" .$row[0] . "'>" .stripslashes($row[1]). "</option>\n";
 		}
 		echo "		</td>\n";
-		
+
 		mysql_free_result($result);
-		
+
 		echo "		<td>Type</td>\n";
 		echo '		<td><select name="type">'."\n";
 		echo '			<option value="weekly">weekly</option>'."\n";
@@ -41,16 +41,16 @@
 		echo "	<tr>\n";
 		echo "		<td>Deadline</td>\n";
 		echo '		<td><input type="text" name="deadline" size="13" value="';
-		echo "YYYY-MM-DD"; 
+		echo "YYYY-MM-DD";
 		echo '"></td>'."\n";
 		echo "		<td>Date Added:</td>\n";
 		echo '		<td><input type="text" name="date" size="13" value="';
-		echo date('Y-m-d'); 
+		echo date('Y-m-d');
 		echo '"></td>'."\n";
 		echo "	</tr>\n";
 		echo "</table>\n\n";
-		
-		
+
+
 		echo "<table>\n";
 		echo "	<tr>\n";
 		echo "		<td>Title</td>\n";
@@ -61,7 +61,7 @@
 		echo '		<td><textarea cols="60" rows="12" name="description" wrap="virtual"></textarea></td>'."\n";
 		echo "	</tr>\n";
 		echo "</table>\n\n";
-		
+
 		echo '<input type="submit" class="button" value="Add Goal" name="submit">'."\n";
 		echo '<input type="reset" class="button" value="Reset">'."\n";
 	}

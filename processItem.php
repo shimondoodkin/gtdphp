@@ -2,9 +2,9 @@
 //INCLUDES
 include_once('header.php');
 
-//Connect to database	
-$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
-mysql_select_db($db) or die ("Unable to select database!");
+//Connect to database
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 //RETRIVE FORM VARIABLES
 $projectId = (int) $_POST['projectId'];

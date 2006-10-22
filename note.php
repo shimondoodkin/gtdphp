@@ -6,8 +6,8 @@
 	$values['noteId']= (int) $_GET["noteId"];
 
 //SQL CODE
-	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
-	mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 	//select note details
 	if ($values['noteId']>0) {
@@ -17,7 +17,7 @@
             }
 
 //PAGE DISPLAY CODE
-	
+
 	if ($values['noteId']>0) {
 		echo "<h2>Edit Note</h2>";
 		echo '<form action="updateNote.php?noteId='.$values['noteId'].'" method="post">';

@@ -16,19 +16,19 @@
 		$values['isSomeday']="y";
 		$pTypename="Someday/Maybe";
 	}
-	else { 
+	else {
 		$values['isSomeday']="n";
 		$pTypename="Project";
 	}
 
 //SQL CODE
-	$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect");
-	mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 	//select item details
 	if ($values['itemId']>0) {
 	   $result = query("selectitem",$config,$values,$options,$sort);
-           if ($result !=-1) {
+           if ($result['ecode']=0) {
             $currentrow = $result[0];
             $values['type']=$currentrow['type'];
 
@@ -63,7 +63,7 @@
 		$tshtml .= '>'.stripslashes($row['timeframe'])."</option>\n";
 	}
 
-//PAGE DISPLAY CODE	
+//PAGE DISPLAY CODE
 	//determine item label
 	if ($values['type']=="a") $typename="Action";
 	elseif ($values['type']=="r") $typename="Reference";
@@ -85,7 +85,7 @@
 				<label for='title' class='left first'>Title:</label>
 				<input type='text' name='title' id='title' value='<?php echo stripslashes($currentrow['title']); ?>'>
 			</div>
-			
+
 			<div class='formrow'>
 				<label for='project' class='left first'><?php echo $pTypename; ?>:</label>
 				<select name="projectId"> <?php echo $pshtml; ?>
@@ -148,7 +148,7 @@
 				<label for='suppress'>Tickle&nbsp;</label>
 				<input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $currentrow['suppressUntil'];?>'><label for='suppressUntil'>&nbsp;days before deadline</label>
 			</div>
-			
+
 			<div class='formrow'>
 				<label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" value="y" <?php if ($nextactioncheck=='true') echo 'CHECKED '; ?>/>
 			</div>
@@ -159,7 +159,7 @@
 	if ($values['itemId']>0) {
 		echo "			<input type='submit' value='Update ".$typename."' name='submit'>\n";
 	} else echo "			<input type='submit' value='Add ".$typename."' name='submit'>\n";
-?>		
+?>
 			<input type='reset' value='Reset'>
 			<input type='checkbox' name='delete' id='delete' value='y' /><label for='delete'>Delete&nbsp;Item</label>
 		</div>
