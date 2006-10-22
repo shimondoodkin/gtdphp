@@ -12,8 +12,8 @@ $projectId=(int) $_GET['projectId'];
 $completedProj = $_POST['completedProj'];
 
 //SQL CODE
-$connection = mysql_connect($host, $user, $pass) or die ("Unable to connect!");
-mysql_select_db($db) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+mysql_select_db($config['db']) or die ("Unable to select database!");
 
 if(isset($completedProj)){
 	$today=strtotime("now");
@@ -25,12 +25,12 @@ if(isset($completedProj)){
 //test to see if project is repeating
 		$testquery = "SELECT projectattributes.repeat FROM projectattributes WHERE projectattributes.projectId='$completedPr'";
 		$testresult = mysql_query($testquery) or die ("Error in query");
-		$testrow = mysql_fetch_assoc($testresult);		
+		$testrow = mysql_fetch_assoc($testresult);
 
 //if repeating, copy result row to new row (new project) with updated due date
 
 		if ($testrow['repeat']!=0) {
-			
+
 			$nextdue=strtotime("+".$testrow['repeat']."day");
 			$nextduedate=gmdate("Y-m-d", $nextdue);
 
@@ -45,8 +45,8 @@ if(isset($completedProj)){
 			$newprojectId = mysql_insert_id();
 
 			//retrieve project attributes
-			$copyquery = "SELECT projectattributes.projectId, projectattributes.categoryId, 
-					projectattributes.isSomeday, projectattributes.deadline, 
+			$copyquery = "SELECT projectattributes.projectId, projectattributes.categoryId,
+					projectattributes.isSomeday, projectattributes.deadline,
 					projectattributes.repeat, projectattributes.suppress, projectattributes.suppressUntil
 					FROM projectattributes WHERE projectattributes.projectId='$completedPr'";
 			$copyresult = mysql_query($copyquery) or die ("Error in query");
