@@ -24,8 +24,6 @@ if ($values['goal']=="") {
 
 else {
     $result=query("updategoal",$config,$values);
-    //echo "Number of rows updated: ";
-    //echo mysql_affected_rows();
     echo '<META HTTP-EQUIV="Refresh" CONTENT="1; url=listGoals.php">';
     echo '<p>Goal updated at ';
     echo date('H:i, jS F');

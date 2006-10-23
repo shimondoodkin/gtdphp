@@ -27,8 +27,6 @@ if($values['delete']=="y") {
 
 else {
     query("updatelist",$config,$values);
-	//echo "<p>Number of Records Updated: ";
-	//echo mysql_affected_rows();
     echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$values['listId'].'">';
 	}
 

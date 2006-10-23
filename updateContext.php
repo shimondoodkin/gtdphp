@@ -18,9 +18,7 @@ if ($values['delete']=="y") {
 
 else query("updatespacecontext",$config,$values);
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=reportContext.php"';
-//echo "Number of Records Updated: ";
-//echo mysql_affected_rows();
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=reportContext.php" />';
 
 mysql_close($connection);
 include_once('footer.php');

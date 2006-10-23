@@ -36,6 +36,5 @@ else {
     echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listChecklist.php?checklistId='.$values['checklistId'].'">';
     }
 
-mysql_close($connection);
 include_once('footer.php');
 ?>

@@ -23,12 +23,13 @@ if (!isset($_POST['submit'])) {
 		</div>
 	</form>
 	<?php
-}else{
-$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
-mysql_select_db($config['db']) or die ("Unable to select database!");
+}
+else {
+    $connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+    mysql_select_db($config['db']) or die ("Unable to select database!");
 
-	$values['name'] = ($_POST['name']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>') : mysql_real_escape_string($_POST['name']);
-	$values['description'] = mysql_real_escape_string($_POST['description']);
+    $values['name'] = ($_POST['name']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>') : mysql_real_escape_string($_POST['name']);
+    $values['description'] = mysql_real_escape_string($_POST['description']);
 
    $result = query("newtimecontext",$config,$values);
 
@@ -38,6 +39,7 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
 
     echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=newTimeContext.php" />';
     }
+
 include_once('footer.php');
 ?>
 

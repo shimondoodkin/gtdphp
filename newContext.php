@@ -23,22 +23,25 @@ if (!isset($_POST['submit'])) {
 		</div>
 	</form>
 	<?php
-}else{
-$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
-mysql_select_db($config['db']) or die ("Unable to select database!");
-
-	$name = empty($_POST['name']) ? die("Error: Enter a context name") : mysql_real_escape_string($_POST['name']);
-	$description = empty($_POST['description']) ? die("Error: Enter a description") : mysql_real_escape_string($_POST['description']);
-	$dateCreated = date('Y-m-d');
-	# don't forget null
-	$query = "INSERT into context  values (NULL, '$name', '$description')";
-	$result = mysql_query($query) or die ("Error in query: $query. ".mysql_error());
-
-//	echo "New context inserted with ID ".mysql_insert_id();
-
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=newContext.php"';
-	mysql_close($connection);
 }
+
+else {
+
+    $connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
+    mysql_select_db($config['db']) or die ("Unable to select database!");
+
+    $values['name'] = ($_POST['name']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>') : mysql_real_escape_string($_POST['name']);
+    $values['description'] = mysql_real_escape_string($_POST['description']);
+
+   $result = query("newspacecontext",$config,$values);
+
+    if ($result['ecode']=="0") echo "Context ".$values['name']." inserted.";
+    else echo "Context NOT inserted.";
+    if (($config['debug']=="true" || $config['debug']=="developer") && $result['ecode']!="0") echo "<p>Error Code: ".$result['ecode']."=> ".$result['etext']."</p>";
+
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=newContext.php" />';
+    }
+
 include_once('footer.php');
 ?>
 
