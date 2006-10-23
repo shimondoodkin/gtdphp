@@ -1,26 +1,20 @@
 <?php
-// turn into a $connect array
-        $theme = "default";
-
-
-
 //Configuration settings
-
         $config = array(
 
             //connection information
-                "host" = 'localhost';
-                "db" = 'testgtd';
-                "user" = 'taskman';
-                "pass" = '90qaXPQ1Z71';
+                "host"                      => 'localhost', //the hostname of your database server
+                "db"                         => '', //the name of your database
+                "user"                      => '', //username for database access
+                "pass"                      => '', //database password
 
             //database information
-                "dbtype"                  => "mysql",
+                "dbtype"                    => 'mysql',  //database type: currently only mysql is valid.  DO NOT CHANGE!
 
             //user preferences
-                "debug"               => 'developer',  // false | true |  developer
-                "theme" = 'default',
-                "contextsummary"      => 'all',  //all | nextaction
+                "debug"                     => 'true',  // false | true |  developer
+                "theme"                     => 'default', //default | menu_sidebar
+                "contextsummary"     => 'all',  //all | nextaction
                 );
 
 
