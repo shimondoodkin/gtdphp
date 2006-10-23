@@ -33,14 +33,14 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
     $values['category'] = ($_POST['category']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a category name</p>') : mysql_escape_string($_POST['category']);
     $values['description'] =  mysql_escape_string($_POST['description']);
 
-   $result = query("newcategory",$config,$values,$options,$sort);
+   $result = query("newcategory",$config,$values);
 
     if ($result['ecode']=="0") echo "Category ".$values['category']." inserted.";
     else echo "Category NOT inserted.";
-    if ($config['debug']=="true" || $config['debug']=="developer") echo $result['ecode'].": ".$result['etext'];
+    if (($config['debug']=="true" || $config['debug']=="developer") && $result['ecode']!="0") echo "<p>Error Code: ".$result['ecode']."=> ".$result['etext']."</p>";
 
     echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" />';
-}
+    }
 
 
 include_once('footer.php');

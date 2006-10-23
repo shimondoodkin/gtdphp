@@ -68,26 +68,11 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
     if ($config['debug']=="developer") echo "<p>Query: ".$query."</p>";
 
     //perform query
-    switch($config['dbtype']){
-        case "frontbase":$reply = fbsql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
-        break;
-        case "msql":$reply = msql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
-        break;
-        case "mysql":$reply = mysql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
-        break;
-        case "mssql":$reply = mssql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
-        break;
-        case "postgres":$reply = pg_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
-        break;
-        case "sqlite":$reply = sqllite_query($query)  or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
-        break;
-        }
+   //parse result into multitdimensional array $result[row#][field name] = field value
+    if($config['dbtype']=="mysql") {
+        $reply = mysql_query($query) or die (($config['debug']=="true" || $config['debug']=="developer") ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
 
-    //parse result into multitdimensional array $result[row#][field name] = field value
-    $info = mysql_info();
-    ereg("Rows matched: ([0-9]*)", $info, $rows_matched);
-
-        if ($rows_matched[1]=="") {
+        if (mysql_num_rows($reply)>0) {
             $i = 0;
            while ($field = mysql_fetch_field($reply)) {
                 /* Create an array $fields which contains all of the column names */
@@ -104,14 +89,47 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
                 }
             }
 
-    //always included; text/codes shown in errors on individual pages as warranted...
-    $result['ecode'] = mysql_errno();
-    $result['etext'] = mysql_error();
+        //always included; text/codes shown in errors on individual pages as warranted...
+        $result['ecode'] = mysql_errno();
+        $result['etext'] = mysql_error();
+        mysql_close($connection);
+        }
+
+    elseif($config['dbtype']=="postgres") {
+        $reply = pg_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
+        echo ("Database not yet supported.");
+         }
+
+
+    elseif($config['dbtype']=="sqlite") {
+        $reply = sqllite_query($query)  or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
+        echo ("Database not yet supported.");
+        }
+
+
+    elseif($config['dbtype']=="msql") {
+        $reply = msql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
+        echo ("Database not yet supported.");
+        }
+
+
+
+    elseif($config['dbtype']=="mssql") {
+        $reply = mssql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
+        echo ("Database not yet supported.");
+        }
+
+
+    elseif($config['dbtype']=="frontbase") {
+        $reply = fbsql_query($query) or die ($config['debug']=="true" ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
+        echo ("Database not yet supported.");
+        }
+
+    else die("Database type not configured.  Please edit the config.php file.");
 
     //for developer testing only, print result array
     if ($config['debug']=="developer") print_r($result);
 
-    mysql_close($connection);
     return $result;
     }
 
