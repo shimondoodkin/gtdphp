@@ -35,7 +35,7 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
             }else{
                 echo '<p>There are ' .$result[0]['nnextactions']. ' <a href="listItems.php?type=n">Next Actions</a> pending';
             }
-    $result=query("countallitems",$config,$values);
+    $result=query("countactiveitems",$config,$values);
 //    $nActions=getNumberOfActions();
     echo ' out of a total of ' .$result[0]['nitems']. ' <a href="listItems.php?type=a">Actions</a>.';
 	echo "</p>\n";
