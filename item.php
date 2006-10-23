@@ -28,7 +28,7 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
 	//select item details
 	if ($values['itemId']>0) {
 	   $result = query("selectitem",$config,$values,$options,$sort);
-           if ($result['ecode']=0) {
+           if ($result['ecode']==0) {
             $currentrow = $result[0];
             $values['type']=$currentrow['type'];
 

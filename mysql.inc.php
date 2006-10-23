@@ -261,7 +261,10 @@ $query=>"SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`descripti
         "selectprojectstatusforcopy" => "",
 
 //nextactions
-        "getnextactions"              =>"SELECT `projectId`, nextaction FROM nextactions",
+        "getnextactions"              =>"SELECT `projectId`, `nextaction` FROM `nextactions`",
+        "countnextactions"          => "SELECT COUNT(nextaction) AS nnextactions FROM nextactions",
+        "countactiveitems"                => "SELECT `type`, COUNT(*) AS nitems FROM `itemattributes`, `itemstatus` WHERE `itemattributes`.`itemId`=`itemstatus`.`itemId` AND (`itemstatus`.`datecompleted`='0000-00-00' OR `itemstatus`.`datecompleted` IS NULL) GROUP BY type",
+        "countallitems"             => "SELECT `type`, COUNT(*) AS nitems FROM `itemattributes` GROUP BY type",
 
         "newnextaction"              =>"INSERT INTO `nextactions` (`projectId`,`nextaction`) VALUES ('{$values['projectId']}','{$values['itemId']}')",
 

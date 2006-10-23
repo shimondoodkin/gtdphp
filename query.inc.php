@@ -65,7 +65,7 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
     $query = $sql[$querylabel];
 
     // for testing only: display fully-formed query
-    if ($config['debug']=="true" || $config['debug']=="developer") echo "<p>Query: ".$query."</p>";
+    if ($config['debug']=="developer") echo "<p>Query: ".$query."</p>";
 
     //perform query
     switch($config['dbtype']){
@@ -85,12 +85,8 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
 
     //parse result into multitdimensional array $result[row#][field name] = field value
     $info = mysql_info();
+    ereg("Rows matched: ([0-9]*)", $info, $rows_matched);
 
-        print "Info: ".$info;
-        ereg("Rows matched: ([0-9]*)", $info, $rows_matched);
-        print_r($rows_matched);
-
-//        if (mysql_num_rows($reply)>0) {
         if ($rows_matched[1]=="") {
             $i = 0;
            while ($field = mysql_fetch_field($reply)) {

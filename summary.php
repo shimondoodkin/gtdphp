@@ -26,16 +26,18 @@ mysql_select_db($config['db']) or die ("Unable to select database!");
 	$result = query("spacecontextselectbox",$config,$values,$options,$sort);
 	$ncon = count($result);
 
-    $nNextActions=getNumberOfNextActions();
+//    $nNextActions=getNumberOfNextActions();
+    $result=query("countnextactions",$config,$values);
     echo "<div class='reportsection'>\n";
 	echo "<h3>Next Actions</h3>\n";
-    if($nNextActions==1){
-                echo '<p>There is ' .$nNextActions. ' <a href="listItems.php?type=n">Next Action</a> pending';
+    if($result[0]['nnextactions']==1){
+                echo '<p>There is ' .$result[0]['nnextactions']. ' <a href="listItems.php?type=n">Next Action</a> pending';
             }else{
-                echo '<p>There are ' .$nNextActions. ' <a href="listItems.php?type=n">Next Actions</a> pending';
+                echo '<p>There are ' .$result[0]['nnextactions']. ' <a href="listItems.php?type=n">Next Actions</a> pending';
             }
-    $nActions=getNumberOfActions();
-    echo ' out of a total of ' .$nActions. ' <a href="listItems.php?type=a">Actions</a>.';
+    $result=query("countallitems",$config,$values);
+//    $nActions=getNumberOfActions();
+    echo ' out of a total of ' .$result[0]['nitems']. ' <a href="listItems.php?type=a">Actions</a>.';
 	echo "</p>\n";
 	echo "</div>\n";
 

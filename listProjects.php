@@ -112,7 +112,14 @@ if (mysql_num_rows($result) > 0){
 	while($row = mysql_fetch_assoc($result)){
 		echo "	<tr>\n";
 		echo "		<td>";
-		$nonext=nonext($row['projectId']);
+
+//$nonext=nonext($row['projectId']);
+
+                $values['projectId']=$row['projectId'];
+                $nexttext=query("selectnextaction",$config,$values);
+                if ($nexttext[0]['nextaction']!="") $nonext="false";
+                else $nonext="true";
+                
 		echo '<a href = "projectReport.php?projectId='.$row['projectId'].'" title="Go to '.htmlspecialchars(stripslashes($row['name'])).' project report">';
 		if ($nonext=="true" && $completed!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>';
 		echo stripslashes($row['name'])."</a></td>\n";
@@ -140,8 +147,6 @@ if (mysql_num_rows($result) > 0){
 
 else echo "<h4>Nothing was found</h4>";
 
-	mysql_free_result($result);
-	mysql_close($connection);
 	include_once('footer.php');
 ?>
 
