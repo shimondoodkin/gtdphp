@@ -59,6 +59,7 @@ $sql = array(
         "getspacecontexts"          => "SELECT `contextId`, `name` FROM `context`",
         "gettimecontexts"           => "SELECT `timeframeId`, `timeframe`, `description` FROM `timeitems`",
         "listselectbox"             => "SELECT `list`.`listId`, `list`.`title`, `list`.`description`, `list`.`categoryId`, `categories`.`category` FROM `list`, `categories` WHERE `list`.`categoryId`=`categories`.`categoryId` ORDER BY {$sort['listselectbox']}",
+        "lookupparent"              => "SELECT `parentId`, `itemId` FROM `lookup` WHERE `itemId`='{$values['itemId']}'",
         "newcategory"               => "INSERT INTO `categories` VALUES (NULL, '{$values['category']}', '{$values['description']}')",
         "newchecklist"              => "INSERT INTO `checklist` VALUES (NULL, '{$values['title']}', '{$values['categoryId']}', '{$values['description']}')",
         "newchecklistitem"          => "INSERT INTO `checklistItems`  VALUES (NULL, '{$values['item']}', '{$values['notes']}', '{$values['checklistId']}', 'n')",
@@ -75,9 +76,6 @@ $sql = array(
         "newspacecontext"           => "INSERT INTO `context`  VALUES (NULL, '{$values['name']}', '{$values['description']}')",
         "newtimecontext"            => "INSERT INTO `timeitems`  VALUES (NULL, '{$values['name']}', '{$values['description']}')",
         "parentselectbox"           => "SELECT `items`.`itemId`, `items`.`title`, `items`.`description`, `itemattributes`.`isSomeday` FROM `items`, `itemattributes`, `itemstatus` WHERE `itemattributes`.`itemId`=`items`.`itemId` AND `itemstatus`.`itemId`=`items`.`itemId` AND `itemattributes`.`type`='{$values['ptype']}' AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') ORDER BY {$sort['parentselectbox']}",
-/*
-        "projectselectbox"          => "SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description` FROM `projects`, `projectattributes`, `projectstatus` WHERE `projectattributes`.`projectId`=`projects`.`projectId` AND `projectstatus`.`projectId`=`projects`.`projectId` AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND `projectattributes`.`isSomeday`='{$values['isSomeday']}' ORDER BY {$sort['projectselectbox']}",
-*/
         "projectssummary"           => "SELECT `projects`.`projectId`, `projects`.`name`, `projects`.`description` FROM `projects`, `projectattributes`, `projectstatus` WHERE `projectattributes`.`projectId`=`projects`.`projectId` AND `projectstatus`.`projectId`=`projects`.`projectId` AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND `projectattributes`.`isSomeday`='{$values['isSomeday']}' ORDER BY {$sort['projectssummary']}",
         "reassigncategory"          => "UPDATE `projectattributes` SET `categoryId`='{$values['newCategoryId']}' WHERE `categoryId`='{$values['categoryId']}'",
         "reassignspacecontext"      => "UPDATE `itemattributes` SET `contextId`='{$values['newContextId']}' WHERE `contextId`='{$values['contextId']}'",
@@ -92,11 +90,6 @@ $sql = array(
         "selectchecklistitem"       => "SELECT `checklistItems`.`checklistItemId`, `checklistItems`.`item`, `checklistItems`.`notes`, `checklistItems`.`checklistId`, `checklistItems`.`checked` FROM `checklistItems` WHERE `checklistItemId` = '{$values['checklistItemId']}'",
         "selectcontext"             => "SELECT `context`.`contextId`, `context`.`name`, `context`.`description` FROM `context` WHERE `context`.`contextId` = '{$values['contextId']}'",
         "selectitem"                => "SELECT `items`.`itemId`, `itemattributes`.`type`, `items`.`title`, `items`.`description`, `items`.`desiredOutcome`, `itemattributes`.`categoryId`, `itemattributes`.`contextId`, `itemattributes`.`timeframeId`, `itemattributes`.`isSomeday`, `itemattributes`.`deadline`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil`, `itemstatus`.`dateCreated`, `itemstatus`.`dateCompleted`, `itemstatus`.`lastModified`  FROM `items`, `itemattributes`, `itemstatus` WHERE `itemstatus`.`itemId`=`items`.`itemId` AND `itemattributes`.`itemId`=`items`.`itemId` AND `items`.`itemId` = '{$values['itemId']}'",
-
-/* old
-        "selectitem"                => "SELECT `items`.`itemId`, `itemattributes`.`projectId`, `itemattributes`.`contextId`, `itemattributes`.`type`, `itemattributes`.`timeframeId`, `items`.`title`, `items`.`description`, `itemstatus`.`dateCreated`, `itemattributes`.`deadline`, `itemstatus`.`dateCompleted`, `itemstatus`.`lastModified`, `itemattributes`.`repeat`, `itemattributes`.`suppress`, `itemattributes`.`suppressUntil` FROM `items`, `itemattributes`, `itemstatus` WHERE `itemstatus`.`itemId`=`items`.`itemId` AND `itemattributes`.`itemId`=`items`.`itemId` AND `items`.`itemId` = '{$values['itemId']}'",
-*/
-
         "selectlist"                => "SELECT `list`.`listId`, `list`.`title`, `list`.`description`, `list`.`categoryId` FROM `list` WHERE `list`.`listId` = '{$values['listId']}'",
         "selectlistitem"            => "SELECT `listItems`.`listItemId`, `listItems`.`item`, `listItems`.`notes`, `listItems`.`listId`, `listItems`.`dateCompleted` FROM `listItems` WHERE `listItems`.`listItemId` = {$values['listItemId']}",
         "selectnextaction"          => "SELECT `nextactions`.`projectId`, `nextactions`.`nextaction` FROM `nextactions` WHERE `nextactions`.`projectId` = '{$values['projectId']}'",

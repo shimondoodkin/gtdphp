@@ -37,7 +37,7 @@ if ($values['itemId']>0) {
     }
 }
 
-//determine item label and parent
+//determine item and parent labels
     switch ($values['type']) {
         case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; break;
         case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; break;
@@ -51,6 +51,9 @@ if ($values['itemId']>0) {
         default  : $typename="Item"; $parentname=""; $values['ptype']="";
         }
 
+$parent = query("lookupparent",$config,$values);
+
+$values['parentId']=$parent[0]['parentId'];
 
 //create item, timecontext, and spacecontext selectboxes
 $pshtml = parentselectbox($config,$values,$options,$sort);
@@ -76,10 +79,17 @@ else {
                 </div>
 
                 <div class='formrow'>
+
+                <?php if ($values['ptype']!="") { ?>
                         <label for='project' class='left first'><?php echo $parentname; ?>:</label>
-                        <select name="projectId"> <?php echo $pshtml; ?>
+                        <select name="projectId" id='project'> <?php echo $pshtml; ?>
                         </select>
-                            <label for='context' class='left'>Context:</label>
+                <?php   }
+                            echo "\n<label for='context' class='";
+                            if ($values['ptype']!="") echo "left";
+                                else echo "leftfirst";
+                            echo "'>Context:</label>\n";
+                 ?>
                         <select name='contextId' id='context'> <?php echo $cshtml; ?>
                         </select>
 
@@ -119,12 +129,27 @@ else {
                         <label for='description' class='left first'>Description:</label>
                         <textarea rows='12' name='description' id='description' wrap='virtual'><?php echo stripslashes($currentrow['description']); ?></textarea>
                 </div>
-
+                <div class='formrow'>
+                        <label for='outcome' class='left first'>Desired Outcome:</label>
+                        <textarea rows='4' name='outcome' id='outcome' class='big' wrap='virtual'><?php echo stripslashes($row['desiredOutcome']) ?></textarea>
+                </div>
                 <div class='formrow'>
                         <label class='left first'>Type:</label>
+                        <input type='radio' name='type' id='value' value='m' class="first" <?php if ($values['type']=='m') echo "CHECKED "; ?>/><label for='value' class='right'>Value</label>
+                        <input type='radio' name='type' id='vision' value='v' class="notfirst" <?php if ($values['type']=='v') echo "CHECKED "; ?>/><label for='vision' class='right'>Vision</label>
+                        <input type='radio' name='type' id='role' value='o' class="notfirst" <?php if ($values['type']=='o') echo "CHECKED "; ?>/><label for='role' class='right'>Role</label>
+                        <input type='radio' name='type' id='goal' value='g' class="notfirst" <?php if ($values['type']=='g') echo "CHECKED "; ?>/><label for='goal' class='right'>Goal</label>
+                        <input type='radio' name='type' id='project' value='p' class="notfirst" <?php if ($values['type']=='p') echo "CHECKED "; ?>/><label for='project' class='right'>Project</label>
+                </div>
+                <div class='formrow'>
+                        <label class='left first'></label>
                         <input type='radio' name='type' id='action' value='a' class="first" <?php if ($values['type']=='a') echo "CHECKED "; ?>/><label for='action' class='right'>Action</label>
                         <input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($values['type']=='r') echo "CHECKED "; ?>/><label for='reference' class='right'>Reference</label>
                         <input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($values['type']=='w') echo "CHECKED "; ?>/><label for='waiting' class='right'>Waiting</label>
+                </div>
+                <div class='formrow'>
+                        <label class='left first'></label>
+                        <input type='radio' name='type' id='inbox' value='i' class="first" <?php if ($values['type']=='i') echo "CHECKED "; ?>/><label for='inbox' class='right'>Inbox</label>
                 </div>
 
                 <div class='formrow'>
