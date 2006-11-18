@@ -172,10 +172,11 @@ else {
 <?php
 if ($values['itemId']>0) {
         echo "			<input type='submit' value='Update ".$typename."' name='submit'>\n";
-} else echo "			<input type='submit' value='Add ".$typename."' name='submit'>\n";
+        echo "                  <input type='reset' value='Reset'>\n";
+        echo "                  <input type='checkbox' name='delete' id='delete' value='y' /><label for='delete'>Delete&nbsp;Item</label>\n";
+    }
+else echo "			<input type='submit' value='Add ".$typename."' name='submit'>\n";
 ?>
-                <input type='reset' value='Reset'>
-                <input type='checkbox' name='delete' id='delete' value='y' /><label for='delete'>Delete&nbsp;Item</label>
         </div>
 </form>
 <?php

@@ -80,6 +80,7 @@ $config['theme']=$_SESSION['theme'];
 
 		<li>Process
 			<ul>
+                                <li><a href="listItems.php?type=i" title="Inbox">Inbox</a></li> 
 				<li><a href="reportContext.php" title="Active items sorted by context">Contexts</a></li>
 				<li><a href="listProjects.php?pType=p" title="Active projects">Projects</a></li>
 				<li><a href="listItems.php?type=n" title="Active next actions">Next Actions</a></li>
