@@ -94,15 +94,16 @@ $config['theme']=$_SESSION['theme'];
 				<li><a href="weekly.php" title="Steps in the Weekly Review">Weekly Review</a></li>
 				<li><a href="listGoals.php" title="List set goals">List Goals</a></li>
 				<li><a href="newGoal.php" title="Define a new goal">Set Goal</a></li>
+                                <li><a href="orphans.php" title="List items without a parent item">Orphaned Items</li>
 			</ul>
 
-        <li>Lists
+                <li>Lists
 			<ul>
 				<li><a href="listList.php" title="General-purpose lists">Lists</a></li>
 				<li><a href="listChecklist.php" title="Reuseable checklists lists">Checklists</a></li>
 			</ul>
 
-        <li>Config
+                <li>Config
 
 			<ul>
 				<li><a href="newCategory.php" title="Meta-Categories">Categories</a></li>

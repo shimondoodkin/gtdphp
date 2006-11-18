@@ -62,15 +62,15 @@ function timecontextselectbox($config,$values,$options,$sort) {
     return $tshtml;
     }
 
-function projectselectbox($config,$values,$options,$sort) {
-    $result = query("projectselectbox",$config,$values,$options,$sort);
-    $pshtml="";
+function itemselectbox($config,$values,$options,$sort) {
+    $result = query("itemselectbox",$config,$values,$options,$sort);
+    $ishtml="";
     foreach($result as $row) {
-        $pshtml .= '                    <option value="'.$row['projectId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-        if($row['projectId']==$values['projectId']) $pshtml .= ' SELECTED';
-        $pshtml .= '>'.stripslashes($row['name'])."</option>\n";
+        $pshtml .= '                    <option value="'.$row['itemId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+        if($row['itemId']==$values['itemId']) $pshtml .= ' SELECTED';
+        $ishtml .= '>'.stripslashes($row['title'])."</option>\n";
         }
-    return $pshtml;
+    return $ishtml;
     }
 
 function checklistselectbox($config,$values,$options,$sort) {

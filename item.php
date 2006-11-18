@@ -9,12 +9,32 @@ $values = array();
 $values['projectId']= (int) $_GET["projectId"];
 $values['itemId']= (int) $_GET["itemId"];
 $values['type']=$_GET["type"]{0};
+$values['pType']=$_GET["pType"]{0};
+
+
 if ($values['type']=="n") {
         $values['type']='a';
         $nextactioncheck='true';
 }
 
-$values['pType']=$_GET["pType"]{0};
+
+
+
+//determine item label
+    switch ($values['type']) {
+        case "m" : $typename="Value";
+        case "v" : $typename="Vision";
+        case "o" : $typename="Role";
+        case "g" : $typename="Goal";
+        case "p" : $typename="Project";
+        case "a" : $typename="Action";
+        case "w" : $typename="Waiting On";
+        case "r" : $typename="Reference";
+        case "i" : $typename="Inbox Item";
+        default  : $typename="Item";
+        }
+
+
 if ($pType=="s") {
         $values['isSomeday']="y";
         $pTypename="Someday/Maybe";
@@ -40,17 +60,12 @@ if ($values['itemId']>0) {
     }
 }
 
-//create project, timecontext, and spacecontext selectboxes
-$pshtml = projectselectbox($config,$values,$options,$sort);
+//create item, timecontext, and spacecontext selectboxes
+$ishtml = itemselectbox($config,$values,$options,$sort);
 $cshtml = contextselectbox($config,$values,$options,$sort);
 $tshtml = timecontextselectbox($config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
-//determine item label
-if ($values['type']=="a") $typename="Action";
-elseif ($values['type']=="r") $typename="Reference";
-elseif ($values['type']=="w") $typename="Waiting On";
-else $typename="Item";
 
 if ($values['itemId']>0) {
         echo "<h2>Edit ".$typename."</h2>";
@@ -70,7 +85,7 @@ else {
 
                 <div class='formrow'>
                         <label for='project' class='left first'><?php echo $pTypename; ?>:</label>
-                        <select name="projectId"> <?php echo $pshtml; ?>
+                        <select name="projectId"> <?php echo $ishtml; ?>
                         </select>
                             <label for='context' class='left'>Context:</label>
                         <select name='contextId' id='context'> <?php echo $cshtml; ?>
