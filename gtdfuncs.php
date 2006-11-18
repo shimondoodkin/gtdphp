@@ -62,15 +62,19 @@ function timecontextselectbox($config,$values,$options,$sort) {
     return $tshtml;
     }
 
-function itemselectbox($config,$values,$options,$sort) {
-    $result = query("itemselectbox",$config,$values,$options,$sort);
-    $ishtml="";
+function parentselectbox($config,$values,$options,$sort) {
+    $result = query("parentselectbox",$config,$values,$options,$sort);
+    $pshtml="";
     foreach($result as $row) {
-        $pshtml .= '                    <option value="'.$row['itemId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+        $pshtml .= '                    <option value="'.$row['itemId'].'" title="'.htmlspecialchars(stripslashes($row['description']));
+        if ($row['isSomeday']=="y") $pshtml .= ' (Someday)';
+        $pshtml .= '"';
         if($row['itemId']==$values['itemId']) $pshtml .= ' SELECTED';
-        $ishtml .= '>'.stripslashes($row['title'])."</option>\n";
+        $pshtml .= '>'.stripslashes($row['title']);
+        if ($row['isSomeday']=="y") $pshtml .= ' (s)';
+        $pshtml .="</option>\n";
         }
-    return $ishtml;
+    return $pshtml;
     }
 
 function checklistselectbox($config,$values,$options,$sort) {

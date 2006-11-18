@@ -9,39 +9,15 @@ $values = array();
 $values['projectId']= (int) $_GET["projectId"];
 $values['itemId']= (int) $_GET["itemId"];
 $values['type']=$_GET["type"]{0};
-$values['pType']=$_GET["pType"]{0};
-
 
 if ($values['type']=="n") {
         $values['type']='a';
         $nextactioncheck='true';
 }
 
-
-
-
-//determine item label
-    switch ($values['type']) {
-        case "m" : $typename="Value";
-        case "v" : $typename="Vision";
-        case "o" : $typename="Role";
-        case "g" : $typename="Goal";
-        case "p" : $typename="Project";
-        case "a" : $typename="Action";
-        case "w" : $typename="Waiting On";
-        case "r" : $typename="Reference";
-        case "i" : $typename="Inbox Item";
-        default  : $typename="Item";
-        }
-
-
-if ($pType=="s") {
+if ($values['type']=="s") {
+        $values['type']='p';
         $values['isSomeday']="y";
-        $pTypename="Someday/Maybe";
-}
-else {
-        $values['isSomeday']="n";
-        $pTypename="Project";
 }
 
 //SQL CODE
@@ -53,6 +29,7 @@ if ($values['itemId']>0) {
     $values['timeframeId']=$currentrow['timeframeId'];
     $values['contextId']=$result[0]['contextId'];
     $values['type']=$currentrow['type'];
+    $values['isSomeday']=$currentrow['isSomeday'];
 
     //Test to see if nextaction
     $result = query("testnextaction",$config,$values,$options,$sort);
@@ -60,13 +37,28 @@ if ($values['itemId']>0) {
     }
 }
 
+//determine item label and parent
+    switch ($values['type']) {
+        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; break;
+        case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; break;
+        case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; break;
+        case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; break;
+        case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; break;
+        case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; break;
+        case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
+        case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; break;
+        case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; break;
+        default  : $typename="Item"; $parentname=""; $values['ptype']="";
+        }
+
+
 //create item, timecontext, and spacecontext selectboxes
-$ishtml = itemselectbox($config,$values,$options,$sort);
+$pshtml = parentselectbox($config,$values,$options,$sort);
 $cshtml = contextselectbox($config,$values,$options,$sort);
 $tshtml = timecontextselectbox($config,$values,$options,$sort);
 
-//PAGE DISPLAY CODE
 
+//PAGE DISPLAY CODE
 if ($values['itemId']>0) {
         echo "<h2>Edit ".$typename."</h2>";
         echo '	<form action="updateItem.php?itemId='.$values['itemId'].'" method="post">';
@@ -84,8 +76,8 @@ else {
                 </div>
 
                 <div class='formrow'>
-                        <label for='project' class='left first'><?php echo $pTypename; ?>:</label>
-                        <select name="projectId"> <?php echo $ishtml; ?>
+                        <label for='project' class='left first'><?php echo $parentname; ?>:</label>
+                        <select name="projectId"> <?php echo $pshtml; ?>
                         </select>
                             <label for='context' class='left'>Context:</label>
                         <select name='contextId' id='context'> <?php echo $cshtml; ?>
