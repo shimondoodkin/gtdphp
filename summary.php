@@ -10,6 +10,8 @@ $numbercontexts = query("countspacecontexts",$config,$values);
 $numbernextactions = query("countnextactions",$config,$values);
 $numberitems = query("countactiveitems",$config,$values);
 
+print_r($numbernextactions);
+
 $values['isSomeday'] = "n";
 $numberprojects = query("countactiveprojects",$config,$values);
 $pres = query("projectssummary",$config,$values,$options,$sort);

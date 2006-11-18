@@ -1,6 +1,6 @@
 <?php
 //INCLUDES
-	include_once('header.php');
+include_once('header.php');
 
 //RETRIEVE URL FORM VARIABLES
 $values=array();	
