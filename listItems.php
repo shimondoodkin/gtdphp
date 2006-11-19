@@ -6,6 +6,10 @@ include_once('header.php');
 //GET URL VARIABLES
 $values = array();
 $values['type']=$_GET["type"]{0};
+if ($_GET['categoryId']>0) $values['categoryId']=(int) $_GET['categoryId'];
+else $values['categoryId']=(int) $_POST['categoryId'];
+if ($_GET['contextId']>0) $values['contextId']=(int) $_GET['contextId'];
+else $values['contextId']=(int) $_POST['contextId'];
 if ($_GET['timeId']>0) $values['timeframeId']=(int) $_GET['timeId'];
 else $values['timeframeId']=(int) $_POST['timeId'];
 
@@ -17,28 +21,66 @@ if ($values['type']=='s') $values['isSomeday']='y';
 else $values['isSomeday']='n';
 
 //Check Session Variables
-if ($_GET['contextId']>0) $values['contextId']=(int) $_GET['contextId'];
-else $values['contextId']=(int) $_POST['contextId'];
-
 //If we have contextId from a new filter, change Session value
 $contextId=$values['contextId'];
 if ($contextId>=0) $_SESSION['contextId']=$contextId;
 else $values['contextId']=$_SESSION['contextId'];
-
-//ditto for category
-
-//Check Session Variables
-if ($_GET['categoryId']>0) $values['categoryId']=(int) $_GET['categoryId'];
-else $values['categoryId']=(int) $_POST['categoryId'];
 
 //If we have categoryId from a new filter, change Session value
 $categoryId=$values['categoryId'];
 if ($categoryId>=0) $_SESSION['categoryId']=$categoryId;
 else $values['categoryId']=$_SESSION['categoryId'];
 
+$show=array();
+/*
+parentdetails
+    description
+    desiredOutcome
+    isSomeday
+    suppressUntil
+    dateCreated
+    lastModified
+    category
+    space context
+    time context
+    deadline / due
+    neglected
+
+childdetails
+    desiredOutcome
+    isSomeday
+    suppressUntil
+    dateCreated
+    lastModified
+    category
+    space context
+    time context
+    deadline / due
+    neglected
+parent (show at all)
+
+
+$filter=array();
+type
+parent type
+issomeday
+tickler vs active vs completed //?
+repeats/doesnotrepeat
+space context
+time context
+category
+deadline
+due today
+neglected
+
+$dynamicsort=array();
+on column header
+*/
+
+
 //determine item and parent labels
     switch ($values['type']) {
-        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; break;
+        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; $show['parent']="false"; break;
         case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; break;
         case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; break;
         case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; break;
@@ -48,7 +90,7 @@ else $values['categoryId']=$_SESSION['categoryId'];
         case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p";$values['type']="a"; $display="nextonly"; break;
         case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
         case "r" : $typename="References"; $parentname="Project"; $values['ptype']="p"; break;
-        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; break;
+        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; $show['parent']="false"; break;
         default  : $typename="Items"; $parentname=""; $values['ptype']="";
         }
 
@@ -97,11 +139,15 @@ if ($values['timeframeId'] != NULL && $values['nottimecontext']=="true") $values
 $result = query("getitems",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
-	echo '<h2><a href="item.php?type='.$values['type'].'" title="Add new '.str_replace("s","",$typename).'">'.$typename."</a></h2>\n";
+	echo '<h2>';
+        
+        if ($values['completed']=="y") echo 'Completed&nbsp;'.$typename."</h2>\n";
+        else echo '<a href="item.php?type='.$values['type'].'" title="Add new '.str_replace("s","",$typename).'">'.$typename."</a></h2>\n";
+        echo '<div id="filter">'."\n";
 	echo '<form action="listItems.php?type='.$values['type'].'" method="post">'."\n";
 	echo "<p>Category:&nbsp;\n";
 	echo '<select name="categoryId" title="Filter items by parent category">'."\n";
-	echo '	<option value="">All</option>'."\n";
+	echo '	<option value="0">All</option>'."\n";
 	echo $cashtml;
 	echo "</select>\n";
         echo '<input type="checkbox" name="notcategory" title="Exclude category from list" value="true"';
@@ -126,53 +172,75 @@ $result = query("getitems",$config,$values,$options,$sort);
         echo '&nbsp;&nbsp;&nbsp;<input type="submit" class="button" value="Filter" name="submit" title="Filter '.$typename.' by category and/or contexts">'."\n";
 	echo "</p>\n";
 	echo "</form>\n\n";
-
+        echo "</div>\n";
+        
 	if ($result!="-1") {
                 $tablehtml="";
                 foreach ($result as $row) {
-			$showme="y";
-			//filter out all but nextactions if $display=nextonly
-			if (($display=='nextonly')  && !($key = array_search($row['itemId'],$nextactions))) $showme="n";
-			if($showme=="y") {
-				$tablehtml .= "	<tr>\n";
-				$tablehtml .= '		<td><a href = "projectReport.php?projectId='.$row['projectId'].'"title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' project report">'.stripslashes($row['ptitle'])."</a></td>\n";
+                    $showme="y";
+                    //filter out all but nextactions if $display=nextonly
+                    if (($display=='nextonly')  && !($key = array_search($row['itemId'],$nextactions))) $showme="n";
+                    if($showme=="y") {
+                        $tablehtml .= "	<tr>\n";
 
-				//if nextaction, add icon in front of action (* for now)
-                                if ($key = array_search($row['itemId'],$nextactions)) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</td>\n";
-				else $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title']).'</td>';
-				$tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
-				$tablehtml .= '		<td><a href = "editContext.php?contextId='.$row['contextId'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
-				$tablehtml .= "		<td>";
-				if(($row['deadline']) == "0000-00-00" || $row['deadline'] ==NULL) $tablehtml .= "&nbsp;";
-				elseif(($row['deadline']) < date("Y-m-d")) $tablehtml .= '<font color="red"><strong title="Item overdue">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>';  //highlight overdue actions
-				elseif(($row['deadline']) == date("Y-m-d")) $tablehtml .= '<font color="green"><strong title="Item due today">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>'; //highlight actions due today
-				else $tablehtml .= date("D M j, Y",strtotime($row['deadline']));
-				$tablehtml .= "</td>\n";
-				if ($row['repeat']=="0") $tablehtml .= "		<td>--</td>\n";
-				else $tablehtml .= "		<td>".$row['repeat']."</td>\n";
-	            $tablehtml .= '		<td align="center"><input type="checkbox" align="center" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" name="completedNas[]" value="';
-                $tablehtml .= $row['itemId'];
-                $tablehtml .= '" /></td>'."\n";
-				$tablehtml .= "	</tr>\n";
-			}
-		}
+                        //parent title
+                            if ($show['parent']!="false")$tablehtml .= '		<td><a href = "projectReport.php?projectId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
+//                            if ($nonext=="true" && $values['completed']!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>'; 
+                            $tablehtml .= stripslashes($row['ptitle'])."</a></td>\n";
+
+                        //item title
+                        //if nextaction, add icon in front of action (* for now)
+                        if ($key = array_search($row['itemId'],$nextactions)) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</td>\n";
+                        else $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title']).'</td>';
+
+                        //item description
+                        $tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
+
+                        //item category
+                        $tablehtml .= '          <td><a href="editCategory.php?categoryId='.$row['categoryId'].'" title="Edit the '.htmlspecialchars(stripslashes($row['category'])).' category">'.stripslashes($row['category'])."</a></td>\n";
+
+                        //item context name
+                        $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
+                        
+                        //item timeframe name
+                        $tablehtml .= '         <td><a href = "reportTimeContext.php?timeframe='.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.stripslashes($row['timeframe'])."</td>\n";
+                        
+                        //item deadline
+                        $tablehtml .= "		<td>";
+                        if(($row['deadline']) == "0000-00-00" || $row['deadline'] ==NULL) $tablehtml .= "&nbsp;";
+                        elseif(($row['deadline']) < date("Y-m-d")) $tablehtml .= '<font color="red"><strong title="Item overdue">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>';  //highlight overdue actions
+                        elseif(($row['deadline']) == date("Y-m-d")) $tablehtml .= '<font color="green"><strong title="Item due today">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>'; //highlight actions due today
+                        else $tablehtml .= date("D M j, Y",strtotime($row['deadline']));
+                        $tablehtml .= "</td>\n";
+
+                        //item repeat
+                        if ($row['repeat']=="0") $tablehtml .= "		<td></td>\n";
+                        else $tablehtml .= "		<td>".$row['repeat']."</td>\n";
+
+                        //completion checkbox
+                        if ($values['completed']!="y") $tablehtml .= '		<td align="center"><input type="checkbox" align="center" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" name="completedNas[]" value="'.$row['itemId'].'" /></td>'."\n";
+                        $tablehtml .= "	</tr>\n";
+                        }
+                    }
 
 		if ($tablehtml!="") {
+                        echo "<p>Click on ".$parentname." for individual report.</p>\n";
 			echo '<form action="processItemUpdate.php" method="post">'."\n";
 			echo "<table class='datatable'>\n";
 			echo "	<thead>\n";
-			echo "		<td>Project</td>\n";
+		    if ($show['parent']!="false") echo "		<td>".$parentname."</td>\n";
 			echo "		<td>".$typename."</td>\n";
 			echo "		<td>Description</td>\n";
-			echo "		<td>Context</td>\n";
+                        echo "          <td>Category</td>\n";
+                        echo "          <td>Space Context</td>\n";
+			echo "		<td>Time Context</td>\n";
 			echo "		<td>Deadline</td>\n";
 			echo "		<td>Repeat</td>\n";
-			echo "		<td>Completed</td>\n";
+                        if ($values['completed']!="y") echo "           <td>Completed</td>\n";
 			echo "	</thead>\n";
 			echo $tablehtml;
 			echo "</table>\n";
 			echo '<input type="hidden" name="type" value="'.$values['type'].'" />'."\n";
-			echo '<input type="hidden" name="contextId" value="'.$values['contextId'].'" />'."\n";
 			echo '<input type="hidden" name="timeId" value="'.$values['timeframeId'].'" />'."\n";
                         echo '<input type="hidden" name="contextId" value="'.$values['contextId'].'" />'."\n";
                         echo '<input type="hidden" name="categoryId" value="'.$values['categoryId'].'" />'."\n";
@@ -183,7 +251,7 @@ $result = query("getitems",$config,$values,$options,$sort);
 			$message="Nothing was found.";
 			nothingFound($message);
 		}
-	}else{
+	}elseif($values['completed']!="y") {
 		$message="You have no ".$typename." remaining.";
 		$prompt="Would you like to create a new ".str_replace("s","",$typename)."?";
 		$yeslink="item.php?type=".$values['type'];

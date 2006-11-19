@@ -92,7 +92,7 @@ echo "<p>To move to a particular space-time context, select the number.<br />To 
 foreach ($contextArray as $values['contextId'] => $timeframe) {
 
     echo '<a name="'.$contextNames[$values['contextId']].'"></a>'."\n";
-    echo '<h2>Context:&nbsp;'.$contextNames[$values['contextId']]."</h2>\n";
+    echo '<h2><a href="editContext.php?contextId='.$values['contextId'].'" title="Edit the '.$contextNames[$values['contextId']].' context">Context:&nbsp;'.$contextNames[$values['contextId']]."</a></h2>\n";
 
     foreach ($timeframe as $values['timeframeId'] => $itemCount) {
         echo '<a name="'.$contextNames[$values['contextId']].'_'.$values['timeframeId'].'"></a>'."\n";
