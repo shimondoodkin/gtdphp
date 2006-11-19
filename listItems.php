@@ -6,8 +6,6 @@ include_once('header.php');
 //GET URL VARIABLES
 $values = array();
 $values['type']=$_GET["type"]{0};
-$values['pType']=$_GET["pType"]{0};
-if ($values['pType']!="s") $values['pType']="p";
 if ($_GET['timeId']>0) $values['timeframeId']=(int) $_GET['timeId'];
 else $values['timeframeId']=(int) $_POST['timeId'];
 
@@ -15,7 +13,7 @@ $values['notspacecontext']=$_POST['notspacecontext'];
 $values['nottimecontext']=$_POST['nottimecontext'];
 $values['notcategory']=$_POST['notcategory'];
 
-if ($values['pType']=='s') $values['isSomeday']='y';
+if ($values['type']=='s') $values['isSomeday']='y';
 else $values['isSomeday']='n';
 
 //Check Session Variables
@@ -38,28 +36,23 @@ $categoryId=$values['categoryId'];
 if ($categoryId>=0) $_SESSION['categoryId']=$categoryId;
 else $values['categoryId']=$_SESSION['categoryId'];
 
-//Set page titles
-if ($values['type']=="a") {
-	$typename="Actions";
-	}
-elseif ($values['type']=="n") {
-	$typename="Next Actions";
-	$display="nextonly";
-	$values['type']="a";
-	}
-elseif ($values['type']=="r") {
-	$typename="References";
-	}
-elseif ($values['type']=="w") {
-	$typename="Waiting On";
-	}
-else {
-	$values['type']="a";
-        $typename="Items"; 
-	}
+//determine item and parent labels
+    switch ($values['type']) {
+        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; break;
+        case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; break;
+        case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; break;
+        case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; break;
+        case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; break;
+        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; break;
+        case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; break;
+        case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p";$values['type']="a"; $display="nextonly"; break;
+        case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
+        case "r" : $typename="References"; $parentname="Project"; $values['ptype']="p"; break;
+        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; break;
+        default  : $typename="Items"; $parentname=""; $values['ptype']="";
+        }
 
 //SQL CODE
-
 //create filter selectboxes
 $cashtml=categoryselectbox($config,$values,$options,$sort);
 $cshtml=contextselectbox($config,$values,$options,$sort);
@@ -79,29 +72,35 @@ if ($result!="-1") {
 
 //Select items
 
-//set query fragments based on filters
-$values['filterquery'] = "";
+//set query fragments based on filters  : parent and child filters!
+//add other filter possibilities
 
-if ($values['categoryId'] != NULL && $values['notcategory']!="true") $values['filterquery'] .= sqlparts("categoryfilter",$config,$values);
-if ($values['categoryId'] != NULL && $values['notcategory']=="true") $values['filterquery'] .= sqlparts("notcategoryfilter",$config,$values);
+//make generic based on type/someday, etc.
+$values['parentfilterquery'] = sqlparts("ptypefilter",$config,$values);
+$values['parentfilterquery'] .= sqlparts("issomeday",$config,$values);
+$values['parentfilterquery'] .= sqlparts("activeitems",$config,$values);
 
-if ($values['contextId'] != NULL && $values['notspacecontext']!="true") $values['filterquery'] .= sqlparts("contextfilter",$config,$values);
-if ($values['contextId'] != NULL && $values['notspacecontext']=="true") $values['filterquery'] .= sqlparts("notcontextfilter",$config,$values);
+$values['childfilterquery'] = sqlparts("typefilter",$config,$values);
+//$values['childfilterquery'] .= sqlparts("issomeday",$config,$values);  //?
+$values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
 
-if ($values['timeframeId'] != NULL && $values['nottimecontext']!="true") $values['filterquery'] .= sqlparts("timeframefilter",$config,$values);
-if ($values['timeframeId'] != NULL && $values['nottimecontext']=="true") $values['filterquery'] .= sqlparts("nottimeframefilter",$config,$values);
+if ($values['categoryId'] != NULL && $values['notcategory']!="true") $values['childfilterquery'] .= sqlparts("categoryfilter",$config,$values);
+if ($values['categoryId'] != NULL && $values['notcategory']=="true") $values['childfilterquery'] .= sqlparts("notcategoryfilter",$config,$values);
+
+if ($values['contextId'] != NULL && $values['notspacecontext']!="true") $values['childfilterquery'] .= sqlparts("contextfilter",$config,$values);
+if ($values['contextId'] != NULL && $values['notspacecontext']=="true") $values['childfilterquery'] .= sqlparts("notcontextfilter",$config,$values);
+
+if ($values['timeframeId'] != NULL && $values['nottimecontext']!="true") $values['childfilterquery'] .= sqlparts("timeframefilter",$config,$values);
+if ($values['timeframeId'] != NULL && $values['nottimecontext']=="true") $values['childfilterquery'] .= sqlparts("nottimeframefilter",$config,$values);
 
 //Get items for display
-$values['filterquery'] .= sqlparts("typefilter",$config,$values);
-$values['filterquery'] .= sqlparts("issomeday",$config,$values);
-$values['filterquery'] .= sqlparts("activeitemsandproject",$config,$values);
 $result = query("getitems",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
 	echo '<h2><a href="item.php?type='.$values['type'].'" title="Add new '.str_replace("s","",$typename).'">'.$typename."</a></h2>\n";
 	echo '<form action="listItems.php?type='.$values['type'].'" method="post">'."\n";
 	echo "<p>Category:&nbsp;\n";
-	echo '<select name="categoryId" title="Filter items by project category">'."\n";
+	echo '<select name="categoryId" title="Filter items by parent category">'."\n";
 	echo '	<option value="">All</option>'."\n";
 	echo $cashtml;
 	echo "</select>\n";
@@ -136,7 +135,7 @@ $result = query("getitems",$config,$values,$options,$sort);
 			if (($display=='nextonly')  && !($key = array_search($row['itemId'],$nextactions))) $showme="n";
 			if($showme=="y") {
 				$tablehtml .= "	<tr>\n";
-				$tablehtml .= '		<td><a href = "projectReport.php?projectId='.$row['projectId'].'"title="Go to '.htmlspecialchars(stripslashes($row['pname'])).' project report">'.stripslashes($row['pname'])."</a></td>\n";
+				$tablehtml .= '		<td><a href = "projectReport.php?projectId='.$row['projectId'].'"title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' project report">'.stripslashes($row['ptitle'])."</a></td>\n";
 
 				//if nextaction, add icon in front of action (* for now)
                                 if ($key = array_search($row['itemId'],$nextactions)) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</td>\n";

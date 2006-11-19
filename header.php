@@ -82,12 +82,12 @@ $config['theme']=$_SESSION['theme'];
 			<ul>
                                 <li><a href="listItems.php?type=i" title="Inbox">Inbox</a></li> 
 				<li><a href="reportContext.php" title="Active items sorted by context">Contexts</a></li>
-				<li><a href="listProjects.php?pType=p" title="Active projects">Projects</a></li>
+				<li><a href="listItems.php?type=p" title="Active projects">Projects</a></li>
 				<li><a href="listItems.php?type=n" title="Active next actions">Next Actions</a></li>
 				<li><a href="listItems.php?type=a" title="Active actions">Actions</a></li>
 				<li><a href="listItems.php?type=w" title="Active waiting">Waiting On</a></li>
 				<li><a href="listItems.php?type=r" title="Active references">References</a></li>
-				<li><a href="listProjects.php?pType=s" title="Someday projects">Someday/Maybe</a></li>
+				<li><a href="listItems.php?type=s" title="Someday projects">Someday/Maybe</a></li>
 				<li><a href="listList.php" title="General-purpose lists">Lists</a></li>
 				<li><a href="listChecklist.php" title="Reusable checklists">Checklists</a></li>
 				<li><a href="listProjects.php?pType=c" title="Completed projects">Achievements</a></li>
