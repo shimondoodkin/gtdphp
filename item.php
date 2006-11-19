@@ -78,23 +78,30 @@ else {
                         <input type='text' name='title' id='title' value='<?php echo stripslashes($currentrow['title']); ?>'>
                 </div>
 
-                <div class='formrow'>
-
                 <?php if ($values['ptype']!="") { ?>
-                        <label for='project' class='left first'><?php echo $parentname; ?>:</label>
-                        <select name="projectId" id='project'> <?php echo $pshtml; ?>
+                <div class='formrow'>
+                        <label for='project' class='left first'>
+                        <?php echo $parentname; ?>:</label>
+                        <select name="projectId" id='project'>
+                        <?php echo $pshtml; ?>
                         </select>
-                <?php   }
-                            echo "\n<label for='context' class='";
-                            if ($values['ptype']!="") echo "left";
-                                else echo "leftfirst";
-                            echo "'>Context:</label>\n";
-                 ?>
-                        <select name='contextId' id='context'> <?php echo $cshtml; ?>
+                </div>
+                <?php } ?>
+
+                <div class='formrow'>
+                        <label for='category' class='left first'>Category:</label>
+                        <select name='categoryId' id='category'>
+                        <?php echo $cashtml; ?>
+                        </select>
+
+                        <label for='context' class='left'>Context:</label>
+                        <select name='contextId' id='context'>
+                        <?php echo $cshtml; ?>
                         </select>
 
                         <label for='timeframe' class='left'>Time:</label>
-                        <select name='timeframeId' id='timeframe'> <?php echo $tshtml; ?>
+                        <select name='timeframeId' id='timeframe'>
+                        <?php echo $tshtml; ?>
                         </select>
                 </div>
 
@@ -158,13 +165,15 @@ else {
 
                 <div class='formrow'>
                         <label for='suppress' class='left first'>Tickler:</label>
-                        <input type='checkbox' name='suppress' id='suppress' value='y' title='Hides this project from the active view' <?php if ($currentrow['suppress']=="y") echo " CHECKED"; ?>/>
+                        <input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($currentrow['suppress']=="y") echo " CHECKED"; ?>/>
                         <label for='suppress'>Tickle&nbsp;</label>
                         <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $currentrow['suppressUntil'];?>'><label for='suppressUntil'>&nbsp;days before deadline</label>
                 </div>
 
                 <div class='formrow'>
                         <label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" value="y" <?php if ($nextactioncheck=='true') echo 'CHECKED '; ?>/>
+
+                        <label for='someday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='someday' value='y' title='Places project in Someday file'<?php if ($values['type']=='s') echo ' CHECKED';?>>
                 </div>
 
         </div> <!-- form div -->
@@ -173,7 +182,7 @@ else {
 if ($values['itemId']>0) {
         echo "			<input type='submit' value='Update ".$typename."' name='submit'>\n";
         echo "                  <input type='reset' value='Reset'>\n";
-        echo "                  <input type='checkbox' name='delete' id='delete' value='y' /><label for='delete'>Delete&nbsp;Item</label>\n";
+        echo "                  <input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Parent and child items are orphaned, NOT deleted.'/><label for='delete'>Delete&nbsp;".$typename."</label>\n";
     }
 else echo "			<input type='submit' value='Add ".$typename."' name='submit'>\n";
 ?>
