@@ -4,7 +4,7 @@ include_once('header.php');
 
 //GET URL AND VARIABLES
 $values=array();
-$calues['categoryId'] = (int) $_POST['categoryId'];
+$values['categoryId'] = (int) $_POST['categoryId'];
 $values['type'] = $_POST['type']{0};
 $values['referrer'] = $_POST['referrer']{0};
 $values['projectId'] = (int) $_GET['projectId'];
