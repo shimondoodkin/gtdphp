@@ -4,8 +4,6 @@ include_once('header.php');
 
 //GET URL ND FORM VARIABLES
 $values=array();
-$values['itemId'] = (int) $_GET['itemId'];
-$values['parentId']=(int) $_GET['parentId'];
 $values['type']=$_POST['type']{0};
 $values['referrer']=$_POST['referrer']{0};
 $values['categoryId'] = (int) $_POST['categoryId'];
@@ -28,6 +26,11 @@ if(isset($values['completedNas'])){
     $today=strtotime("now");
     $values['date']=date('Y-m-d');
     foreach ($values['completedNas'] as $values['completedNa']) {
+        $values['itemId']=$values['completedNa'];
+
+        //test to see if item is a nextaction
+        $nextactiontest=query("testnextaction",$config,$values);
+        if ($nextactiontest[0]['nextaction']==$values['completedNa']) $isna="true";
 
     //test to see if action is repeating
         $testrow = query("testitemrepeat",$config,$values);
@@ -35,7 +38,6 @@ if(isset($values['completedNas'])){
         if ($testrow[0]['repeat']!=0) {
             $nextdue=strtotime("+".$testrow[0]['repeat']."day");
             $values['nextduedate']=gmdate("Y-m-d", $nextdue);
-            $values['itemId']=$values['completedNa'];
 
             //retrieve item details
             $copyresult = query("selectitem",$config,$values,$options,$sort);
@@ -66,22 +68,22 @@ if(isset($values['completedNas'])){
             //copy parent information with new id
             if ($values['parentId']>0) $result=query("newparent",$config,$values);
 
-            //test to see if item is a nextaction
-            $nextactiontest=query("testnextaction",$config,$values);
+
             //update nextactions list with new itemId if nextaction (may want to set user option for this later)
-            if ($nextactiontest[0]['nextaction']==$values['completedNa']) $result = query("copynextaction",$config,$values);
+
+            if ($isna=="true") $result = query("copynextaction",$config,$values);
             }
 
         //in either case, set original row completed
         $result = query("completeitem",$config,$values);
 
         //remove original row from nextActions list
-        $result = query("deletenextaction",$config,$values);
+        if ($isna=="true") $result = query("deletenextaction",$config,$values);
         }
     }
 
 // Check on user radio button reset of next action 
-if (isset($values['isNext'])){
+if (($values['isNext']>0)){
     $values['itemId'] = $values['isNext'];
     $result = query("updatenextaction",$config,$values);
     }

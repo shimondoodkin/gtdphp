@@ -63,8 +63,8 @@ parent (show at all)
 $filter=array();
 type
 parent type
-issomeday
-tickler vs active vs completed //?
+issomeday //should handle like completed-- not as seperate type
+tickler vs active vs completed //?  completed overlays all item types ; remove type=c option from referrers
 repeats/doesnotrepeat
 space context
 time context
@@ -184,7 +184,7 @@ $result = query("getitems",$config,$values,$options,$sort);
                         $tablehtml .= "	<tr>\n";
 
                         //parent title
-                            if ($show['parent']!="false")$tablehtml .= '		<td><a href = "projectReport.php?projectId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
+                            if ($show['parent']!="false")$tablehtml .= '		<td><a href = "itemReport.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
 //                            if ($nonext=="true" && $values['completed']!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>'; 
                             $tablehtml .= stripslashes($row['ptitle'])."</a></td>\n";
 
@@ -197,13 +197,13 @@ $result = query("getitems",$config,$values,$options,$sort);
                         $tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
 
                         //item category
-                        $tablehtml .= '          <td><a href="editCategory.php?categoryId='.$row['categoryId'].'" title="Edit the '.htmlspecialchars(stripslashes($row['category'])).' category">'.stripslashes($row['category'])."</a></td>\n";
+                        $tablehtml .= '          <td><a href="reportCategory.php#'.$row['category'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['category'])).' category">'.stripslashes($row['category'])."</a></td>\n";
 
                         //item context name
-                        $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
+                        $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
                         
                         //item timeframe name
-                        $tablehtml .= '         <td><a href = "reportTimeContext.php?timeframe='.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.stripslashes($row['timeframe'])."</td>\n";
+                        $tablehtml .= '         <td><a href = "reportTimeContext.php#'.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.stripslashes($row['timeframe'])."</td>\n";
                         
                         //item deadline
                         $tablehtml .= "		<td>";
