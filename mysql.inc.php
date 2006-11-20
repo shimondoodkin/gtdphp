@@ -116,5 +116,5 @@ $sql = array(
         "updateproject"             => "UPDATE `projects` SET `projects`.`description` = '{$values['description']}', `projects`.`name` = '{$values['name']}', `projects`.`desiredOutcome` = '{$values['desiredOutcome']}' WHERE `projects`.`projectId` = '{$values['projectId']}'",
         "updateprojectattributes"   => "UPDATE `projectattributes` SET `projectattributes`.`categoryId` = '{$values['categoryId']}', `projectattributes`.`isSomeday` = '{$values['isSomeday']}', `projectattributes`.`deadline` = '{$values['deadline']}', `projectattributes`.`repeat` = '{$values['repeat']}', `projectattributes`.`suppress`='{$values['suppress']}', `projectattributes`.`suppressUntil`='{$values['suppressUntil']}' WHERE `projectattributes`.`projectId` = {$values['projectId']}",
         "updateprojectstatus"       => "UPDATE `projectstatus` SET  `projectstatus`.`dateCompleted`='{$values['dateCompleted']}' WHERE `projectstatus`.`projectId` ='{$values['projectId']}'",
-        "updatetimecontext"         => "UPDATE `timeitems` SET `timeframe` ='{$values['name']}', `description`='{$values['description']}' WHERE `timeframeId` ='{$values['tcId']}'",
+        "updatetimecontext"         => "UPDATE `timeitems` SET `timeframe` ='{$values['name']}', `description`='{$values['description']}', `type`='{$values['type']}' WHERE `timeframeId` ='{$values['tcId']}'",
     );
