@@ -55,8 +55,13 @@ $parent = query("lookupparent",$config,$values);
 
 $values['parentId']=$parent[0]['parentId'];
 
+//create filters for selectboxes
+if ($values['type']=="g") $values['timefilterquery'] = sqlparts("timegoals",$config,$values);
+else $values['timefilterquery'] = sqlparts("timeitems",$config,$values);
+
 //create item, timecontext, and spacecontext selectboxes
 $pshtml = parentselectbox($config,$values,$options,$sort);
+$cashtml = categoryselectbox($config,$values,$options,$sort);
 $cshtml = contextselectbox($config,$values,$options,$sort);
 $tshtml = timecontextselectbox($config,$values,$options,$sort);
 

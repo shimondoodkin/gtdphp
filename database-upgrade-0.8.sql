@@ -134,7 +134,7 @@ ALTER TABLE `goals` DROP `id`;
 ALTER TABLE `goals` CHANGE `prikey` `id` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0';
 
 --Move goal type data to timeitems--
-ALTER TABLE `timeitems` ADD `type` ENUM( 'm', 'v', 'o', 'g', 'p', 'a' ) NOT NULL DEFAULT 'a';
+ALTER TABLE `timeitems` ADD `type` ENUM( 'v', 'o', 'g', 'p', 'a' ) NOT NULL DEFAULT 'a';
 ALTER TABLE `timeitems` ADD INDEX ( `type` );
 ALTER TABLE `goals` ADD `timeframeId` INT UNSIGNED NOT NULL;
 UPDATE `goals` SET `timeframeId`= ((SELECT MAX(`timeframeId`) FROM `timeitems`)+1) WHERE `type`='weekly';

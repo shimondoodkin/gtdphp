@@ -7,8 +7,6 @@ $values=array();
 
 $result = query("getorphaneditems",$config,$values,$options,$sort);
 
-print_r($result);
-
 $tablehtml="";
 
 foreach ($result as $row) {
