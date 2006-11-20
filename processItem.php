@@ -35,7 +35,7 @@ $result = query("newitemstatus",$config,$values);
 if($values['nextAction']=='y') $result = query("newnextaction",$config,$values);
 if($values['parentId']>0) $result = query("newparent",$config,$values);
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['parentId'].'">';
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['newitemId'].'">';
 
 include_once('footer.php');
 ?>

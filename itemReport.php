@@ -80,11 +80,11 @@ switch ($item['type']) {
     case "g" : $childtype=array("p"); break;
     case "p" : $childtype=array("a","r","w"); break;
     case "s" : $childtype=array("a","r","w"); break;
-    case "a" : $childtype=""; break;
-    case "w" : $childtype=""; break;
-    case "r" : $childtype=""; break;
-    case "i" : $childtype=""; break;
-    default  : $childtype="";
+    case "a" : $childtype=NULL; break;
+    case "w" : $childtype=NULL; break;
+    case "r" : $childtype=NULL; break;
+    case "i" : $childtype=NULL; break;
+    default  : $childtype=NULL;
     }
 
 echo "<h1>".str_replace("s","",$typename[$item['type']])."&nbsp;Report:&nbsp;".stripslashes($item['title'])."</h1>\n";
@@ -108,6 +108,7 @@ if ($item['dateCompleted']>0) echo 'Completed On:&nbsp;'.$item['dateCompleted'].
 echo "</p>\n";
 
 
+if ($childtype!=NULL) {
 echo '<form action="processItemUpdate.php?itemId='.$values['itemId'].'" method="post">'."\n";
 
 //Create iteration arrays
@@ -118,7 +119,7 @@ foreach ($completed as $comp) {
     foreach ($childtype as $value) {
 	echo "<div class='reportsection'>\n";
 	if ($comp=="y") echo '<h2>Completed&nbsp;'.$typename[$value]."</h2>\n";
-	else echo '<h2><a href = "item.php?type='.$value.'&itemId='.$values['itemId'].'" title="Add new '.str_replace("s","",$typename[$value]).'">'.$typename[$value]."</a></h2>\n";
+	else echo '<h2><a href = "item.php?type='.$value.'" title="Add new '.str_replace("s","",$typename[$value]).'">'.$typename[$value]."</a></h2>\n";
 
     //Select items by type
     $values['type']=$value;
@@ -160,7 +161,7 @@ foreach ($completed as $comp) {
                                 echo $naText;
 
                                 //if nextaction, add icon in front of action (* for now)
-				echo '		<td class="nextactioncell"><a href="item.php?itemId='.$row['itemId'].'&pType='.$pType.'" class="nextactionlink" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'"><span class="nextActionMarker" title="Next Action">*</span>'.stripslashes($row['title'])."</a></td>\n";
+				echo '		<td class="nextactioncell"><a href="item.php?itemId='.$row['itemId'].'" class="nextactionlink" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'"><span class="nextActionMarker" title="Next Action">*</span>'.stripslashes($row['title'])."</a></td>\n";
 			} else {
 				echo "	<tr>\n";
 
@@ -169,7 +170,7 @@ foreach ($completed as $comp) {
                                 $naText.=$row['itemId'].'"><br></td>'."\n";
                                 if ($comp!="y") echo $naText;
 
-				echo '		<td><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
+				echo '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
 			}
 
 			echo '		<td>'.nl2br(stripslashes($row['description']))."</td>\n";
@@ -218,6 +219,6 @@ foreach ($completed as $comp) {
             	}
 }
 echo "</form>\n";
-
+}
 include_once('footer.php');
 ?>

@@ -82,17 +82,17 @@ $config['theme']=$_SESSION['theme'];
 			<ul>
                                 <li><a href="listItems.php?type=i" title="Inbox">Inbox</a></li> 
 				<li><a href="reportContext.php" title="Active items sorted by context">Contexts</a></li>
-				<li><a href="listItems.php?type=p" title="Active projects">Projects</a></li>
-				<li><a href="listItems.php?type=n" title="Active next actions">Next Actions</a></li>
-				<li><a href="listItems.php?type=a" title="Active actions">Actions</a></li>
-				<li><a href="listItems.php?type=w" title="Active waiting">Waiting On</a></li>
-				<li><a href="listItems.php?type=r" title="Active references">References</a></li>
-				<li><a href="listItems.php?type=s" title="Someday projects">Someday/Maybe</a></li>
+				<li><a href="listItems.php?type=p" title="Projects">Projects</a></li>
+				<li><a href="listItems.php?type=n" title="Next actions">Next Actions</a></li>
+				<li><a href="listItems.php?type=a" title="Actions">Actions</a></li>
+				<li><a href="listItems.php?type=w" title="Waiting On">Waiting On</a></li>
+				<li><a href="listItems.php?type=r" title="References">References</a></li>
+				<li><a href="listItems.php?type=s" title="Someday projects">Someday/Maybes</a></li>
 				<li><a href="listList.php" title="General-purpose lists">Lists</a></li>
 				<li><a href="listChecklist.php" title="Reusable checklists">Checklists</a></li>
-				<li><a href="listItems.php?type=c" title="Completed projects">Achievements</a></li>
-				<li><a href="summaryAlone.php" title="Summary view">Summary</a></li>
-				<li><a href="tickler.php" title="Hidden items and reminders">Tickler File</a></li>
+				<li><a href="listItems.php?type=c" title="Notable Achivements">Achievements</a></li>
+                                <li><a href="tickler.php" title="Hidden items and reminders">Tickler File</a></li>				
+                                <li><a href="summaryAlone.php" title="Summary view">Summary</a></li>
 			</ul>
 
 		<li>Review
@@ -100,6 +100,10 @@ $config['theme']=$_SESSION['theme'];
 				<li><a href="weekly.php" title="Steps in the Weekly Review">Weekly Review</a></li>
                                 <li><a href="leadership.php" title="Leadership view">Leadership</a></li>
                                 <li><a href="management.php" title="Management view">Management</a></li>
+                                <li><a href="listItems.php?type=m" title="Values / Mission">Values</a></li>
+                                <li><a href="listItems.php?type=v" title="Visions">Visions</a></li>
+                                <li><a href="listItems.php?type=o" title="Roles / Areas of Responsibility">Roles</a></li>
+                                <li><a href="listItems.php?type=g" title="Goals">Goals</a></li>
                                 <li><a href="orphans.php" title="List items without a parent item">Orphaned Items</a></li>
 			</ul>
 
@@ -111,9 +115,9 @@ $config['theme']=$_SESSION['theme'];
 
                 <li>Config
 
-			<ul>
+			<ul><!-- need to change from capture to management view  //-->
 				<li><a href="newCategory.php" title="Meta-categories">Categories</a></li>
-				<li><a href="newContext.php" title="Spatial contexts">Space Contexts</a></li>
+				<li><a href="newContext.php" title="Spatial contexts">Space Contexts</a></li>  
 				<li><a href="newTimeContext.php" title="Time contexts">Time Contexts</a></li>
 				<li><a href="preferences.php" title="User preferences">User Preferences</a></li>
 			</ul>
@@ -131,6 +135,3 @@ $config['theme']=$_SESSION['theme'];
 </div>
 
 <div id="main">
-
-
-
