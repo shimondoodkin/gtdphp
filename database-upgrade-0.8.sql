@@ -151,11 +151,18 @@ INSERT INTO `timeitems` ( `timeframeId` , `timeframe` , `description` , `type` )
 --Drop projectattributes, projectstatus, projects, and goals tables--
 DROP TABLE `projectattributes`,`projects`,`projectstatus`,`goals` ;
 
---Update indexes and fulltext searches--
+--Reorder tables by itemId--
 ALTER TABLE `items`  ORDER BY `itemId`;
 ALTER TABLE `itemattributes`  ORDER BY `itemId`;
 ALTER TABLE `itemstatus`  ORDER BY `itemId`;
 ALTER TABLE `itemattributes` ADD INDEX ( `isSomeday`);
+
+--Replace Autoincrement on primary keys--
+ALTER TABLE `items` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT
+ALTER TABLE `itemattributes` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT
+ ALTER TABLE `itemstatus` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT 
+
+--Update indexes and fulltext searches--
 ALTER TABLE `timeitems` ADD FULLTEXT (`timeframe`);
 ALTER TABLE `timeitems` ADD FULLTEXT (`description`);
 ALTER TABLE `tickler` ADD FULLTEXT (`title`);

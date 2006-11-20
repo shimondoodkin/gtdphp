@@ -6,7 +6,6 @@ $nextactioncheck="n";
 
 //RETRIEVE URL VARIABLES
 $values = array();
-$values['projectId']= (int) $_GET["projectId"];
 $values['itemId']= (int) $_GET["itemId"];
 $values['type']=$_GET["type"]{0};
 
@@ -144,7 +143,7 @@ else {
                 </div>
                 <div class='formrow'>
                         <label for='outcome' class='left first'>Desired Outcome:</label>
-                        <textarea rows='4' name='outcome' id='outcome' class='big' wrap='virtual'><?php echo stripslashes($currentrow['desiredOutcome']) ?></textarea>
+                        <textarea rows='4' name='desiredOutcome' id='outcome' class='big' wrap='virtual'><?php echo stripslashes($currentrow['desiredOutcome']) ?></textarea>
                 </div>
                 <div class='formrow'>
                         <label class='left first'>Type:</label>
@@ -179,7 +178,7 @@ else {
                 <div class='formrow'>
                         <label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" value="y" <?php if ($nextactioncheck=='true') echo 'CHECKED '; ?>/>
 
-                        <label for='someday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='someday' value='y' title='Places project in Someday file'<?php if ($values['type']=='s') echo ' CHECKED';?>>
+                        <label for='someday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='someday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']=='y' || $values['type']=='s') echo ' CHECKED';?>>
                 </div>
 
         </div> <!-- form div -->
@@ -188,7 +187,7 @@ else {
 if ($values['itemId']>0) {
         echo "			<input type='submit' value='Update ".$typename."' name='submit'>\n";
         echo "                  <input type='reset' value='Reset'>\n";
-        echo "                  <input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Parent and child items are orphaned, NOT deleted.'/><label for='delete'>Delete&nbsp;".$typename."</label>\n";
+        echo "                  <input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/><label for='delete'>Delete&nbsp;".$typename."</label>\n";
     }
 else echo "			<input type='submit' value='Add ".$typename."' name='submit'>\n";
 ?>

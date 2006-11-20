@@ -90,7 +90,7 @@ $config['theme']=$_SESSION['theme'];
 				<li><a href="listItems.php?type=s" title="Someday projects">Someday/Maybe</a></li>
 				<li><a href="listList.php" title="General-purpose lists">Lists</a></li>
 				<li><a href="listChecklist.php" title="Reusable checklists">Checklists</a></li>
-				<li><a href="listProjects.php?pType=c" title="Completed projects">Achievements</a></li>
+				<li><a href="listItems.php?type=c" title="Completed projects">Achievements</a></li>
 				<li><a href="summaryAlone.php" title="Summary view">Summary</a></li>
 				<li><a href="tickler.php" title="Hidden items and reminders">Tickler File</a></li>
 			</ul>
