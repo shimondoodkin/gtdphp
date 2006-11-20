@@ -28,6 +28,10 @@ if(isset($values['completedNas'])){
     foreach ($values['completedNas'] as $values['completedNa']) {
         $values['itemId']=$values['completedNa'];
 
+        //lookup parent of item
+        $parentresult = query("lookupparent",$config,$values);
+        if ($parentresult!="-1") $values['parentId']=$parentresult[0]['parentId'];
+
         //test to see if item is a nextaction
         $nextactiontest=query("testnextaction",$config,$values);
         if ($nextactiontest[0]['nextaction']==$values['completedNa']) $isna="true";
@@ -53,10 +57,6 @@ if(isset($values['completedNas'])){
             $values['repeat']=$copyresult[0]['repeat'];
             $values['suppress']=$copyresult[0]['suppress'];
             $values['suppressUntil']=$copyresult[0]['suppressUntil'];
-
-            //lookup parent of item
-            $parentresult = query("lookupparent",$config,$values);
-            if ($parentresult!="-1") $values['parentId']=$parentresult[0]['parentId'];
 
             //copy data to projects tables with new id
             $result=query("newitem",$config,$values);
@@ -89,22 +89,22 @@ if (($values['isNext']>0)){
     }
 
 if ($values['referrer']=="i") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=listItems.php?type='.$values['type'].'&contextId='.$values['contextId'].'&timeId='.$values['timeId'].'&categoryId='.$values['categoryId'].'">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$values['type'].'&contextId='.$values['contextId'].'&timeId='.$values['timeId'].'&categoryId='.$values['categoryId'].'">';
 	}
 
 elseif ($values['referrer']=="p") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=itemReport.php?itemId='.$values['itemId'].'">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['parentId'].'">';
 	}
 
 elseif ($values['referrer']=="c") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=reportContext.php">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=reportContext.php">';
 	}
 
 elseif ($values['referrer']=="t") {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=tickler.php">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=tickler.php">';
 }
 else {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=reportContext.php">';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=reportContext.php">';
 	}
 
 include_once('footer.php');

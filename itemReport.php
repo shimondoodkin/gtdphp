@@ -136,8 +136,8 @@ foreach ($completed as $comp) {
 		$counter=0;
 		echo "<table class='datatable'>\n";
 		echo "	<thead>\n";
-                echo "          <td>Next</td>\n";               
-		echo "		<td>".$typelabel[$value]."</td>\n";
+            if ($comp!="y") echo "          <td>Next</td>\n";
+		echo "		<td>".$typename[$value]."</td>\n";
 		echo "		<td>Description</td>\n";
 		echo "		<td>Context</td>\n";
 		if ($comp=="n") {
@@ -152,22 +152,22 @@ foreach ($completed as $comp) {
 		echo "	</thead>\n";
 
 		foreach ($result as $row) {
-			//if nextaction, add icon in front of action (* for now)
-			if ($key = in_array($row['itemId'],$nextactions)) {
+			if ($key = in_array($row['itemId'],$nextactions) && $comp!="y") {
                                 echo "	<tr class = 'nextactionrow'>\n";
                                 $naText='<td align=center><input type="radio"';
                                 $naText.=' name="isNext" value="';
                                 $naText.=$row['itemId'].'" checked><br></td>'."\n";
                                 echo $naText;
-                                
+
+                                //if nextaction, add icon in front of action (* for now)
 				echo '		<td class="nextactioncell"><a href="item.php?itemId='.$row['itemId'].'&pType='.$pType.'" class="nextactionlink" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'"><span class="nextActionMarker" title="Next Action">*</span>'.stripslashes($row['title'])."</a></td>\n";
 			} else {
 				echo "	<tr>\n";
-                                
-                                $naText='<td align=center><input type="radio"';                  
+
+                                $naText='<td align=center><input type="radio"';
                                 $naText.=' name="isNext" value="';
                                 $naText.=$row['itemId'].'"><br></td>'."\n";
-                                echo $naText;
+                                if ($comp!="y") echo $naText;
 
 				echo '		<td><a href = "item.php?itemId='.$row['itemId'].'&pType='.$pType.'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
 			}
