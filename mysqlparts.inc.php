@@ -4,7 +4,7 @@ $sqlparts = array(
     
     "activeitems"           =>  " AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND ((CURDATE()>=DATE_ADD(`itemattributes`.`deadline`, INTERVAL -(`itemattributes`.`suppressUntil`) DAY)) OR `itemattributes`.`suppress`='n') ",
     "activelistitems"       =>  " AND (`listItems`.`dateCompleted` IS NOT NULL AND `listItems`.`dateCompleted` ='0000-00-00') ",
-    "categoryfilter"        =>  " AND `projectattributes`.`categoryId` = '{$values['categoryId']}' ",
+    "categoryfilter"        =>  " AND `itemattributes`.`categoryId` = '{$values['categoryId']}' ",
     "contextfilter"         =>  " AND `itemattributes`.`contextId` = '{$values['contextId']}' ",
     "completeditems"        =>  " AND  `itemstatus`.`dateCompleted` > 0 ",
     "completedlistitems"    =>  " AND (`listItems`.`dateCompleted`!='0000-00-00' AND `listItems`.`dateCompleted` IS NOT NULL) ",
@@ -14,7 +14,7 @@ $sqlparts = array(
     "notcategoryfilter"     =>  " AND `itemattributes`.`categoryId` != '{$values['categoryId']}' ",
     "notcontextfilter"      =>  " AND `itemattributes`.`contextId` != '{$values['contextId']}' ",
     "nottimeframefilter"    =>  " AND `itemattributes`.`timeframeId` !='{$values['timeframeId']}' ",
-    "suppresseditems"       =>  " AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`projectstatus`.`dateCompleted` IS NULL OR `projectstatus`.`dateCompleted` = '0000-00-00') AND (`itemattributes`.`suppress`='y') ",
+    "suppresseditems"       =>  " AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`itemattributes`.`suppress`='y') ",
     "timeframefilter"       =>  " AND `itemattributes`.`timeframeId` ='{$values['timeframeId']}' ",
     "timegoals"             =>  " WHERE `timeitems`.`type` = 'g' ",
     "timeitems"             =>  " WHERE `timeitems`.`type` !='g' ",

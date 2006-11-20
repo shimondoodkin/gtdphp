@@ -11,13 +11,13 @@ $tablehtml="";
 
 foreach ($result as $row) {
     switch ($row['type']) {
-        case "v" : $typename="visions";
-        case "o" : $typename="roles";
-        case "g" : $typename="goals";
-        case "p" : $typename="projects";
-        case "a" : $typename="actions";
-        case "w" : $typename="waiting";
-        case "r" : $typename="references";
+        case "v" : $typename="vision"; break;
+        case "o" : $typename="role"; break;
+        case "g" : $typename="goal"; break;
+        case "p" : $typename="project"; break;
+        case "a" : $typename="action"; break;
+        case "w" : $typename="waiting"; break;
+        case "r" : $typename="references"; break;
         }
     
                                 $tablehtml .= " <tr>\n";

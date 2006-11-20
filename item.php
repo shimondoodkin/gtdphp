@@ -25,10 +25,11 @@ if ($values['itemId']>0) {
     $result = query("selectitem",$config,$values,$options,$sort);
     if ($GLOBALS['ecode']==0) {
     $currentrow = $result[0];
-    $values['projectId']=$currentrow['projectId'];
-    $values['timeframeId']=$currentrow['timeframeId'];
-    $values['contextId']=$result[0]['contextId'];
+    $values['itemId']=$currentrow['itemId'];
     $values['type']=$currentrow['type'];
+    $values['categoryId']=$currentrow['categoryId'];
+    $values['contextId']=$currentrow['contextId'];
+    $values['timeframeId']=$currentrow['timeframeId'];
     $values['isSomeday']=$currentrow['isSomeday'];
 
     //Test to see if nextaction
@@ -143,7 +144,7 @@ else {
                 </div>
                 <div class='formrow'>
                         <label for='outcome' class='left first'>Desired Outcome:</label>
-                        <textarea rows='4' name='outcome' id='outcome' class='big' wrap='virtual'><?php echo stripslashes($row['desiredOutcome']) ?></textarea>
+                        <textarea rows='4' name='outcome' id='outcome' class='big' wrap='virtual'><?php echo stripslashes($currentrow['desiredOutcome']) ?></textarea>
                 </div>
                 <div class='formrow'>
                         <label class='left first'>Type:</label>
