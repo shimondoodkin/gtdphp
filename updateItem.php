@@ -42,6 +42,7 @@ else {
     query("updateitemstatus",$config,$values);
     query("updateitemattributes",$config,$values);
     query("updateitem",$config,$values);
+    query("updateparent",$config,$values);
 
     if ($values['nextAction']=='y' && ($values['dateCompleted']==NULL || $values['dateCompleted']=="0000-00-00")) query("updatenextaction",$config,$values);
     else query("deletenextaction",$config,$values);

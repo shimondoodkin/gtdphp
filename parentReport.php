@@ -4,10 +4,10 @@ include_once('header.php');
 
 //RETRIEVE URL VARIABLES
 $values=array();
-$values['projectId'] = (int) $_GET['projectId'];
+$values['projectId'] = (int) $_GET['parentId'];
 
 //GET project details
-$result = query("selectproject",$config,$values,$options,$sort);
+$result = query("selectitem",$config,$values,$options,$sort);
 
 $project = $result[0];
 if ($project['isSomeday']=="y") $pType="s";

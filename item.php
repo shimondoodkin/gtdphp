@@ -86,9 +86,9 @@ else {
 
                 <?php if ($values['ptype']!="") { ?>
                 <div class='formrow'>
-                        <label for='project' class='left first'>
+                        <label for='parent' class='left first'>
                         <?php echo $parentname; ?>:</label>
-                        <select name="projectId" id='project'>
+                        <select name="parentId" id='parent'>
                         <?php echo $pshtml; ?>
                         </select>
                 </div>
