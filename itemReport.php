@@ -4,14 +4,11 @@ include_once('header.php');
 
 //RETRIEVE URL VARIABLES
 $values=array();
-$values['projectId'] = (int) $_GET['parentId'];
+$values['itemId'] = (int) $_GET['itemId'];
 
-//GET project details
+//Get item details
 $result = query("selectitem",$config,$values,$options,$sort);
-
-$project = $result[0];
-if ($project['isSomeday']=="y") $pType="s";
-else $pType="p";
+$item = $result[0];
 
 //select all nextactions for test
 $result = query("getnextactions",$config,$values,$options,$sort);
@@ -25,13 +22,17 @@ if ($result!="-1") {
     }
 //Find previous and next projects
 $values['isSomeday']="n";
-$values['filterquery'] = sqlparts("activeprojects",$config,$values);
+$values['type']=$item['type'];
+$values['filterquery']  = sqlparts("typefilter-w",$config,$values);
+$values['filterquery'] .= sqlparts("activeitems",$config,$values);
 $values['filterquery'] .= sqlparts("issomeday",$config,$values);
-$result = query("getprojects",$config,$values,$options,$sort);
+$result = query("getitemids",$config,$values,$options,$sort);
+
 $c=0;
 foreach ($result as $row) {
-    $ids[$c]=$row['projectId'];
-    if($ids[$c]==$values['projectId']){
+    $ids[$c]=$row['itemId'];
+    $titles[$c]=$row['title'];
+    if($ids[$c]==$values['itemId']){
         $id=$c;
     }
     $c++;
@@ -41,62 +42,96 @@ $n=sizeof($ids);
 if(isset($id)){
     if($id==$n-1){
         $nextId=$ids[0];
+        $nexttitle=$titles[0];
     }else{
         $nextId=$ids[$id+1];
+        $nexttitle=$titles[$id+1];
     }
     if($id==0){
         $previousId=$ids[$n-1];
+        $previoustitle=$titles[$n-1];
     }else{
         $previousId=$ids[$id-1];
+        $previoustitle=$titles[$id-1];
     }
 }
 
 //PAGE DISPLAY AREA
-if ($pType=="s") $typename="Someday/Maybe";
-else $typename="Project";
 
-echo '<form action="processItemUpdate.php?projectId='.$values['projectId'].'" method="post">'."\n";
+//set item labels
+$typename=array();
+$typename=array("m" => "Values",
+                "v" => "Visions",
+                "o" => "Roles",
+                "g" => "Goals",
+                "p" => "Projects",
+                "s" => "Someday/Maybes",
+                "a" => "Actions",
+                "w" => "Waiting Ons",
+                "r" => "References",
+                "i" => "Inbox Items");
 
-echo "<h1>".$typename."&nbsp;Report:&nbsp;".stripslashes($project['name'])."</h1>\n";
-echo '[ <a href="project.php?projectId='.$values['projectId'].'" title="Edit '.stripslashes($project['name']).'">Edit</a> ]'."\n";
-if(isset($previousId)){
-    echo '[ <a href="projectReport.php?projectId='.$previousId.'" title="Previous Project">Previous</a> ]'."\n";
-}
-if(isset($nextId)){
-    echo '[ <a href="projectReport.php?projectId='.$nextId.'" title="Next Project">Next</a> ]'."\n";
-}
-echo '<p>Created: '.$project['dateCreated']."<br />\n";
-echo 'Description: '.stripslashes($project['description'])."<br />\n";
-if ($project['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.stripslashes($project['desiredOutcome'])."<br />\n";
-if ($project['deadline']!=NULL && $project['deadline']!="0000-00-00") echo 'Deadline:&nbsp;'.$project['deadline']."<br />\n";
-if ($project['repeat']>0) echo 'Repeat every&nbsp;'.$project['repeat'].'&nbsp;days'."<br />\n";
-if ($project['suppress']=='y') echo 'Suppressed Until:&nbsp;'.$project['suppressUntil']."<br />\n";
-if ($project['dateCompleted']>0) echo 'Completed On:&nbsp;'.$project['dateCompleted']."\n";
+$childtype=array();  //I don't like this... but it's the best solution at the moment...
+
+switch ($item['type']) {
+    case "m" : $childtype=array("v"); break;
+    case "v" : $childtype=array("o"); break;
+    case "o" : $childtype=array("g"); break;
+    case "g" : $childtype=array("p"); break;
+    case "p" : $childtype=array("a","r","w"); break;
+    case "s" : $childtype=array("a","r","w"); break;
+    case "a" : $childtype=""; break;
+    case "w" : $childtype=""; break;
+    case "r" : $childtype=""; break;
+    case "i" : $childtype=""; break;
+    default  : $childtype="";
+    }
+
+echo "<h1>".str_replace("s","",$typename[$item['type']])."&nbsp;Report:&nbsp;".stripslashes($item['title'])."</h1>\n";
+
+//Edit, next, and previous buttons
+echo '[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.stripslashes($item['title']).'">Edit</a> ]'."\n";
+if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" title="'.$previoustitle.'">Previous</a> ]'."\n";
+if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="'.$nexttitle.'">Next</a> ]'."\n";
+
+//Item details
+echo '<p>Created: '.$item['dateCreated']."<br />\n";
+if ($item['description']!="") echo 'Description: '.stripslashes($item['description'])."<br />\n";
+if ($item['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.stripslashes($item['desiredOutcome'])."<br />\n";
+if ($item['categoryId']>0) echo 'Category:&nbsp;'.stripslashes($item['category'])."<br />\n";
+if ($item['contextId']>0) echo 'Space Context:&nbsp;'.stripslashes($item['cname'])."<br />\n";
+if ($item['timeframeId']>0) echo 'Time Context:&nbsp;'.stripslashes($item['timeframe'])."<br />\n";
+if ($item['deadline']!=NULL && $item['deadline']!="0000-00-00") echo 'Deadline:&nbsp;'.$item['deadline']."<br />\n";
+if ($item['repeat']>0) echo 'Repeat every&nbsp;'.$item['repeat'].'&nbsp;days'."<br />\n";
+if ($item['suppress']=='y') echo 'Suppressed Until:&nbsp;'.$item['suppressUntil']."<br />\n";
+if ($item['dateCompleted']>0) echo 'Completed On:&nbsp;'.$item['dateCompleted']."\n";
 echo "</p>\n";
+
+
+echo '<form action="processItemUpdate.php?itemId='.$values['itemId'].'" method="post">'."\n";
+
 //Create iteration arrays
-$type = array("a","w","r");
-$typelabel = array("a" => "Actions","w" => "Waiting On", "r" => "References");
 $completed = array("n","y");
 
 //table display loop
 foreach ($completed as $comp) {
-foreach ($type as $value) {
+    foreach ($childtype as $value) {
 	echo "<div class='reportsection'>\n";
-	if ($comp=="y") echo '<h2>Completed&nbsp;'.$typelabel[$value]."</h2>\n";
-	else echo '<h2><a href = "item.php?type='.$value.'&projectId='.$values['projectId'].'&pType='.$pType.'" title="Add new '.str_replace("s","",$typelabel[$value]).'">'.$typelabel[$value]."</a></h2>\n";
+	if ($comp=="y") echo '<h2>Completed&nbsp;'.$typename[$value]."</h2>\n";
+	else echo '<h2><a href = "item.php?type='.$value.'&itemId='.$values['itemId'].'" title="Add new '.str_replace("s","",$typename[$value]).'">'.$typename[$value]."</a></h2>\n";
 
     //Select items by type
     $values['type']=$value;
+    $values['parentId']=$values['itemId'];
     $values['filterquery'] = sqlparts("typefilter",$config,$values);
-    $values['filterquery'] .= sqlparts("projectfilter",$config,$values);
     if ($comp=="y") {
 		$values['filterquery'] .= sqlparts("completeditems",$config,$values);
-		$result = query("getcompleteditems",$config,$values,$options,$sort);
+		$result = query("getchildren",$config,$values,$options,$sort);
 	} else {
-		$values['filterquery'] .= sqlparts("activeitemsandproject",$config,$values);
-		$result = query("getitems",$config,$values,$options,$sort);
+		$values['filterquery'] .= sqlparts("activeitems",$config,$values);
+		$result = query("getchildren",$config,$values,$options,$sort);
 	}
-	
+
         if ($result != "-1") {
 		$counter=0;
 		echo "<table class='datatable'>\n";
@@ -180,7 +215,7 @@ foreach ($type as $value) {
 		else echo "<p>None</p>\n";
 
 		echo "</div>\n";
-	}
+            	}
 }
 echo "</form>\n";
 

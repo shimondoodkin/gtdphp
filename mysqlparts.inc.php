@@ -18,14 +18,16 @@ $sqlparts = array(
     "timeframefilter"       =>  " AND `itemattributes`.`timeframeId` ='{$values['timeframeId']}' ",
     "timegoals"             =>  " WHERE `timeitems`.`type` = 'g' ",
     "timeitems"             =>  " WHERE `timeitems`.`type` !='g' ",
-    "ptypefilter"           =>  " WHERE `itemattributes`.`type` = '{$values['ptype']}' ", //PLACE FIRST IN FILTER STRING
-    "typefilter"            =>  " WHERE `itemattributes`.`type` = '{$values['type']}' ",  //PLACE FIRST IN FILTER STRING
+    "ptypefilter-w"         =>  " WHERE `itemattributes`.`type` = '{$values['ptype']}' ", //PLACE FIRST IN FILTER STRING
+    "typefilter-w"          =>  " WHERE `itemattributes`.`type` = '{$values['type']}' ",  //PLACE FIRST IN FILTER STRING
+    "typefilter"            =>  " AND `itemattributes`.`type` = '{$values['type']}' ",
     "repeats"               =>  " AND `itemattributes`.`repeat`>'0' ",
     "doesnotrepeat"         =>  " AND `itemattributes`.`repeat`='0' ",
     "deadline"              =>  " AND `itemattributes`.`deadline` IS NOT NULL ",
     "nodeadline"            =>  " AND `itemattributes`.`deadline` IS NULL OR `itemattributes`.`deadline` = '0000-00-00' ",
     "duetoday"              =>  " AND `itemattributes`.`deadline` = '{$values['today']}' ",
     "neglected"             =>  " AND CURDATE()>DATE_ADD(`itemstatus`.`lastModified`,INTERVAL {$values['neglected']} DAY) ",
+    "selectitem"            =>  " AND `items`.`itemId` = '{$values['itemId']}' ",
     );
 
 //parentfilterquery: typefilter, issomeday, activeitems

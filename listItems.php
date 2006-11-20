@@ -118,11 +118,11 @@ if ($result!="-1") {
 //add other filter possibilities
 
 //make generic based on type/someday, etc.
-$values['parentfilterquery'] = sqlparts("ptypefilter",$config,$values);
+$values['parentfilterquery'] = sqlparts("ptypefilter-w",$config,$values);
 $values['parentfilterquery'] .= sqlparts("issomeday",$config,$values);
 $values['parentfilterquery'] .= sqlparts("activeitems",$config,$values);
 
-$values['childfilterquery'] = sqlparts("typefilter",$config,$values);
+$values['childfilterquery'] = sqlparts("typefilter-w",$config,$values);
 //$values['childfilterquery'] .= sqlparts("issomeday",$config,$values);  //?
 $values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
 
