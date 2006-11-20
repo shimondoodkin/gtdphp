@@ -21,12 +21,12 @@ $result = query("selecttimecontext",$config,$values,$options,$sort);
 <div class="form">
     <div class="formrow">
     <label for="timeframe" class="left first">Name:</label>
-    <input type="text" name="timeframe" id="timeframe" size="50" value="<?php echo stripslashes($result[0]['timeframe']); ?> " />
+    <input type="text" name="timeframe" id="title" value="<?php echo stripslashes($result[0]['timeframe']); ?> " />
     </div>
 
     <div class="formrow">
         <label for="description" class="left first">Description:</label>
-        <textarea cols="80" rows="10" name="description" wrap=virtual"><?php echo stripslashes($result[0]['description']) ?></textarea>
+        <textarea  rows='4' class='big' id='description' name="description" wrap='virtual' ><?php echo stripslashes($result[0]['description']) ?></textarea>
     </div>
 
     <div class='formrow'>
@@ -39,8 +39,8 @@ $result = query("selecttimecontext",$config,$values,$options,$sort);
     </div>
 
     <div class="formrow">
-        <label for="delete" id="delete" class="left first">Delete Timeframe</label><input type="checkbox" name="delete" value="y" />
-        <label for="reassign" class="notfirst">Reassign Items to timeframe:</label>
+        <label for="delete" id="delete" class="left first">Delete</label><input type="checkbox" name="delete" value="y" />
+        <label for="reassign" id="reassign" class="notfirst">Reassign Items to timeframe:</label>
         <select name="ntcId"><?php echo $tshtml; ?></select>
     </div>
 </div>
