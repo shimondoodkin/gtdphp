@@ -4,10 +4,9 @@ $config = array(
 
     //connection information
         "host"                      => 'localhost', //the hostname of your database server
-        "db"                        => 'gtd', //the name of your database
+        "db"                        => '', //the name of your database
         "user"                      => '', //username for database access
         "pass"                      => '', //database password
-
     //database information
         "dbtype"                    => 'mysql',  //database type: currently only mysql is valid.  DO NOT CHANGE!
 
@@ -42,5 +41,8 @@ $sort = array(
     "getchecklists"         => "`categories`.`category` ASC",
     "getlists"              => "`categories`.`category` ASC",
     "getchecklistitems"     => "`checklistItems`.`checked` DESC, `checklistItems`.`item` ASC",
+    "getchildren"           => "`itemattributes`.`type` ASC",
+    "getitemids"            =>  " `categories`.`category`, `items`.`title` ASC ",
+
     );
 ?>
