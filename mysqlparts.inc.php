@@ -16,8 +16,8 @@ $sqlparts = array(
     "nottimeframefilter"    =>  " AND `itemattributes`.`timeframeId` !='{$values['timeframeId']}' ",
     "suppresseditems"       =>  " AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') AND (`itemattributes`.`suppress`='y') ",
     "timeframefilter"       =>  " AND `itemattributes`.`timeframeId` ='{$values['timeframeId']}' ",
-    "timegoals"             =>  " WHERE `timeitems`.`type` = 'g' ",
-    "timeitems"             =>  " WHERE `timeitems`.`type` !='g' ",
+    "timegoals"             =>  " WHERE `timeitems`.`type` = 'g' ", //FOR timecontextselectbox ONLY
+    "timeitems"             =>  " WHERE `timeitems`.`type` !='g' ", //FOR timecontextselectbox ONLY
     "ptypefilter-w"         =>  " WHERE `itemattributes`.`type` = '{$values['ptype']}' ", //PLACE FIRST IN FILTER STRING
     "typefilter-w"          =>  " WHERE `itemattributes`.`type` = '{$values['type']}' ",  //PLACE FIRST IN FILTER STRING
     "typefilter"            =>  " AND `itemattributes`.`type` = '{$values['type']}' ",
