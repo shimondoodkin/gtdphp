@@ -85,7 +85,7 @@ on column header
         case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; break;
         case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; break;
         case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; break;
-        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; break;
+        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; $values['type']="p"; break;
         case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; break;
         case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p";$values['type']="a"; $display="nextonly"; break;
         case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
@@ -119,11 +119,12 @@ if ($result!="-1") {
 
 //make generic based on type/someday, etc.
 $values['parentfilterquery'] = sqlparts("ptypefilter-w",$config,$values);
-$values['parentfilterquery'] .= sqlparts("issomeday",$config,$values);
+//$values['parentfilterquery'] .= sqlparts("issomeday",$config,$values);
 $values['parentfilterquery'] .= sqlparts("activeitems",$config,$values);
 
+//problem with isSomeday--  retrieves ITEM that isSomeday, not PARENT
 $values['childfilterquery'] = sqlparts("typefilter-w",$config,$values);
-//$values['childfilterquery'] .= sqlparts("issomeday",$config,$values);  //?
+$values['childfilterquery'] .= sqlparts("issomeday",$config,$values);  //?
 $values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
 
 if ($values['categoryId'] != NULL && $values['notcategory']!="true") $values['childfilterquery'] .= sqlparts("categoryfilter",$config,$values);
