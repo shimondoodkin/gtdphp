@@ -5,6 +5,8 @@ include_once('header.php');
 //RETRIEVE URL VARIABLES
 $values=array();
 $values['noteId']= (int) $_GET["noteId"];
+$referrer = $_GET["referrer"];
+$type = $_GET["type"];
 
 //select note details
 if ($values['noteId']>0) {
@@ -55,6 +57,9 @@ echo '<br />';
 if ($values['noteId']>0) echo '<input type="submit" class="button" value="Update Note" name="submit">';
 else echo '<input type="submit" class="button" value="Add Note" name="submit">';
 echo '<input type="reset" class="button" value="Reset">';
+echo '<input type="hidden" name="referrer" value="'.$referrer.'" />';
+echo '<input type="hidden" name="type" value="'.$type.'" />';
+echo '</form>';
 
 include_once('footer.php');
 ?>

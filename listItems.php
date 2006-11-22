@@ -5,7 +5,7 @@ include_once('header.php');
 
 //GET URL VARIABLES
 $values = array();
-$values['type']=$_GET["type"]{0};
+$type=$_GET["type"]{0};
 if ($_GET['categoryId']>0) $values['categoryId']=(int) $_GET['categoryId'];
 else $values['categoryId']=(int) $_POST['categoryId'];
 if ($_GET['contextId']>0) $values['contextId']=(int) $_GET['contextId'];
@@ -17,7 +17,7 @@ $values['notspacecontext']=$_POST['notspacecontext'];
 $values['nottimecontext']=$_POST['nottimecontext'];
 $values['notcategory']=$_POST['notcategory'];
 
-if ($values['type']=='s') $values['isSomeday']='y';
+if ($type=='s') $values['isSomeday']='y';
 else $values['isSomeday']='n';
 
 //Check Session Variables
@@ -33,22 +33,6 @@ else $values['categoryId']=$_SESSION['categoryId'];
 
 //page display options array--- can put defaults in preferences table/config/session and load into $show array as defaults...
 $show=array();
-$show['parent']=TRUE;
-$show['title']=TRUE;
-$show['description']=TRUE;
-$show['desiredOutcome']=FALSE;
-$show['isSomeday']=FALSE;
-$show['suppress']=FALSE;
-$show['suppressUntil']=FALSE;
-$show['dateCreated']=FALSE;
-$show['lastModified']=FALSE;
-$show['category']=TRUE;
-$show['context']=TRUE;
-$show['timeframe']=TRUE;
-$show['deadline']=TRUE;
-$show['repeat']=TRUE;
-$show['checkbox']=TRUE;
-
 
 /*
 
@@ -89,21 +73,6 @@ on column header
 */
 
 
-//determine item and parent labels, set a few defaults
-    switch ($values['type']) {
-        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; break;
-        case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; $values['type']="p"; $show['context']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['timeframe']=FALSE; $show['dateCreated']=TRUE; break;
-        case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; break;
-        case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p"; $values['type']="a"; $display="nextonly"; $show['category']=FALSE; break;
-        case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
-        case "r" : $typename="References"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; break;
-        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $show['checkbox']=FALSE; break;
-        default  : $typename="Items"; $parentname=""; $values['ptype']="";
-        }
 
 //SQL CODE
 //create filter selectboxes
@@ -123,10 +92,103 @@ if ($result!="-1") {
         }
     }
 
+//Select notes
+$reminderresult = query("getnotes",$config,$values,$options,$sort);
+
+
 //Select items
 
 //set query fragments based on filters  : parent and child filters!
 //add other filter possibilities
+
+
+$loop=array();
+if ($type=="t") {
+    $loop = array("m","v","o","g","p","a","w","r");
+    $suppressed=TRUE;
+    }
+
+else {
+    $loop = array($type);
+    $suppresed=FALSE;
+    }
+
+
+//Tickler file header and notes section
+if ($type=="t")
+    echo "<h1>Tickler File</h1>\n";
+    echo "<div class='tickler'>\n";
+    echo '<h4>Today is '.date("l, F jS, Y").'. (Week '.date("w").'/52 & Day '.date("z").'/'.(365+date("L")).")</h4>\n";
+    echo '<p>To add an item to the tickler file:
+            <ul>
+                    <li>Add a new item (<a href="item.php?type=a" title="Add new action">action</a>,
+                            <a href="item.php?type=w" title="Add new waitingOn">waiting</a>,
+                            <a href="item.php?type=r" title="Add new reference">reference</a>),
+                            <a href="project.php?type=p">project</a>, or <a href="project.php?type=s">someday/maybe</a> as appropriate,</li>
+                    <li>Select the tickler option, and fill in the details as desired.</li>
+            </ul>
+            <br />Reminder notes can be added <a href="note.php?&type='.$type.'&referrer=t" Title="Add new reminder">here</a>.</p>';
+    echo "</div>\n";
+    if ($reminderresult!="-1") {
+            echo "<div class='notes'>\n";
+            echo "<h3>Reminder Notes</h3>";
+            $tablehtml="";
+            foreach ($reminderresult as $row) {
+                    $tablehtml .= " <tr>\n";
+                    $tablehtml .= "         <td>".$row['date']."</td>\n";
+                    $tablehtml .= '         <td><a href = "note.php?noteId='.$row['ticklerId'].'&type='.$type.'&referrer=t" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</td>\n";
+                    $tablehtml .= '         <td>'.nl2br(stripslashes($row['note']))."</td>\n";
+                    $tablehtml .= " </tr>\n";
+            }
+
+            echo "<table class='datatable'>\n";
+            echo "  <thead>\n";
+            echo "          <td>Reminder</td>\n";
+            echo "          <td>Title</td>\n";
+            echo "          <td>Note</td>\n";
+            echo "  </thead>\n";
+            echo $tablehtml;
+            echo "</table>\n";
+            echo "</div>\n";
+        }
+
+$filterdisplay=0;
+foreach ($loop as $values['type']) {
+
+//reset default table column display options (kludge-- needs to be divided into multidimensional array for each table type
+$show['parent']=TRUE;
+$show['title']=TRUE;
+$show['description']=TRUE;
+$show['desiredOutcome']=FALSE;
+$show['isSomeday']=FALSE;
+$show['suppress']=FALSE;
+$show['suppressUntil']=FALSE;
+$show['dateCreated']=FALSE;
+$show['lastModified']=FALSE;
+$show['category']=TRUE;
+$show['context']=TRUE;
+$show['timeframe']=TRUE;
+$show['deadline']=TRUE;
+$show['repeat']=TRUE;
+$show['checkbox']=TRUE;
+
+
+//determine item and parent labels, set a few defaults
+    switch ($values['type']) {
+        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; break;
+        case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; $values['type']="p"; $show['context']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['timeframe']=FALSE; $show['dateCreated']=TRUE; break;
+        case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; break;
+        case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p"; $values['type']="a"; $display="nextonly"; $show['category']=FALSE; break;
+        case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
+        case "r" : $typename="References"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; break;
+        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; break;
+        default  : $typename="Items"; $parentname=""; $values['ptype']="";
+        }
+
 
 //make generic based on type/someday, etc.
 $values['parentfilterquery'] = sqlparts("ptypefilter-w",$config,$values);
@@ -136,7 +198,10 @@ $values['parentfilterquery'] .= sqlparts("activeitems",$config,$values);
 
 $values['childfilterquery'] = sqlparts("typefilter-w",$config,$values);
 $values['childfilterquery'] .= sqlparts("issomeday",$config,$values);  //?
-$values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
+
+if ($suppressed==TRUE) $values ['childfilterquery'] .= sqlparts("suppresseditems",$config,$values);
+else $values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
+
 
 if ($values['categoryId'] != NULL && $values['notcategory']!="true") $values['childfilterquery'] .= sqlparts("categoryfilter",$config,$values);
 if ($values['categoryId'] != NULL && $values['notcategory']=="true") $values['childfilterquery'] .= sqlparts("notcategoryfilter",$config,$values);
@@ -151,10 +216,7 @@ if ($values['timeframeId'] != NULL && $values['nottimecontext']=="true") $values
 $result = query("getitemsandparent",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
-	echo '<h2>';
-        
-        if ($values['completed']=="y") echo 'Completed&nbsp;'.$typename."</h2>\n";
-        else echo '<a href="item.php?type='.$values['type'].'" title="Add new '.str_replace("s","",$typename).'">'.$typename."</a></h2>\n";
+    if ($filterdisplay<1) {
         echo '<div id="filter">'."\n";
 	echo '<form action="listItems.php?type='.$values['type'].'" method="post">'."\n";
 	echo "<p>Category:&nbsp;\n";
@@ -185,7 +247,14 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
 	echo "</p>\n";
 	echo "</form>\n\n";
         echo "</div>\n";
-        
+        }
+        $filterdisplay++;
+
+        echo '<h2>';
+        if ($values['completed']=="y") echo 'Completed&nbsp;'.$typename."</h2>\n";
+        else echo '<a href="item.php?type='.$values['type'].'" title="Add new '.str_replace("s","",$typename).'">'.$typename."</a></h2>\n";
+
+
 	if ($result!="-1") {
                 $tablehtml="";
                 foreach ($result as $row) {
@@ -196,9 +265,11 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                         $tablehtml .= "	<tr>\n";
 
                         //parent title
-                            if ($show['parent']!=FALSE) $tablehtml .= '		<td><a href = "itemReport.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
-//                            if ($nonext=="true" && $values['completed']!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>'; 
-                            $tablehtml .= stripslashes($row['ptitle'])."</a></td>\n";
+                            if ($show['parent']!=FALSE) {
+                                $tablehtml .= '		<td><a href = "itemReport.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
+                                if ($nonext=="true" && $values['completed']!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>';
+                                $tablehtml .= stripslashes($row['ptitle'])."</a></td>\n";
+                                }
 
                         //item title
                         //if nextaction, add icon in front of action (* for now)
@@ -248,7 +319,7 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                     }
 
 		if ($tablehtml!="") {
-                        echo "<p>Click on ".$parentname." for individual report.</p>\n";
+                         if ($show['parent']!=FALSE) echo "<p>Click on ".$parentname." for individual report.</p>\n";
 			echo '<form action="processItemUpdate.php" method="post">'."\n";
 			echo "<table class='datatable'>\n";
 			echo "	<thead>\n";
@@ -274,16 +345,23 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
 			echo '<input type="hidden" name="referrer" value="i" />'."\n";
 			echo '<input type="submit" class="button" value="Complete '.$typename.'" name="submit">'."\n";
 			echo "</form>\n";
-		}else{
-			$message="Nothing was found.";
-			nothingFound($message);
 		}
-	}elseif($values['completed']!="y") {
+	}
+
+
+        elseif($values['completed']!="y" && $type!="t") {
 		$message="You have no ".$typename." remaining.";
 		$prompt="Would you like to create a new ".str_replace("s","",$typename)."?";
 		$yeslink="item.php?type=".$values['type'];
 		nothingFound($message,$prompt,$yeslink);
 	}
+        
+        elseif($type="t") {
+                $message="None";
+                nothingFound($message);
+        }
+
+}
 
 	include_once('footer.php');
 ?>

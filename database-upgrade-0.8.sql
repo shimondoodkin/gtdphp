@@ -53,6 +53,8 @@ INSERT INTO `newgtd`.`timeitems` SELECT * FROM `gtd`.`timeitems`;
 --SWITCH TO NEW DATABASE--
 
 USE `newgtd`;
+--Update note tickler file for repeating notes
+ALTER TABLE `tickler` ADD `repeat` INT UNSIGNED NOT NULL DEFAULT '0';
 
 --Create new lookup table--
 CREATE TABLE `newgtd`.`lookup` (`parentId` int(11) NOT NULL default '0', `itemId` int(11) NOT NULL default '0', PRIMARY  KEY (`parentId`,`itemId`));

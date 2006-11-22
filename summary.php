@@ -73,7 +73,7 @@ if ($reminderresult!="-1") {
         $tablehtml="";
         foreach ($reminderresult as $row) {
                 $notehtml .= "<p>";
-                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>: ";
+                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&referrer=s" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>: ";
                 $notehtml .= nl2br(stripslashes($row['note']));
                 $notehtml .= "</p>\n";
         }
@@ -81,6 +81,8 @@ if ($reminderresult!="-1") {
     }
 
 echo "</div>";
+echo "<div class='reportsection'>\n";
+echo '<p>Reminder notes can be added <a href="note.php?referrer=s" Title="Add new reminder">here</a>.</p>'."\n";
 
 echo "<div class='reportsection'>\n";
     echo "<h3>Next Actions</h3>\n";
