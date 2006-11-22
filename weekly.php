@@ -39,7 +39,7 @@ $values=array();
                 $values['parentId']=$row['itemId'];
                 $nonext=query("selectnextaction",$config,$values);
 	        if ($nonext=="-1") {
-                    echo '			<li><a href="projectReport.php?projectId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['title'])).'  project report">'.stripslashes($row['title'])."</a></li>\n";
+                    echo '			<li><a href="itemReport.php?itemId='.$row['itemId'].'" title="Go to '.htmlspecialchars(stripslashes($row['title'])).'  project report">'.stripslashes($row['title'])."</a></li>\n";
 	           $counter++;
                    } 
                 }
@@ -51,10 +51,10 @@ $values=array();
 	echo '	<tr><td>Review <a href="listItems.php?type=w">WaitingOn list</a></td><td>Mark off any returned items, and determine any further actions.</td></tr>'."\n";
 	echo '	<tr><td>Review <a href="listList.php">Lists</a></td><td>Review relevant lists for actionable items or projects.</td></tr>'."\n";
 	echo '	<tr><td>Review <a href="listChecklist.php">Checklists</a></td><td>Review relevant Checklists for actionable items or projects.</td></tr>'."\n";
-	echo '	<tr><td>Review <a href="listProjects.php?pType=s">Someday/Maybe List</a></td><td>Add new fun things, move any existing items into Projects if they are ready to go</td></tr>'."\n";
+	echo '	<tr><td>Review <a href="listItems.php?type=s">Someday/Maybe List</a></td><td>Add new fun things, move any existing items into Projects if they are ready to go</td></tr>'."\n";
 	echo '	<tr><td>Review support files</td><td></td></tr>'."\n";
 	echo '	<tr><td>Review <a href="listItems.php?type=g">Goals</a></td><td>Check off goals from this week. Define goals for upcoming week</td></tr>'."\n";
-	echo '	<tr><td>Brainstorm</td><td>Get creative with any new <a href="tem.php?type=p" title="Add project">projects</a> or
+	echo '	<tr><td>Brainstorm</td><td>Get creative with any new <a href="item.php?type=p" title="Add project">projects</a> or
 		<a href="item.php?type=s" title="Add Someday/Maybe">someday/maybes</a> that may further your values, visions, goals, or areas of responsibility.</td></tr>'."\n";
 	echo "</table>\n";
 
