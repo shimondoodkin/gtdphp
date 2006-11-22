@@ -31,8 +31,28 @@ $categoryId=$values['categoryId'];
 if ($categoryId>=0) $_SESSION['categoryId']=$categoryId;
 else $values['categoryId']=$_SESSION['categoryId'];
 
+//page display options array--- can put defaults in preferences table/config/session and load into $show array as defaults...
 $show=array();
+$show['parent']=TRUE;
+$show['title']=TRUE;
+$show['description']=TRUE;
+$show['desiredOutcome']=FALSE;
+$show['isSomeday']=FALSE;
+$show['suppress']=FALSE;
+$show['suppressUntil']=FALSE;
+$show['dateCreated']=FALSE;
+$show['lastModified']=FALSE;
+$show['category']=TRUE;
+$show['context']=TRUE;
+$show['timeframe']=TRUE;
+$show['deadline']=TRUE;
+$show['repeat']=TRUE;
+$show['checkbox']=TRUE;
+
+
 /*
+
+Other fields to consider...
 parentdetails
     description
     desiredOutcome
@@ -45,20 +65,9 @@ parentdetails
     time context
     deadline / due
     neglected
+*/
 
-childdetails
-    desiredOutcome
-    isSomeday
-    suppressUntil
-    dateCreated
-    lastModified
-    category
-    space context
-    time context
-    deadline / due
-    neglected
-parent (show at all)
-
+/*
 
 $filter=array();
 type
@@ -72,25 +81,27 @@ category
 deadline
 due today
 neglected
+*/
 
+/*
 $dynamicsort=array();
 on column header
 */
 
 
-//determine item and parent labels
+//determine item and parent labels, set a few defaults
     switch ($values['type']) {
-        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; $show['parent']="false"; break;
-        case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; break;
-        case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; break;
-        case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; break;
-        case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; break;
-        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; $values['type']="p"; break;
-        case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; break;
-        case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p";$values['type']="a"; $display="nextonly"; break;
+        case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; break;
+        case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; $values['type']="p"; $show['context']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['timeframe']=FALSE; $show['dateCreated']=TRUE; break;
+        case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; break;
+        case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p"; $values['type']="a"; $display="nextonly"; $show['category']=FALSE; break;
         case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
-        case "r" : $typename="References"; $parentname="Project"; $values['ptype']="p"; break;
-        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; $show['parent']="false"; break;
+        case "r" : $typename="References"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; break;
+        case "i" : $typename="Inbox Items"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $show['checkbox']=FALSE; break;
         default  : $typename="Items"; $parentname=""; $values['ptype']="";
         }
 
@@ -122,7 +133,7 @@ $values['parentfilterquery'] = sqlparts("ptypefilter-w",$config,$values);
 //$values['parentfilterquery'] .= sqlparts("issomeday",$config,$values);
 $values['parentfilterquery'] .= sqlparts("activeitems",$config,$values);
 
-//problem with isSomeday--  retrieves ITEM that isSomeday, not PARENT
+
 $values['childfilterquery'] = sqlparts("typefilter-w",$config,$values);
 $values['childfilterquery'] .= sqlparts("issomeday",$config,$values);  //?
 $values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
@@ -185,41 +196,53 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                         $tablehtml .= "	<tr>\n";
 
                         //parent title
-                            if ($show['parent']!="false")$tablehtml .= '		<td><a href = "itemReport.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
+                            if ($show['parent']!=FALSE) $tablehtml .= '		<td><a href = "itemReport.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
 //                            if ($nonext=="true" && $values['completed']!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>'; 
                             $tablehtml .= stripslashes($row['ptitle'])."</a></td>\n";
 
                         //item title
                         //if nextaction, add icon in front of action (* for now)
-                        if ($key = array_search($row['itemId'],$nextactions)) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</td>\n";
-                        else $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title']).'</td>';
+                        if ($key = array_search($row['itemId'],$nextactions) && ($show['title']!=FALSE)) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</td>\n";
+                        elseif ($show['title']!=FALSE) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title']).'</td>';
 
                         //item description
-                        $tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
+                        if ($show['description']!=FALSE) $tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
+
+                        //item description
+                        if ($show['desiredOutcome']!=FALSE) $tablehtml .= '                <td>'.nl2br(substr(stripslashes($row['desiredOutcome']),0,72))."</td>\n";
 
                         //item category
-                        $tablehtml .= '          <td><a href="reportCategory.php#'.$row['category'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['category'])).' category">'.stripslashes($row['category'])."</a></td>\n";
+                        if ($show['category']!=FALSE) $tablehtml .= '          <td><a href="reportCategory.php#'.$row['category'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['category'])).' category">'.stripslashes($row['category'])."</a></td>\n";
 
                         //item context name
-                        $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
+                        if ($show['context']!=FALSE) $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
                         
                         //item timeframe name
-                        $tablehtml .= '         <td><a href = "reportTimeContext.php#'.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.stripslashes($row['timeframe'])."</td>\n";
+                        if ($show['timeframe']!=FALSE) $tablehtml .= '         <td><a href = "reportTimeContext.php#'.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.stripslashes($row['timeframe'])."</td>\n";
                         
                         //item deadline
-                        $tablehtml .= "		<td>";
-                        if(($row['deadline']) == "0000-00-00" || $row['deadline'] ==NULL) $tablehtml .= "&nbsp;";
-                        elseif(($row['deadline']) < date("Y-m-d")) $tablehtml .= '<font color="red"><strong title="Item overdue">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>';  //highlight overdue actions
-                        elseif(($row['deadline']) == date("Y-m-d")) $tablehtml .= '<font color="green"><strong title="Item due today">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>'; //highlight actions due today
-                        else $tablehtml .= date("D M j, Y",strtotime($row['deadline']));
-                        $tablehtml .= "</td>\n";
+                        if ($show['deadline']!=FALSE) {
+                            $tablehtml .= "		<td>";
+                            if(($row['deadline']) == "0000-00-00" || $row['deadline'] ==NULL) $tablehtml .= "&nbsp;";
+                            elseif(($row['deadline']) < date("Y-m-d")) $tablehtml .= '<font color="red"><strong title="Item overdue">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>';  //highlight overdue actions
+                            elseif(($row['deadline']) == date("Y-m-d")) $tablehtml .= '<font color="green"><strong title="Item due today">'.date("D M j, Y",strtotime($row['deadline'])).'</strong></font>'; //highlight actions due today
+                            else $tablehtml .= date("D M j, Y",strtotime($row['deadline']));
+                            $tablehtml .= "</td>\n";
+                            }
 
                         //item repeat
-                        if ($row['repeat']=="0") $tablehtml .= "		<td></td>\n";
-                        else $tablehtml .= "		<td>".$row['repeat']."</td>\n";
+                        if ($show['repeat']!=FALSE) {
+                            if ($row['repeat']=="0") $tablehtml .= "		<td></td>\n";
+                            else $tablehtml .= "		<td>".$row['repeat']."</td>\n";
+                            }
+                        //item date Created
+                        if ($show['dateCreated']!=FALSE) $tablehtml .= '              <td>'.nl2br(stripslashes($row['dateCreated']))."</td>\n";
+
+                        //item last modified
+                        if ($show['lastModified']!=FALSE) $tablehtml .= '              <td>'.nl2br(stripslashes($row['lastModified']))."</td>\n";
 
                         //completion checkbox
-                        if ($values['completed']!="y") $tablehtml .= '		<td align="center"><input type="checkbox" align="center" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" name="completedNas[]" value="'.$row['itemId'].'" /></td>'."\n";
+                        if ($values['completed']!="y" && ($show['checkbox']!=FALSE)) $tablehtml .= '		<td align="center"><input type="checkbox" align="center" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" name="completedNas[]" value="'.$row['itemId'].'" /></td>'."\n";
                         $tablehtml .= "	</tr>\n";
                         }
                     }
@@ -229,15 +252,18 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
 			echo '<form action="processItemUpdate.php" method="post">'."\n";
 			echo "<table class='datatable'>\n";
 			echo "	<thead>\n";
-		    if ($show['parent']!="false") echo "		<td>".$parentname."</td>\n";
-			echo "		<td>".$typename."</td>\n";
-			echo "		<td>Description</td>\n";
-                        echo "          <td>Category</td>\n";
-                        echo "          <td>Space Context</td>\n";
-			echo "		<td>Time Context</td>\n";
-			echo "		<td>Deadline</td>\n";
-			echo "		<td>Repeat</td>\n";
-                        if ($values['completed']!="y") echo "           <td>Completed</td>\n";
+		        if ($show['parent']!=FALSE) echo "		<td>".$parentname."</td>\n";
+			if ($show['title']!=FALSE) echo "		<td>".$typename."</td>\n";
+			if ($show['description']!=FALSE) echo "		<td>Description</td>\n";
+                        if ($show['desiredOutcome']!=FALSE) echo "         <td>Desired Outcome</td>\n";
+                        if ($show['category']!=FALSE)echo "          <td>Category</td>\n";
+                        if ($show['context']!=FALSE)echo "          <td>Space Context</td>\n";
+			if ($show['timeframe']!=FALSE)echo "		<td>Time Context</td>\n";
+			if ($show['deadline']!=FALSE)echo "		<td>Deadline</td>\n";
+			if ($show['repeat']!=FALSE)echo "		<td>Repeat</td>\n";
+                        if ($show['dateCreated']!=FALSE)echo "               <td>dateCreated</td>\n";
+                        if ($show['lastModified']!=FALSE)echo "               <td>lastModified</td>\n";
+                        if ($show['checkbox']!=FALSE) echo "           <td>Completed</td>\n";
 			echo "	</thead>\n";
 			echo $tablehtml;
 			echo "</table>\n";
