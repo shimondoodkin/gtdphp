@@ -61,7 +61,8 @@ $config['theme']=$_SESSION['theme'];
 	 	<li>Capture
 			<ul>
                                 <li><a href="item.php?type=i" title="Drop an item into the inbox">Inbox item</a></li>
-				<li><a href="item.php?type=n" title="Create a new next action">Next Action</a></li>
+                                <li><a href="note.php" title="Create a reminder note">Note</a></li>
+                                <li><a href="item.php?type=n" title="Create a new next action">Next Action</a></li>
 				<li><a href="item.php?type=a" title="Create a new action">Action</a></li>
                                 <li><a href="item.php?type=w" title="Create a new waiting on item">Waiting On</a></li>
                                 <li><a href="item.php?type=r" title="Create a reference">Reference</a></li>

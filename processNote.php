@@ -8,6 +8,7 @@ $values['date'] = $_POST['date'];
 $values['title'] = mysql_real_escape_string($_POST['title']);
 $values['note'] = mysql_real_escape_string($_POST['note']);
 $values['repeat'] = (int) $_POST['repeat'];
+$values['suppressUntil'] = mysql_real_escape_string($_POST['suppressUntil']);
 $referrer = $_POST['referrer']{0};
 $type = $_POST['type']{0};
 
