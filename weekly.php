@@ -9,9 +9,9 @@ $values=array();
         $values['isSomeday']="n";
         $values['type']='p';
 
-        $values['childfilterquery']  = sqlparts("typefilter",$config,$values);
-        $values['childfilterquery'] .= sqlparts("issomeday",$config,$values);
-        $values['childfilterquery'] .= sqlparts("activeitems",$config,$values);
+        $values['filterquery']  = sqlparts("typefilter-w",$config,$values);
+        $values['filterquery'] .= sqlparts("issomeday",$config,$values);
+        $values['filterquery'] .= sqlparts("activeitems",$config,$values);
 
         $result = query("getitems",$config,$values,$options,$sort);
 
@@ -36,7 +36,7 @@ $values=array();
         $counter=0;
         if ($result!="-1") {
 	    foreach($result as $row) {
-                $values['parentId']=$row['parentId'];
+                $values['parentId']=$row['itemId'];
                 $nonext=query("selectnextaction",$config,$values);
 	        if ($nonext=="-1") {
                     echo '			<li><a href="projectReport.php?projectId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['title'])).'  project report">'.stripslashes($row['title'])."</a></li>\n";

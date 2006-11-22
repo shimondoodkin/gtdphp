@@ -45,7 +45,7 @@ $values['isSomeday'] = "n";
 $values['filterquery']  = sqlparts("typefilter-w",$config,$values);
 $values['filterquery'] .= sqlparts("issomeday",$config,$values);
 $values['filterquery'] .= sqlparts("activeitems",$config,$values);
-$pres = query("getitemids",$config,$values,$options,$sort);
+$pres = query("getitems",$config,$values,$options,$sort);
 
 //get someday projects
 $values['type']= "p";
@@ -53,7 +53,7 @@ $values['isSomeday'] = "y";
 $values['filterquery']  = sqlparts("typefilter-w",$config,$values);
 $values['filterquery'] .= sqlparts("isSomeday",$config,$values);
 $values['filterquery'] .= sqlparts("activeitems",$config,$values);
-$sm = query("getitemids",$config,$values,$options,$sort);
+$sm = query("getitems",$config,$values,$options,$sort);
 
 
 //set empty database counts to zero

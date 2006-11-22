@@ -137,7 +137,7 @@ if ($values['timeframeId'] != NULL && $values['nottimecontext']!="true") $values
 if ($values['timeframeId'] != NULL && $values['nottimecontext']=="true") $values['childfilterquery'] .= sqlparts("nottimeframefilter",$config,$values);
 
 //Get items for display
-$result = query("getitems",$config,$values,$options,$sort);
+$result = query("getitemsandparent",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
 	echo '<h2>';

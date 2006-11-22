@@ -35,14 +35,14 @@ $sort = array(
     "getprojects"           => "`categories`.`category`, `projectattributes`.`deadline`, `projects`.`name` ASC",
     "getlistitems"          => "`listItems`.`item` ASC",
     "getcompleteditems"     => "`itemstatus`.`dateCompleted` DESC, `projects`.`name`, `items`.`title` ASC",
-    "getitems"              => "ptitle, pcatname, type, deadline, title ASC",
+    "getitemsandparent"              => "ptitle, pcatname, type, deadline, title ASC",
     "getorphaneditems"      => "`itemattributes`.`type` ASC, `items`.`title` ASC",
     "selectchecklist"       => "`checklist`.`title` ASC",
     "getchecklists"         => "`categories`.`category` ASC",
     "getlists"              => "`categories`.`category` ASC",
     "getchecklistitems"     => "`checklistItems`.`checked` DESC, `checklistItems`.`item` ASC",
     "getchildren"           => "`itemattributes`.`type` ASC",
-    "getitemids"            =>  " `categories`.`category`, `items`.`title` ASC ",
+    "getitems"            =>  " `categories`.`category`, `items`.`title` ASC ",
 
     );
 ?>

@@ -26,7 +26,7 @@ $values['type']=$item['type'];
 $values['filterquery']  = sqlparts("typefilter-w",$config,$values);
 $values['filterquery'] .= sqlparts("activeitems",$config,$values);
 $values['filterquery'] .= sqlparts("issomeday",$config,$values);
-$result = query("getitemids",$config,$values,$options,$sort);
+$result = query("getitems",$config,$values,$options,$sort);
 
 $c=0;
 foreach ($result as $row) {
