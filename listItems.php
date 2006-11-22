@@ -93,7 +93,7 @@ if ($result!="-1") {
     }
 
 //Select notes
-$reminderresult = query("getnotes",$config,$values,$options,$sort);
+if ($type=="t") $reminderresult = query("getnotes",$config,$values,$options,$sort);
 
 
 //Select items
@@ -115,7 +115,7 @@ else {
 
 
 //Tickler file header and notes section
-if ($type=="t")
+if ($type=="t") {
     echo "<h1>Tickler File</h1>\n";
     echo "<div class='tickler'>\n";
     echo '<h4>Today is '.date("l, F jS, Y").'. (Week '.date("w").'/52 & Day '.date("z").'/'.(365+date("L")).")</h4>\n";
@@ -151,7 +151,8 @@ if ($type=="t")
             echo "</table>\n";
             echo "</div>\n";
         }
-
+    }
+    
 $filterdisplay=0;
 foreach ($loop as $values['type']) {
 
@@ -189,6 +190,7 @@ $show['checkbox']=TRUE;
         default  : $typename="Items"; $parentname=""; $values['ptype']="";
         }
 
+if ($suppressed==TRUE) $show['suppressUntil']=TRUE;
 
 //make generic based on type/someday, etc.
 $values['parentfilterquery'] = sqlparts("ptypefilter-w",$config,$values);
@@ -272,14 +274,19 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                                 }
 
                         //item title
+                        if ($show['title']!=FALSE && ($row['type']=="a" || $row['type']=="r" || $row['type']=="w" || $row['type']=="i")) $tablehtml .= '         <td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">';
+
+                        elseif ($show['title']!=FALSE) $tablehtml .= '         <td><a href = "itemReport.php?itemId='.$row['itemId'].'" title="Go to '.htmlspecialchars(stripslashes($row['title'])).' report">';
+
                         //if nextaction, add icon in front of action (* for now)
-                        if ($key = array_search($row['itemId'],$nextactions) && ($show['title']!=FALSE)) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">*&nbsp;'.stripslashes($row['title'])."</td>\n";
-                        elseif ($show['title']!=FALSE) $tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title']).'</td>';
+                        if ($key = array_search($row['itemId'],$nextactions) && ($show['title']!=FALSE)) $tablehtml .= '*&nbsp;';
+
+                        if ($show['title']!=FALSE) $tablehtml .= stripslashes($row['title'])."</td>\n";
 
                         //item description
                         if ($show['description']!=FALSE) $tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
 
-                        //item description
+                        //item desiredOutcome
                         if ($show['desiredOutcome']!=FALSE) $tablehtml .= '                <td>'.nl2br(substr(stripslashes($row['desiredOutcome']),0,72))."</td>\n";
 
                         //item category
@@ -306,6 +313,21 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                             if ($row['repeat']=="0") $tablehtml .= "		<td></td>\n";
                             else $tablehtml .= "		<td>".$row['repeat']."</td>\n";
                             }
+
+                        //tickler date
+                        if ($show['suppressUntil']!=FALSE) {
+                                    //Calculate reminder date as # suppress days prior to deadline
+                                    if ($row['suppress']=="y") {
+                                    $dm=(int)substr($row['deadline'],5,2);
+                                    $dd=(int)substr($row['deadline'],8,2);
+                                    $dy=(int)substr($row['deadline'],0,4);
+                                    $remind=mktime(0,0,0,$dm,($dd-(int)$row['suppressUntil']),$dy);
+                                    $reminddate=gmdate("Y-m-d", $remind);
+                                    }
+                                    else $reminddate="--";
+                                    $tablehtml .= "         <td>".date("D M j, Y",strtotime($reminddate))."</td>\n";
+                                    }
+                                    
                         //item date Created
                         if ($show['dateCreated']!=FALSE) $tablehtml .= '              <td>'.nl2br(stripslashes($row['dateCreated']))."</td>\n";
 
@@ -319,7 +341,7 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                     }
 
 		if ($tablehtml!="") {
-                         if ($show['parent']!=FALSE) echo "<p>Click on ".$parentname." for individual report.</p>\n";
+//                         if ($show['parent']!=FALSE) echo "<p>Click on ".$parentname." for individual report.</p>\n";
 			echo '<form action="processItemUpdate.php" method="post">'."\n";
 			echo "<table class='datatable'>\n";
 			echo "	<thead>\n";
@@ -332,6 +354,7 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
 			if ($show['timeframe']!=FALSE)echo "		<td>Time Context</td>\n";
 			if ($show['deadline']!=FALSE)echo "		<td>Deadline</td>\n";
 			if ($show['repeat']!=FALSE)echo "		<td>Repeat</td>\n";
+                        if ($show['suppressUntil']!=FALSE) echo "            <td>Reminder Date</td>\n";
                         if ($show['dateCreated']!=FALSE)echo "               <td>dateCreated</td>\n";
                         if ($show['lastModified']!=FALSE)echo "               <td>lastModified</td>\n";
                         if ($show['checkbox']!=FALSE) echo "           <td>Completed</td>\n";

@@ -78,8 +78,8 @@ switch ($item['type']) {
     case "v" : $childtype=array("o"); break;
     case "o" : $childtype=array("g"); break;
     case "g" : $childtype=array("p"); break;
-    case "p" : $childtype=array("a","r","w"); break;
-    case "s" : $childtype=array("a","r","w"); break;
+    case "p" : $childtype=array("a","w","r"); break;
+    case "s" : $childtype=array("a","w","r"); break;
     case "a" : $childtype=NULL; break;
     case "w" : $childtype=NULL; break;
     case "r" : $childtype=NULL; break;
@@ -129,7 +129,7 @@ foreach ($completed as $comp) {
 		$values['filterquery'] .= sqlparts("completeditems",$config,$values);
 		$result = query("getchildren",$config,$values,$options,$sort);
 	} else {
-		$values['filterquery'] .= sqlparts("activeitems",$config,$values);
+		$values['filterquery'] .= sqlparts("incompleteitems",$config,$values);  //suppressed items will be shown on report page
 		$result = query("getchildren",$config,$values,$options,$sort);
 	}
 
@@ -141,11 +141,11 @@ foreach ($completed as $comp) {
 		echo "		<td>".$typename[$value]."</td>\n";
 		echo "		<td>Description</td>\n";
 		echo "		<td>Context</td>\n";
+                echo "          <td>Date Created</td>\n";
 		if ($comp=="n") {
-			echo "		<td>Date Created</td>\n";
+                        echo "          <td>SuppressUntil</td>\n";
 			echo "		<td>Deadline</td>\n";
 			echo "		<td>Repeat</td>\n";
-			echo "		<td>Suppress</td>\n";
 			echo "		<td>Completed</td>\n";
 		} else {
 			echo "		<td>Date Completed</td>\n";
@@ -176,8 +176,20 @@ foreach ($completed as $comp) {
 			echo '		<td>'.nl2br(stripslashes($row['description']))."</td>\n";
 			echo '		<td><a href = "reportContext.php?contextId='.$row['contextId'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</a></td>\n";
 
-			if ($comp=="n") {
-				echo "		<td>".date("D M j, Y",strtotime($row['dateCreated']))."</td>\n";
+                                echo "          <td>".date("D M j, Y",strtotime($row['dateCreated']))."</td>\n";
+
+                        if ($comp=="n") {                                
+                                    //Calculate reminder date as # suppress days prior to deadline
+                                    if ($row['suppress']=="y") {
+                                    $dm=(int)substr($row['deadline'],5,2);
+                                    $dd=(int)substr($row['deadline'],8,2);
+                                    $dy=(int)substr($row['deadline'],0,4);
+                                    $remind=mktime(0,0,0,$dm,($dd-(int)$row['suppressUntil']),$dy);
+                                    $reminddate=gmdate("Y-m-d", $remind);
+                                    echo "         <td>".date("D M j, Y",strtotime($reminddate))."</td>\n";
+                                    }
+                                    else echo "<td></td>";
+                                    
 				echo "		<td>";
 				//Blank out empty deadlines
 				if(($row['deadline']) == "0000-00-00") echo "&nbsp;";
@@ -188,12 +200,9 @@ foreach ($completed as $comp) {
 				else echo date("D M j, Y",strtotime($row['deadline']));
 				echo "</td>\n";
 
-				if ($row['repeat']=="0") echo "		<td>--</td>\n";
+				if ($row['repeat']=="0") echo "		<td></td>\n";
 				else echo "		<td>".$row['repeat']."</td>\n";
 
-				if ($row['suppress']=="y") $suppressText=$row['suppressUntil'];
-				else $suppressText="--";
-				echo "		<td>".$suppressText."</td>\n";
 
 				echo '		<td align=center><input type="checkbox" align="center" name="completedNas[]" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" value="';
 				echo $row['itemId'];
