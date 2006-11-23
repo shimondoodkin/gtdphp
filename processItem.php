@@ -11,7 +11,7 @@ $values['desiredOutcome'] = mysql_real_escape_string($_POST['desiredOutcome']);
 $values['categoryId'] = (int) $_POST['categoryId'];
 $values['contextId'] = (int) $_POST['contextId'];
 $values['timeframeId'] = (int) $_POST['timeframeId'];
-$values['parentId'] = (int) $_POST['parentId'];
+$parents = $_POST['parentId'];
 $values['deadline'] = $_POST['deadline'];
 $values['repeat'] = (int) $_POST['repeat'];
 $values['suppress'] = $_POST['suppress']{0};
@@ -20,6 +20,7 @@ $values['nextAction'] = $_POST['nextAction']{0};
 $values['dateCompleted']=mysql_real_escape_string($_POST['dateCompleted']);
 if ($_POST['isSomeday']{0}=='y') $values['isSomeday']='y';
 else $values['isSomeday']='n';
+
 
 //CRUDE error checking
 if ($values['suppress']!="y") $values['suppress']="n";
@@ -33,7 +34,7 @@ $result = query("newitemattributes",$config,$values);
 $result = query("newitemstatus",$config,$values);
 
 if($values['nextAction']=='y') $result = query("newnextaction",$config,$values);
-if($values['parentId']>0) $result = query("newparent",$config,$values);
+    foreach ($parents as $values['parentId']) $result = query("newparent",$config,$values);
 
 echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['newitemId'].'">';
 

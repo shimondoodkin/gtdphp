@@ -51,9 +51,14 @@ if ($values['itemId']>0) {
         default  : $typename="Item"; $parentname=""; $values['ptype']="";
         }
 
-$parent = query("lookupparent",$config,$values);
+$parents = query("lookupparent",$config,$values);
 
-$values['parentId']=$parent[0]['parentId'];
+    $i=1;
+    $values['parentId']=array();
+    foreach ($parents as $row) {
+        $values['parentId'][$i]=$row['parentId'];
+        $i++;
+        }
 
 //create filters for selectboxes
 if ($values['type']=="g") $values['timefilterquery'] = sqlparts("timegoals",$config,$values);
@@ -87,7 +92,7 @@ else {
                 <div class='formrow'>
                         <label for='parent' class='left first'>
                         <?php echo $parentname; ?>:</label>
-                        <select name="parentId" id='parent'>
+                        <select name="parentId[]" id='parent' multiple size=4>
                         <?php echo $pshtml; ?>
                         </select>
                 </div>

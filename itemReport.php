@@ -29,14 +29,16 @@ $values['filterquery'] .= sqlparts("issomeday",$config,$values);
 $result = query("getitems",$config,$values,$options,$sort);
 
 $c=0;
-foreach ($result as $row) {
-    $ids[$c]=$row['itemId'];
-    $titles[$c]=$row['title'];
-    if($ids[$c]==$values['itemId']){
-        $id=$c;
+if ($result!="-1") {
+    foreach ($result as $row) {
+        $ids[$c]=$row['itemId'];
+        $titles[$c]=$row['title'];
+        if($ids[$c]==$values['itemId']){
+            $id=$c;
+            }
+        $c++;
+        }
     }
-    $c++;
-}
 
 $n=sizeof($ids);
 if(isset($id)){

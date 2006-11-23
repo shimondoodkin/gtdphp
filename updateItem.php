@@ -12,7 +12,7 @@ $values['desiredOutcome']=mysql_real_escape_string($_POST['DesiredOutcome']);
 $values['categoryId']=(int) $_POST['categoryId'];
 $values['contextId'] = (int) $_POST['contextId'];
 $values['timeframeId'] = (int) $_POST['timeframeId'];
-$values['parentId'] = (int) $_POST['parentId'];
+$parents = $_POST['parentId']; //array
 $values['deadline'] = $_POST['deadline'];
 $values['repeat'] = (int) $_POST['repeat'];
 $values['suppress'] = $_POST['suppress']{0};
@@ -35,7 +35,7 @@ if($values['delete']=="y"){
     query("deleteitem",$config,$values);
     query("deletelookup",$config,$values);
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['parentId'].'" />';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=itemReport.php?itemId='.$parents[0].'" />';
     if ($values['nextAction']=='y') query("deletenextaction",$config,$values);
     }
 
@@ -43,12 +43,14 @@ else {
     query("updateitemstatus",$config,$values);
     query("updateitemattributes",$config,$values);
     query("updateitem",$config,$values);
-    if($values['parentId']>0) $result = query("updateparent",$config,$values);
+    query("deletelookup",$config,$values); //remove all parents before adding current ones
+    foreach ($parents as $values['parentId']) $result = query("updateparent",$config,$values);
 
-    if ($values['nextAction']=='y' && ($values['dateCompleted']==NULL || $values['dateCompleted']=="0000-00-00")) query("updatenextaction",$config,$values);
-    else query("deletenextaction",$config,$values);
+    if ($values['nextAction']=='y' && ($values['dateCompleted']==NULL || $values['dateCompleted']=="0000-00-00")) foreach ($parents as $values['parentId']) $result = query("updatenextaction",$config,$values);
+    else $result = query("deletenextaction",$config,$values);
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['parentId'].'" />';
+
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="`0; url=itemReport.php?itemId='.$values['itemId'].'" />';
     }
 
 include_once('footer.php');

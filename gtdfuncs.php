@@ -76,7 +76,7 @@ function parentselectbox($config,$values,$options,$sort) {
             $pshtml .= '                    <option value="'.$row['itemId'].'" title="'.htmlspecialchars(stripslashes($row['description']));
             if ($row['isSomeday']=="y") $pshtml .= ' (Someday)';
             $pshtml .= '"';
-            if($row['itemId']==$values['parentId']) $pshtml .= ' SELECTED';
+            if(in_array($row['itemId'],$values['parentId'])) $pshtml .= ' SELECTED';
             $pshtml .= '>'.stripslashes($row['title']);
             if ($row['isSomeday']=="y") $pshtml .= ' (s)';
             $pshtml .="</option>\n";
