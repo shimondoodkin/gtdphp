@@ -1,4 +1,4 @@
---DUPLICATE CURRENT TABLE--
+ -- DUPLICATE CURRENT TABLE --
 
 CREATE DATABASE `newgtd`;
 
@@ -20,7 +20,7 @@ INSERT INTO `newgtd`.`goals` SELECT * FROM `gtd`.`goals`;
 CREATE TABLE `newgtd`.`itemattributes` ( `itemId` int( 10 ) unsigned NOT NULL auto_increment , `type` enum( 'a', 'r', 'w' ) NOT NULL default 'a', `projectId` int( 10 ) unsigned NOT NULL default '0', `contextId` int( 10 ) unsigned NOT NULL default '0', `timeframeId` int( 10 ) unsigned NOT NULL default '0', `deadline` date default NULL , `repeat` int( 10 ) unsigned NOT NULL default '0', `suppress` enum( 'y', 'n' ) NOT NULL default 'n', `suppressUntil` int( 10 ) unsigned default NULL , PRIMARY KEY ( `itemId` ) , KEY `projectId` ( `projectId` ) , KEY `contextId` ( `contextId` ) , KEY `suppress` ( `suppress` ) , KEY `type` ( `type` ) , KEY `timeframeId` ( `timeframeId` ) ) COMMENT = 'Characteristics of items (action, waiting, reference, etc)' ;
 INSERT INTO `newgtd`.`itemattributes` SELECT * FROM `gtd`.`itemattributes`;
 
-CREATE TABLE `newgtd`.`items` ( `itemId` int( 10 ) unsigned NOT NULL auto_increment , `title` text NOT NULL , `description` longtext, PRIMARY KEY ( `itemId` ) , FULLTEXT KEY `title` ( `title` ) , FULLTEXT KEY `description` ( `description` ) ) COMMENT = 'All individual items (runway)-- actions, references, waiting' ;
+CREATE TABLE `newgtd`.`items` ( `itemId` int( 10 ) unsigned NOT NULL auto_increment , `title` text NOT NULL , `description` longtext, PRIMARY KEY ( `itemId` ) , FULLTEXT KEY `title` ( `title` ) , FULLTEXT KEY `description` ( `description` ) ) COMMENT = 'All individual items (runway) --  actions, references, waiting' ;
 INSERT INTO `newgtd`.`items` SELECT * FROM `gtd`.`items`;
 
 CREATE TABLE `newgtd`.`itemstatus` ( `itemId` int( 10 ) unsigned NOT NULL auto_increment , `dateCreated` date NOT NULL default '0000-00-00', `lastModified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP , `dateCompleted` date default NULL , `completed` int( 10 ) unsigned default NULL , PRIMARY KEY ( `itemId` ) ) COMMENT = 'Status of items';
@@ -50,47 +50,47 @@ INSERT INTO `newgtd`.`tickler` SELECT * FROM `gtd`.`tickler`;
 CREATE TABLE `newgtd`.`timeitems` ( `timeframeId` int( 10 ) unsigned NOT NULL auto_increment , `timeframe` text NOT NULL , `description` text, PRIMARY KEY ( `timeframeId` ) ) COMMENT = 'Item timeframes';
 INSERT INTO `newgtd`.`timeitems` SELECT * FROM `gtd`.`timeitems`;
 
---SWITCH TO NEW DATABASE--
+ -- SWITCH TO NEW DATABASE -- 
 
 USE `newgtd`;
---Update note tickler file for repeating notes
+ -- Update note tickler file for repeating notes
 ALTER TABLE `tickler` ADD `repeat` INT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `tickler` ADD `suppressUntil` INT UNSIGNED NOT NULL DEFAULT '0';
 
---Create new lookup table--
+ -- Create new lookup table -- 
 CREATE TABLE `newgtd`.`lookup` (`parentId` int(11) NOT NULL default '0', `itemId` int(11) NOT NULL default '0', PRIMARY  KEY (`parentId`,`itemId`));
 
---Copy over projectId and itemId pairs to projectLookup--
+ -- Copy over projectId and itemId pairs to projectLookup -- 
 INSERT INTO `lookup` (`parentId`,`itemId`) SELECT `projectId`,`itemId` FROM `itemattributes`;
 
---Drop projectId from itemattributes--
+ -- Drop projectId from itemattributes -- 
 ALTER TABLE `itemattributes` DROP `projectId`;
 
---Add category Id and is Someday to itemattributes table--
+ -- Add category Id and is Someday to itemattributes table -- 
 ALTER TABLE `itemattributes` ADD `isSomeday` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n' AFTER `type`, ADD `categoryId` INT( 11 ) UNSIGNED NOT NULL DEFAULT '0' AFTER `isSomeday` ;
 ALTER TABLE `itemattributes` ADD INDEX ( `isSomeday` );
 ALTER TABLE `itemattributes` ADD INDEX ( `categoryId`);
 
---Add desiredOutcome to items table--
+ -- Add desiredOutcome to items table -- 
 ALTER TABLE `items` ADD `desiredOutcome` TEXT NULL;
 ALTER TABLE `items` ADD FULLTEXT (`desiredOutcome`);
 
---Drop completed from itemstatus table--
+ -- Drop completed from itemstatus table -- 
 ALTER TABLE `itemstatus` DROP `completed`;
 
---Alter type enum to be m,v,o,g,p,a,r,w,i; default i--
+ -- Alter type enum to be m,v,o,g,p,a,r,w,i; default i -- 
 ALTER TABLE `itemattributes` CHANGE `type` `type` ENUM( 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' ) NOT NULL DEFAULT 'i';
 
---Add type to projectattributes table and default all to 'p'--
+ -- Add type to projectattributes table and default all to 'p' -- 
 ALTER TABLE `projectattributes` ADD `type` ENUM( 'p' ) NOT NULL DEFAULT 'p' AFTER `projectId`;
 
---Fix nextactions primary key--
+ -- Fix nextactions primary key -- 
 ALTER TABLE `nextactions` DROP PRIMARY KEY, ADD PRIMARY KEY ( `projectId` , `nextaction`);
 
---Rename projectId to parentId in nextactions--
+ -- Rename projectId to parentId in nextactions -- 
 ALTER TABLE `nextactions` CHANGE `projectId` `parentId` INT( 10 ) UNSIGNED NOT NULL DEFAULT'0';
 
---Increment all itemIds by max (projectId+goalId) in items, itemsstatus, itemattributes, nextactions, and lookup--
+ -- Increment all itemIds by max (projectId+goalId) in items, itemsstatus, itemattributes, nextactions, and lookup -- 
 ALTER TABLE `items` ADD `prikey` INT UNSIGNED NOT NULL FIRST;
 ALTER TABLE `itemattributes` ADD `prikey` INT UNSIGNED NOT NULL FIRST;
 ALTER TABLE `itemstatus` ADD `prikey` INT UNSIGNED NOT NULL FIRST;
@@ -118,17 +118,17 @@ DELETE FROM `nextactions` WHERE `nextaction` ='0';
 UPDATE `nextactions` SET `nextaction`=`nextaction`+(SELECT MAX(`projectId`) FROM `projects`);
 
 ALTER TABLE `lookup` ADD `prikey` INT UNSIGNED NOT NULL;
-UPDATE `lookup` SET `itemId` =`itemId`+(SELECT (SELECT MAX(`id`) FROM `goals`)+(SELECT MAX(`projectId`) FROM `projects`));
+UPDATE `lookup` SET `prikey` =`itemId`+(SELECT (SELECT MAX(`id`) FROM `goals`)+(SELECT MAX(`projectId`) FROM `projects`));
 ALTER TABLE `lookup` DROP PRIMARY KEY, ADD PRIMARY KEY (`parentId` , `prikey`);
 ALTER TABLE `lookup` DROP `itemId`;
 ALTER TABLE `lookup` CHANGE `prikey` `itemId` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0';
 
---Copy over data from projects, projectattributes, projectstatus--
+ -- Copy over data from projects, projectattributes, projectstatus -- 
 INSERT INTO `items` (`itemId`,`title`,`description`,`desiredOutcome`) SELECT `projectId`,`name`,`description`,`desiredOutcome` FROM `projects`;
 INSERT INTO `itemattributes`(`itemId`,`type`,`categoryId`,`isSomeday`,`deadline`,`repeat`,`suppress`,`suppressUntil`) SELECT `projectId`,`type`,`categoryId`,`isSomeday`,`deadline`,`repeat`,`suppress`,`suppressUntil` FROM `projectattributes`;
 INSERT INTO `itemstatus` (`itemId`,`dateCreated`, `lastModified`, `dateCompleted`) SELECT `projectId`,`dateCreated`, `lastModified`, `dateCompleted` FROM `projectstatus`;
 
---Increment goals table by max projectId--
+ -- Increment goals table by max projectId -- 
 ALTER TABLE `goals` ADD `prikey` INT UNSIGNED NOT NULL FIRST;
 ALTER TABLE `goals` CHANGE `id` `id` INT( 10 ) UNSIGNED NOT NULL;
 UPDATE `goals` SET `prikey`=`id`+(SELECT MAX(`projectId`) FROM `projects`);
@@ -136,7 +136,7 @@ ALTER TABLE `goals` DROP PRIMARY KEY, ADD PRIMARY KEY (`prikey`);
 ALTER TABLE `goals` DROP `id`;
 ALTER TABLE `goals` CHANGE `prikey` `id` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0';
 
---Move goal type data to timeitems--
+ -- Move goal type data to timeitems -- 
 ALTER TABLE `timeitems` ADD `type` ENUM( 'v', 'o', 'g', 'p', 'a' ) NOT NULL DEFAULT 'a';
 ALTER TABLE `timeitems` ADD INDEX ( `type` );
 ALTER TABLE `goals` ADD `timeframeId` INT UNSIGNED NOT NULL;
@@ -144,28 +144,28 @@ UPDATE `goals` SET `timeframeId`= ((SELECT MAX(`timeframeId`) FROM `timeitems`)+
 UPDATE `goals` SET `timeframeId`= ((SELECT MAX(`timeframeId`) FROM `timeitems`)+2) WHERE `type`='quarterly';
 ALTER TABLE `goals` CHANGE `type` `type` ENUM('g') NOT NULL DEFAULT 'g';
 
---Copy over data from goals--
+ -- Copy over data from goals -- 
 INSERT INTO `items` (`itemId`,`title`,`description`) SELECT `id`,`goal`,`description` FROM `goals`;
 INSERT INTO `itemattributes` (`itemId`,`type`,`timeframeId`,`deadline`) SELECT `id`,`type`,`timeframeId`, `deadline` FROM `goals`;
-INSERT INTO `itemstatus` (`itemId`,`dateCreated`, `dateCompleted`) SELECT `id`, `dateCreated`, `completed` FROM `goals`;
-INSERT INTO `lookup` (`parentId`,`itemId`) SELECT `projectId`,`id` `FROM goals`;
+INSERT INTO `itemstatus` (`itemId`,`dateCreated`, `dateCompleted`) SELECT `id`, `created`, `completed` FROM `goals`;
+INSERT INTO `lookup` (`parentId`,`itemId`) SELECT `projectId`,`id` FROM `goals`;
 INSERT INTO `timeitems` ( `timeframeId` , `timeframe` , `description` , `type` ) VALUES (NULL , 'Weekly', NULL, 'g'), (NULL , 'Quarterly', NULL , 'g');
 
---Drop projectattributes, projectstatus, projects, and goals tables--
+ -- Drop projectattributes, projectstatus, projects, and goals tables -- 
 DROP TABLE `projectattributes`,`projects`,`projectstatus`,`goals` ;
 
---Reorder tables by itemId--
+ -- Reorder tables by itemId -- 
 ALTER TABLE `items`  ORDER BY `itemId`;
 ALTER TABLE `itemattributes`  ORDER BY `itemId`;
 ALTER TABLE `itemstatus`  ORDER BY `itemId`;
 ALTER TABLE `itemattributes` ADD INDEX ( `isSomeday`);
 
---Replace Autoincrement on primary keys--
-ALTER TABLE `items` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT
-ALTER TABLE `itemattributes` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT
- ALTER TABLE `itemstatus` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT 
+ -- Replace Autoincrement on primary keys -- 
+ALTER TABLE `items` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `itemattributes` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT;
+ ALTER TABLE `itemstatus` CHANGE `itemId` `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---Update indexes and fulltext searches--
+ -- Update indexes and fulltext searches -- 
 ALTER TABLE `timeitems` ADD FULLTEXT (`timeframe`);
 ALTER TABLE `timeitems` ADD FULLTEXT (`description`);
 ALTER TABLE `tickler` ADD FULLTEXT (`title`);
@@ -176,11 +176,11 @@ ALTER TABLE `checklist` ADD FULLTEXT (`title`);
 ALTER TABLE `categories` ADD FULLTEXT (`category`);
 ALTER TABLE `categories` ADD FULLTEXT (`description`);
 
---create version table--
- CREATE TABLE `version` (`version` FLOAT UNSIGNED NOT NULL,`updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)
+ -- create version table -- 
+ CREATE TABLE `version` (`version` FLOAT UNSIGNED NOT NULL,`updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
 
---rename old database to name.old--
+ -- rename old database to name.old -- 
 
---rename new database to preferred name--
+ -- rename new database to preferred name -- 
 
---adjust priveliges--
+ -- adjust priveliges -- 
