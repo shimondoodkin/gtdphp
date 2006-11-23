@@ -71,7 +71,8 @@ else {
             ?>
 
             <input type="reset" class="button" value="Reset">
-            <input type="checkbox" name="delete" value="y" /><label for="delete" id="delete" class="notfirst">Delete Note</label>
+            <input type="checkbox" name="acknowledge" value="y" title="Updates note, incrementing to next display date" /><label for="acknowledge" id="acknowledge" class="notfirst">Acknowledge Note</label>
+            <input type="checkbox" name="delete" value="y" title="Deletes note; will not repeat again"/><label for="delete" id="delete" class="notfirst">Delete Note</label>
             <input type="hidden" name="referrer" value="<?php echo $referrer ?>" />
             <input type="hidden" name="type" value="<?php echo $type ?>" />
         </div>

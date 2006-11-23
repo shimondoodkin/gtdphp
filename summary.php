@@ -7,6 +7,7 @@ $values=array();
 //SQL Code
 
 //Select notes
+$values['filterquery'] = sqlparts("notefilter",$config,$values);
 $reminderresult = query("getnotes",$config,$values,$options,$sort);
 
 //get # space contexts
@@ -72,9 +73,9 @@ if ($reminderresult!="-1") {
         echo "<br /><h3>Reminder Notes</h3>";
         $tablehtml="";
         foreach ($reminderresult as $row) {
-                $notehtml .= "<p>";
-                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&referrer=s" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>: ";
-                $notehtml .= nl2br(stripslashes($row['note']));
+                $notehtml .= "<p>".date("l, M jS Y",strtotime($row['date'])).": ";
+                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&referrer=s" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>";
+                if ($row['note']!="") $notehtml .= " - ".nl2br(stripslashes($row['note']));
                 $notehtml .= "</p>\n";
         }
     echo $notehtml;

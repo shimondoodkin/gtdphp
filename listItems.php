@@ -123,15 +123,15 @@ if ($type=="t") {
             <ul>
                     <li>Add a new item (<a href="item.php?type=a" title="Add new action">action</a>,
                             <a href="item.php?type=w" title="Add new waitingOn">waiting</a>,
-                            <a href="item.php?type=r" title="Add new reference">reference</a>),
-                            <a href="project.php?type=p">project</a>, or <a href="project.php?type=s">someday/maybe</a> as appropriate,</li>
+                            <a href="item.php?type=r" title="Add new reference">reference</a>), 
+                            <a href="note.php?referrer=t" title="Add new reminder note">note</a>, 
+                            <a href="item.php?type=p">project</a>, or <a href="item.php?type=s">someday/maybe</a> as appropriate,</li>
                     <li>Select the tickler option, and fill in the details as desired.</li>
-            </ul>
-            <br />Reminder notes can be added <a href="note.php?&type='.$type.'&referrer=t" Title="Add new reminder">here</a>.</p>';
+            </ul></p>';
     echo "</div>\n";
     if ($reminderresult!="-1") {
             echo "<div class='notes'>\n";
-            echo "<h3>Reminder Notes</h3>";
+            echo '<h2><a href="note.php?&type='.$type.'&referrer=t" Title="Add new reminder">Reminder Notes</a></h2>';
             $tablehtml="";
             foreach ($reminderresult as $row) {
                     $tablehtml .= " <tr>\n";

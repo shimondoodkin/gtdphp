@@ -17,7 +17,7 @@ if ($values['date']=="") die ('<META HTTP-EQUIV="Refresh" CONTENT="3;url=note.ph
 if ($values['title']=="") die ('<META HTTP-EQUIV="Refresh" CONTENT="3;url=note.php?type='.$type.'&referrer='.$referrer.'"><p>No title. Note NOT added.</p>');
 
 //Insert note
-query("newnote",$config,$values);
+$result = query("newnote",$config,$values);
 
 if ($referrer=="s") echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=summaryAlone.php" />';
 else echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$type.'" />';

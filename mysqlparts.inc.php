@@ -29,6 +29,7 @@ $sqlparts = array(
     "neglected"             =>  " AND CURDATE()>DATE_ADD(`itemstatus`.`lastModified`,INTERVAL {$values['neglected']} DAY) ",
     "selectitem"            =>  " AND `items`.`itemId` = '{$values['itemId']}' ",
     "incompleteitems"       =>  " AND (`itemstatus`.`dateCompleted` IS NULL OR `itemstatus`.`dateCompleted` = '0000-00-00') ",
+    "notefilter"            =>  " WHERE (`date` IS NULL OR `date` = '0000-00-00') OR (CURDATE()>= `date`) ",
     );
 
 //parentfilterquery: typefilter, issomeday, activeitems
