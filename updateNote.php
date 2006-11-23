@@ -25,7 +25,7 @@ if($values['delete']=="y") $result=query("deletenote",$config,$values);
 else if ($acknowledge=="y") $result=query("repeatnote",$config,$values);
 else $result=query("updatenote",$config,$values);
 
-if ($referrer=="s") echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=summaryAlone.php" />';
+if ($referrer=="s") echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=summaryAlone.php" />';
 else echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$type.'" />';
 
 include_once('footer.php');
