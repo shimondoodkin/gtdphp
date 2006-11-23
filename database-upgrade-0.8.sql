@@ -179,8 +179,7 @@ ALTER TABLE `categories` ADD FULLTEXT (`description`);
  -- create version table -- 
  CREATE TABLE `version` (`version` FLOAT UNSIGNED NOT NULL,`updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
 
- -- rename old database to name.old -- 
-
+ -- rename old database to name-old --
  -- rename new database to preferred name -- 
+ -- User may need to adjust privileges --
 
- -- adjust priveliges -- 
