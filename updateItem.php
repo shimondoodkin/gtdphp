@@ -8,7 +8,7 @@ $values['itemId'] = (int) $_GET['itemId'];
 $values['type']=$_POST['type']{0};
 $values['title'] = mysql_real_escape_string($_POST['title']);
 $values['description'] = mysql_real_escape_string($_POST['description']);
-$values['desiredOutcome']=mysql_real_escape_string($_POST['DesiredOutcome']);
+$values['desiredOutcome']=mysql_real_escape_string($_POST['desiredOutcome']);
 $values['categoryId']=(int) $_POST['categoryId'];
 $values['contextId'] = (int) $_POST['contextId'];
 $values['timeframeId'] = (int) $_POST['timeframeId'];
@@ -44,7 +44,7 @@ else {
     query("updateitemattributes",$config,$values);
     query("updateitem",$config,$values);
     query("deletelookup",$config,$values); //remove all parents before adding current ones
-    foreach ($parents as $values['parentId']) $result = query("updateparent",$config,$values);
+    if ($parents>0) foreach ($parents as $values['parentId']) $result = query("updateparent",$config,$values);
 
     if ($values['nextAction']=='y' && ($values['dateCompleted']==NULL || $values['dateCompleted']=="0000-00-00")) foreach ($parents as $values['parentId']) $result = query("updatenextaction",$config,$values);
     else $result = query("deletenextaction",$config,$values);

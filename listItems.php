@@ -136,8 +136,8 @@ if ($type=="t") {
             foreach ($reminderresult as $row) {
                     $tablehtml .= " <tr>\n";
                     $tablehtml .= "         <td>".$row['date']."</td>\n";
-                    $tablehtml .= '         <td><a href = "note.php?noteId='.$row['ticklerId'].'&type='.$type.'&referrer=t" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</td>\n";
-                    $tablehtml .= '         <td>'.nl2br(stripslashes($row['note']))."</td>\n";
+                    $tablehtml .= '         <td><a href = "note.php?noteId='.$row['ticklerId'].'&type='.$type.'&referrer=t" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.htmlspecialchars(stripslashes($row['title']))."</td>\n";
+                    $tablehtml .= '         <td>'.nl2br(htmlspecialchars(stripslashes($row['note'])))."</td>\n";
                     $tablehtml .= " </tr>\n";
             }
 
@@ -219,8 +219,10 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
     if ($filterdisplay<1) {
+        if ($display=="nextonly" && $values['type']=="a") $urltype="n";
+        else $urltype=$values['type'];
         echo '<div id="filter">'."\n";
-	echo '<form action="listItems.php?type='.$values['type'].'" method="post">'."\n";
+	echo '<form action="listItems.php?type='.$urltype.'" method="post">'."\n";
 	echo "<p>Category:&nbsp;\n";
 	echo '<select name="categoryId" title="Filter items by parent category">'."\n";
 	echo '	<option value="0">All</option>'."\n";
@@ -270,7 +272,7 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                             if ($show['parent']!=FALSE) {
                                 $tablehtml .= '		<td><a href = "itemReport.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' '.$parentname.' report">';
                                 if ($nonext=="true" && $values['completed']!="y") echo '<span class="noNextAction" title="No next action defined!">!</span>';
-                                $tablehtml .= stripslashes($row['ptitle'])."</a></td>\n";
+                                $tablehtml .= htmlspecialchars(stripslashes($row['ptitle']))."</a></td>\n";
                                 }
 
                         //item title
@@ -281,22 +283,22 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                         //if nextaction, add icon in front of action (* for now)
                         if ($key = array_search($row['itemId'],$nextactions) && ($show['title']!=FALSE)) $tablehtml .= '*&nbsp;';
 
-                        if ($show['title']!=FALSE) $tablehtml .= stripslashes($row['title'])."</td>\n";
+                        if ($show['title']!=FALSE) $tablehtml .=htmlspecialchars(stripslashes($row['title']))."</td>\n";
 
                         //item description
-                        if ($show['description']!=FALSE) $tablehtml .= '		<td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
+                        if ($show['description']!=FALSE) $tablehtml .= '		<td>'.nl2br(substr(htmlspecialchars(stripslashes($row['description'])),0,72))."</td>\n";
 
                         //item desiredOutcome
-                        if ($show['desiredOutcome']!=FALSE) $tablehtml .= '                <td>'.nl2br(substr(stripslashes($row['desiredOutcome']),0,72))."</td>\n";
+                        if ($show['desiredOutcome']!=FALSE) $tablehtml .= '                <td>'.nl2br(substr(htmlspecialchars(stripslashes($row['desiredOutcome'])),0,72))."</td>\n";
 
                         //item category
-                        if ($show['category']!=FALSE) $tablehtml .= '          <td><a href="reportCategory.php#'.$row['category'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['category'])).' category">'.stripslashes($row['category'])."</a></td>\n";
+                        if ($show['category']!=FALSE) $tablehtml .= '          <td><a href="reportCategory.php#'.$row['category'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['category'])).' category">'.htmlspecialchars(stripslashes($row['category']))."</a></td>\n";
 
                         //item context name
-                        if ($show['context']!=FALSE) $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</td>\n";
+                        if ($show['context']!=FALSE) $tablehtml .= '		<td><a href = "reportContext.php#'.$row['cname'].'" title="Go to the  '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.htmlspecialchars(stripslashes($row['cname']))."</td>\n";
                         
                         //item timeframe name
-                        if ($show['timeframe']!=FALSE) $tablehtml .= '         <td><a href = "reportTimeContext.php#'.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.stripslashes($row['timeframe'])."</td>\n";
+                        if ($show['timeframe']!=FALSE) $tablehtml .= '         <td><a href = "reportTimeContext.php#'.$row['timeframe'].'" title="Go to '.htmlspecialchars(stripslashes($row['timeframe'])).' time context report">'.htmlspecialchars(stripslashes($row['timeframe']))."</td>\n";
                         
                         //item deadline
                         if ($show['deadline']!=FALSE) {
@@ -329,10 +331,10 @@ $result = query("getitemsandparent",$config,$values,$options,$sort);
                                     }
                                     
                         //item date Created
-                        if ($show['dateCreated']!=FALSE) $tablehtml .= '              <td>'.nl2br(stripslashes($row['dateCreated']))."</td>\n";
+                        if ($show['dateCreated']!=FALSE) $tablehtml .= '              <td>'.nl2br(htmlspecialchars(stripslashes($row['dateCreated'])))."</td>\n";
 
                         //item last modified
-                        if ($show['lastModified']!=FALSE) $tablehtml .= '              <td>'.nl2br(stripslashes($row['lastModified']))."</td>\n";
+                        if ($show['lastModified']!=FALSE) $tablehtml .= '              <td>'.nl2br(htmlspecialchars(stripslashes($row['lastModified'])))."</td>\n";
 
                         //completion checkbox
                         if ($values['completed']!="y" && ($show['checkbox']!=FALSE)) $tablehtml .= '		<td align="center"><input type="checkbox" align="center" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" name="completedNas[]" value="'.$row['itemId'].'" /></td>'."\n";

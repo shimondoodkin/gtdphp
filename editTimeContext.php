@@ -21,12 +21,12 @@ $result = query("selecttimecontext",$config,$values,$options,$sort);
 <div class="form">
     <div class="formrow">
     <label for="timeframe" class="left first">Name:</label>
-    <input type="text" name="timeframe" id="title" value="<?php echo stripslashes($result[0]['timeframe']); ?> " />
+    <input type="text" name="timeframe" id="title" value="<?php echo htmlspecialshars(stripslashes($result[0]['timeframe'])); ?> " />
     </div>
 
     <div class="formrow">
         <label for="description" class="left first">Description:</label>
-        <textarea  rows='4' class='big' id='description' name="description" wrap='virtual' ><?php echo stripslashes($result[0]['description']) ?></textarea>
+        <textarea  rows='4' class='big' id='description' name="description" wrap='virtual' ><?php echo htmlspecialshars(stripslashes($result[0]['description'])) ?></textarea>
     </div>
 
     <div class='formrow'>

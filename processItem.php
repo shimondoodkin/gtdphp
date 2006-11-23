@@ -36,7 +36,7 @@ $result = query("newitemstatus",$config,$values);
 if($values['nextAction']=='y') $result = query("newnextaction",$config,$values);
     foreach ($parents as $values['parentId']) $result = query("newparent",$config,$values);
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=itemReport.php?itemId='.$values['newitemId'].'">';
+echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$values['type'].'">';
 
 include_once('footer.php');
 ?>

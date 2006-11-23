@@ -55,9 +55,11 @@ $parents = query("lookupparent",$config,$values);
 
     $i=1;
     $values['parentId']=array();
-    foreach ($parents as $row) {
-        $values['parentId'][$i]=$row['parentId'];
-        $i++;
+    if ($parents!="-1") {
+        foreach ($parents as $row) {
+            $values['parentId'][$i]=$row['parentId'];
+            $i++;
+            }
         }
 
 //create filters for selectboxes
@@ -85,7 +87,7 @@ else {
 
                 <div class='formrow'>
                         <label for='title' class='left first'>Title:</label>
-                        <input type='text' name='title' id='title' value='<?php echo stripslashes($currentrow['title']); ?>'>
+                        <input type="text" name="title" id="title" value="<?php echo htmlspecialchars(stripslashes($currentrow['title'])); ?>">
                 </div>
 
                 <?php if ($values['ptype']!="") { ?>
@@ -144,11 +146,11 @@ else {
                 </div>
                 <div class='formrow'>
                         <label for='description' class='left first'>Description:</label>
-                        <textarea rows='12' name='description' id='description' wrap='virtual'><?php echo stripslashes($currentrow['description']); ?></textarea>
+                        <textarea rows='12' name='description' id='description' wrap='virtual'><?php echo htmlspecialchars(stripslashes($currentrow['description'])); ?></textarea>
                 </div>
                 <div class='formrow'>
                         <label for='outcome' class='left first'>Desired Outcome:</label>
-                        <textarea rows='4' name='desiredOutcome' id='outcome' class='big' wrap='virtual'><?php echo stripslashes($currentrow['desiredOutcome']) ?></textarea>
+                        <textarea rows='4' name='desiredOutcome' id='outcome' class='big' wrap='virtual'><?php echo htmlspecialchars(stripslashes($currentrow['desiredOutcome'])) ?></textarea>
                 </div>
                 <div class='formrow'>
                         <label class='left first'>Type:</label>

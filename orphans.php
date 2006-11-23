@@ -22,7 +22,7 @@ foreach ($result as $row) {
     
                                 $tablehtml .= " <tr>\n";
                                 $tablehtml .= '         <td><a href = "listItems.php?type='.$row['type'].'"title="List '.$typename.'">'.$typename."</a></td>\n";
-                                $tablehtml .= '            <td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title']).'</td>';
+                                $tablehtml .= '            <td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.htmlspecialchars(stripslashes($row['title'])).'</td>';
                                 $tablehtml .= '         <td>'.nl2br(substr(stripslashes($row['description']),0,72))."</td>\n";
                                 $tablehtml .= " </tr>\n";
     }

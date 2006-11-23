@@ -132,6 +132,7 @@ $config['theme']=$_SESSION['theme'];
 				<li><a href="credits.php">Credits</a></li>
 				<li><a href="http://toae.org/boards">Mailing List</a></li>
 				<li><a href="http://www.gtd-php.com">Wiki</a></li>
+                                <li><a href="https://www.hosted-projects.com/trac/toae/gtdphp">Trac Page</a></li>
 				<li><a href="http://www.frappr.com/gtdphp">Frappr Map</a></li>
 				<li><a href="donate.php">Donate</a></li>
 			</ul>

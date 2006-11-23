@@ -89,20 +89,20 @@ switch ($item['type']) {
     default  : $childtype=NULL;
     }
 
-echo "<h1>".str_replace("s","",$typename[$item['type']])."&nbsp;Report:&nbsp;".stripslashes($item['title'])."</h1>\n";
+echo "<h1>".str_replace("s","",$typename[$item['type']])."&nbsp;Report:&nbsp;".htmlspecialchars(stripslashes($item['title']))."</h1>\n";
 
 //Edit, next, and previous buttons
-echo '[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.stripslashes($item['title']).'">Edit</a> ]'."\n";
+echo '[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($item['title'])).'">Edit</a> ]'."\n";
 if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" title="'.$previoustitle.'">Previous</a> ]'."\n";
 if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="'.$nexttitle.'">Next</a> ]'."\n";
 
 //Item details
 echo '<p>Created: '.$item['dateCreated']."<br />\n";
-if ($item['description']!="") echo 'Description: '.stripslashes($item['description'])."<br />\n";
-if ($item['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.stripslashes($item['desiredOutcome'])."<br />\n";
-if ($item['categoryId']>0) echo 'Category:&nbsp;'.stripslashes($item['category'])."<br />\n";
-if ($item['contextId']>0) echo 'Space Context:&nbsp;'.stripslashes($item['cname'])."<br />\n";
-if ($item['timeframeId']>0) echo 'Time Context:&nbsp;'.stripslashes($item['timeframe'])."<br />\n";
+if ($item['description']!="") echo 'Description: '.htmlspecialchars(stripslashes($item['description']))."<br />\n";
+if ($item['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.html(stripslashes($item['desiredOutcome']))."<br />\n";
+if ($item['categoryId']>0) echo 'Category:&nbsp;'.htmlspecialchars(stripslashes($item['category']))."<br />\n";
+if ($item['contextId']>0) echo 'Space Context:&nbsp;'.htmlspecialchars(stripslashes($item['cname']))."<br />\n";
+if ($item['timeframeId']>0) echo 'Time Context:&nbsp;'.htmlspecialchars(stripslashes($item['timeframe']))."<br />\n";
 if ($item['deadline']!=NULL && $item['deadline']!="0000-00-00") echo 'Deadline:&nbsp;'.$item['deadline']."<br />\n";
 if ($item['repeat']>0) echo 'Repeat every&nbsp;'.$item['repeat'].'&nbsp;days'."<br />\n";
 if ($item['suppress']=='y') echo 'Suppressed Until:&nbsp;'.$item['suppressUntil']."<br />\n";
@@ -163,7 +163,7 @@ foreach ($completed as $comp) {
                                 echo $naText;
 
                                 //if nextaction, add icon in front of action (* for now)
-				echo '		<td class="nextactioncell"><a href="item.php?itemId='.$row['itemId'].'" class="nextactionlink" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'"><span class="nextActionMarker" title="Next Action">*</span>'.stripslashes($row['title'])."</a></td>\n";
+				echo '		<td class="nextactioncell"><a href="item.php?itemId='.$row['itemId'].'" class="nextactionlink" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'"><span class="nextActionMarker" title="Next Action">*</span>'.htmlspecialchars(stripslashes($row['title']))."</a></td>\n";
 			} else {
 				echo "	<tr>\n";
 
@@ -172,11 +172,11 @@ foreach ($completed as $comp) {
                                 $naText.=$row['itemId'].'"><br></td>'."\n";
                                 if ($comp!="y") echo $naText;
 
-				echo '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a></td>\n";
+				echo '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.htmlspecialchars(stripslashes($row['title']))."</a></td>\n";
 			}
 
 			echo '		<td>'.nl2br(stripslashes($row['description']))."</td>\n";
-			echo '		<td><a href = "reportContext.php?contextId='.$row['contextId'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.stripslashes($row['cname'])."</a></td>\n";
+			echo '		<td><a href = "reportContext.php?contextId='.$row['contextId'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.htmlspecialchars(stripslashes($row['cname']))."</a></td>\n";
 
                                 echo "          <td>".date("D M j, Y",strtotime($row['dateCreated']))."</td>\n";
 

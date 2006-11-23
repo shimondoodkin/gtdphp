@@ -36,7 +36,7 @@ function categoryselectbox($config,$values,$options,$sort) {
         foreach($result as $row) {
             $cashtml .= '   <option value="'.$row['categoryId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
             if($row['categoryId']==$values['categoryId']) $cashtml .= ' SELECTED';
-            $cashtml .= '>'.stripslashes($row['category'])."</option>\n";
+            $cashtml .= '>'.htmlspecialchars(stripslashes($row['category']))."</option>\n";
             }
         }
     return $cashtml;
@@ -49,7 +49,7 @@ function contextselectbox($config,$values,$options,$sort) {
             foreach($result as $row) {
             $cshtml .= '                    <option value="'.$row['contextId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
             if($row['contextId']==$values['contextId']) $cshtml .= ' SELECTED';
-            $cshtml .= '>'.stripslashes($row['name'])."</option>\n";
+            $cshtml .= '>'.htmlspecialchars(stripslashes($row['name']))."</option>\n";
             }
         }
     return $cshtml;
@@ -62,7 +62,7 @@ function timecontextselectbox($config,$values,$options,$sort) {
         foreach($result as $row) {
             $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
             if($row['timeframeId']==$values['timeframeId']) $tshtml .= ' SELECTED';
-            $tshtml .= '>'.stripslashes($row['timeframe'])."</option>\n";
+            $tshtml .= '>'.htmlspecialchars(stripslashes($row['timeframe']))."</option>\n";
             }
         }
     return $tshtml;
@@ -77,7 +77,7 @@ function parentselectbox($config,$values,$options,$sort) {
             if ($row['isSomeday']=="y") $pshtml .= ' (Someday)';
             $pshtml .= '"';
             if(in_array($row['itemId'],$values['parentId'])) $pshtml .= ' SELECTED';
-            $pshtml .= '>'.stripslashes($row['title']);
+            $pshtml .= '>'.htmlspecialchars(stripslashes($row['title']));
             if ($row['isSomeday']=="y") $pshtml .= ' (s)';
             $pshtml .="</option>\n";
             }
@@ -92,7 +92,7 @@ function checklistselectbox($config,$values,$options,$sort) {
         foreach($result as $row) {
             $cshtml .= '                    <option value="'.$row['checklistId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
             if($row['checklistId']==$values['checklistId']) $cshtml .= ' SELECTED';
-            $cshtml .= '>'.stripslashes($row['title'])."</option>\n";
+            $cshtml .= '>'.htmlspecialchars(stripslashes($row['title']))."</option>\n";
             }
         }
     return $cshtml;
@@ -105,7 +105,7 @@ function listselectbox($config,$values,$options,$sort) {
         foreach($result as $row) {
             $lshtml .= '                    <option value="'.$row['listId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
             if($row['listId']==$values['listId']) $lshtml .= ' SELECTED';
-            $lshtml .= '>'.stripslashes($row['title'])."</option>\n";
+            $lshtml .= '>'.htmlspecialchars(stripslashes($row['title']))."</option>\n";
             }
         }
     return $lshtml;

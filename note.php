@@ -54,12 +54,12 @@ else {
 
         <div class="formrow">
             <label for="text" id="text" class="left first">Title</label>
-            <input type="text" size="68" name="title"  id="title" value="<?php echo stripslashes($currentrow['title']) ?>">
+            <input type="text" size="68" name="title"  id="title" value="<?php echo htmlspecialchars(stripslashes($currentrow['title'])) ?>">
         </div>
         
         <div class="formrow">
             <label for="note" id="note" class="left first">Details</label>
-            <textarea rows="12" class="big" name="note" id="description" wrap="virtual"><?php echo stripslashes($currentrow['note']) ?></textarea>
+            <textarea rows="12" class="big" name="note" id="description" wrap="virtual"><?php echo htmlspecialchars(stripslashes($currentrow['note'])) ?></textarea>
         </div>
 
     </div>
