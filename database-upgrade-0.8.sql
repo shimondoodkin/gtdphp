@@ -176,6 +176,8 @@ ALTER TABLE `checklist` ADD FULLTEXT (`title`);
 ALTER TABLE `categories` ADD FULLTEXT (`category`);
 ALTER TABLE `categories` ADD FULLTEXT (`description`);
 
+--create version table--
+ CREATE TABLE `version` (`version` FLOAT UNSIGNED NOT NULL,`updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)
 
 --rename old database to name.old--
 
