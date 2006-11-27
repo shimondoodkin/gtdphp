@@ -34,7 +34,7 @@ $result = query("newitemattributes",$config,$values);
 $result = query("newitemstatus",$config,$values);
 
 if($values['nextAction']=='y') $result = query("newnextaction",$config,$values);
-    foreach ($parents as $values['parentId']) $result = query("newparent",$config,$values);
+    if ($parents>0) foreach ($parents as $values['parentId']) $result = query("newparent",$config,$values);
 
 echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$values['type'].'">';
 

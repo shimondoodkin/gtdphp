@@ -75,6 +75,11 @@ on column header
 
 
 //SQL CODE
+
+//create filters for selectboxes
+if ($type=="g") $values['timefilterquery'] = sqlparts("timegoals",$config,$values);
+else $values['timefilterquery'] = sqlparts("timeitems",$config,$values);
+
 //create filter selectboxes
 $cashtml=categoryselectbox($config,$values,$options,$sort);
 $cshtml=contextselectbox($config,$values,$options,$sort);

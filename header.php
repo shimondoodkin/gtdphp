@@ -130,11 +130,11 @@ $config['theme']=$_SESSION['theme'];
 			<ul>
 				<li><a href="about.php">License</a></li>
 				<li><a href="credits.php">Credits</a></li>
-				<li><a href="http://toae.org/boards">Mailing List</a></li>
-				<li><a href="http://www.gtd-php.com">Wiki</a></li>
-                                <li><a href="https://www.hosted-projects.com/trac/toae/gtdphp">Trac Page</a></li>
-				<li><a href="http://www.frappr.com/gtdphp">Frappr Map</a></li>
-				<li><a href="donate.php">Donate</a></li>
+				<li><a href="http://toae.org/boards" title="Help and development discussions">Forum</a></li>
+				<li><a href="http://www.gtd-php.com" title="Documentation">Wiki</a></li>
+                                <li><a href="https://www.hosted-projects.com/trac/toae/gtdphp" title="Bug tracking and project development">Trac Page</a></li>
+				<li><a href="http://www.frappr.com/gtdphp" title="Tell us where you are">Frappr Map</a></li>
+				<li><a href="donate.php" title="Help us defray our costs">Donate</a></li>
 			</ul>
 	</ul>
 </div>
