@@ -121,7 +121,7 @@ foreach ($completed as $comp) {
     foreach ($childtype as $value) {
 	echo "<div class='reportsection'>\n";
 	if ($comp=="y") echo '<h2>Completed&nbsp;'.$typename[$value]."</h2>\n";
-	else echo '<h2><a href = "item.php?type='.$value.'" title="Add new '.str_replace("s","",$typename[$value]).'">'.$typename[$value]."</a></h2>\n";
+	else echo '<h2><a href = "item.php?parentId='.$values['itemId'].'&type='.$value.'" title="Add new '.str_replace("s","",$typename[$value]).'">'.$typename[$value]."</a></h2>\n";
 
     //Select items by type
     $values['type']=$value;

@@ -6,7 +6,10 @@ $nextactioncheck="n";
 
 //RETRIEVE URL VARIABLES
 $values = array();
+$values['parentId']=array();
+
 $values['itemId']= (int) $_GET["itemId"];
+if ($_GET['parentId']>0) $values['parentId'][0] = (int) $_GET["parentId"];
 $values['type']=$_GET["type"]{0};
 
 if ($values['type']=="n") {
@@ -54,13 +57,14 @@ if ($values['itemId']>0) {
 $parents = query("lookupparent",$config,$values);
 
     $i=1;
-    $values['parentId']=array();
     if ($parents!="-1") {
         foreach ($parents as $row) {
             $values['parentId'][$i]=$row['parentId'];
             $i++;
             }
         }
+
+print_r($values['parentId']);
 
 //create filters for selectboxes
 if ($values['type']=="g") $values['timefilterquery'] = sqlparts("timegoals",$config,$values);
