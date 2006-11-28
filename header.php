@@ -68,8 +68,8 @@ $config['theme']=$_SESSION['theme'];
                                 <li><a href="item.php?type=r" title="Create a reference">Reference</a></li>
 				<li><a href="item.php?type=p" title="Create a new project">Project</a></li>
                                 <li><a href="item.php?type=s" title="Create a future project">Someday/Maybe</a></li>
-                                <li><a href="item.php?type=g" title="Define a new goal">Goal</a></li>
                                 <li><a href="item.php?type=o" title="Define a new role">Role</a></li>
+                                <li><a href="item.php?type=g" title="Define a new goal">Goal</a></li>
                                 <li><a href="item.php?type=v" title="Define a new vision">Vision</a></li>
                                 <li><a href="item.php?type=m" title="Define a new value">Value</a></li>
 				<li><a href="newList.php" title="Create a general purpose list">List</a></li>
@@ -104,8 +104,8 @@ $config['theme']=$_SESSION['theme'];
                                 <li><a href="management.php" title="Management view">Management</a></li>
                                 <li><a href="listItems.php?type=m" title="Values / Mission">Values</a></li>
                                 <li><a href="listItems.php?type=v" title="Visions">Visions</a></li>
-                                <li><a href="listItems.php?type=o" title="Roles / Areas of Responsibility">Roles</a></li>
                                 <li><a href="listItems.php?type=g" title="Goals">Goals</a></li>
+                                <li><a href="listItems.php?type=o" title="Roles / Areas of Responsibility">Roles</a></li>
                                 <li><a href="listItems.php?type=c" title="Notable Achivements">Achievements</a></li>
                                 <li><a href="listItems.php?type=t" title="Hidden items and reminders">Tickler File</a></li>
 

@@ -109,7 +109,7 @@ if ($type=="t") $reminderresult = query("getnotes",$config,$values,$options,$sor
 
 $loop=array();
 if ($type=="t") {
-    $loop = array("m","v","o","g","p","a","w","r");
+    $loop = array("m","v","g","o","p","a","w","r");
     $suppressed=TRUE;
     }
 
@@ -183,10 +183,10 @@ $show['checkbox']=TRUE;
     switch ($values['type']) {
         case "m" : $typename="Values"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
         case "v" : $typename="Visions"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "o" : $typename="Roles"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "g" : $typename="Goals"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; break;
-        case "p" : $typename="Projects"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; break;
-        case "s" : $typename="Someday/Maybe"; $parentname="Goal"; $values['ptype']="g"; $values['type']="p"; $show['context']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['timeframe']=FALSE; $show['dateCreated']=TRUE; break;
+        case "g" : $typename="Goals"; $parentname="Vision"; $values['ptype']="v"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; break;
+        case "o" : $typename="Roles"; $parentname="Goal"; $values['ptype']="g"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "p" : $typename="Projects"; $parentname="Role"; $values['ptype']="o"; $show['context']=FALSE; $show['timeframe']=FALSE; break;
+        case "s" : $typename="Someday/Maybe"; $parentname="Role"; $values['ptype']="o"; $values['type']="p"; $show['context']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['timeframe']=FALSE; $show['dateCreated']=TRUE; break;
         case "a" : $typename="Actions"; $parentname="Project"; $values['ptype']="p"; $show['category']=FALSE; break;
         case "n" : $typename="Next Actions"; $parentname="Project";$values['ptype']="p"; $values['type']="a"; $display="nextonly"; $show['category']=FALSE; break;
         case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;

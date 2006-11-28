@@ -12,8 +12,8 @@ $tablehtml="";
 foreach ($result as $row) {
     switch ($row['type']) {
         case "v" : $typename="vision"; break;
-        case "o" : $typename="role"; break;
         case "g" : $typename="goal"; break;
+        case "o" : $typename="role"; break;
         case "p" : $typename="project"; break;
         case "a" : $typename="action"; break;
         case "w" : $typename="waiting"; break;
