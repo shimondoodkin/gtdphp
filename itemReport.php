@@ -99,7 +99,7 @@ if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="'
 //Item details
 echo '<p>Created: '.$item['dateCreated']."<br />\n";
 if ($item['description']!="") echo 'Description: '.htmlspecialchars(stripslashes($item['description']))."<br />\n";
-if ($item['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.html(stripslashes($item['desiredOutcome']))."<br />\n";
+if ($item['desiredOutcome']!="") echo 'Desired Outcome:&nbsp;'.htmlspecialchars(stripslashes($item['desiredOutcome']))."<br />\n";
 if ($item['categoryId']>0) echo 'Category:&nbsp;'.htmlspecialchars(stripslashes($item['category']))."<br />\n";
 if ($item['contextId']>0) echo 'Space Context:&nbsp;'.htmlspecialchars(stripslashes($item['cname']))."<br />\n";
 if ($item['timeframeId']>0) echo 'Time Context:&nbsp;'.htmlspecialchars(stripslashes($item['timeframe']))."<br />\n";
