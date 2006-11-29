@@ -35,7 +35,7 @@ if($values['delete']=="y"){
     query("deleteitem",$config,$values);
     query("deletelookup",$config,$values);
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="10; url=itemReport.php?itemId='.$parents[0].'" />';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$values['type'].'" />';
     if ($values['nextAction']=='y') query("deletenextaction",$config,$values);
     }
 
@@ -50,7 +50,7 @@ else {
     else $result = query("deletenextaction",$config,$values);
 
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="`0; url=itemReport.php?itemId='.$values['itemId'].'" />';
+    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listItems.php?type='.$values['type'].'" />';
     }
 
 include_once('footer.php');
