@@ -96,7 +96,7 @@ else {
                 <div class='formrow'>
                         <label for='parent' class='left first'>
                         <?php echo $parentname; ?>:</label>
-                        <select name="parentId[]" id='parent' multiple size=4>
+                        <select name="parentId[]" id='parent' multiple size=6>
                         <?php echo $pshtml; ?>
                         </select>
                 </div>
