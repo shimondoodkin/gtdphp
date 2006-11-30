@@ -64,8 +64,6 @@ $parents = query("lookupparent",$config,$values);
             }
         }
 
-print_r($values['parentId']);
-
 //create filters for selectboxes
 if ($values['type']=="g") $values['timefilterquery'] = sqlparts("timegoals",$config,$values);
 else $values['timefilterquery'] = sqlparts("timeitems",$config,$values);
