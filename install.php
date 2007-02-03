@@ -21,14 +21,19 @@
     $v.="mysql: ".mysql_get_server_info()."</li></ul>\n";
     echo $v;
 
-
-    // check if we are using prefixes
-    //echo $config['prefix'];
-
-
-    //check if gtd db exists
+    //check if db exists
     $msg='<font color="red">Unable to select gtd database.<br>Please create the '.$config['db'].' mysql database and rerun this script.';
 	mysql_select_db($config['db']) or die ($msg);
+
+
+    // start creating new tables
+
+    $q="create table ".$config['prefix']."categories (";
+    $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
+    $q.="`category` text NOT NULL, "; 
+    $q.="`description` text, ";
+    $q.="PRIMARY KEY  (`categoryId`));";
+    $result = mysql_query($q);
 
     $q="create table ".$config['prefix']."items (";
     $q.="`itemId` int(10) unsigned NOT NULL auto_increment, "; 
@@ -37,9 +42,15 @@
     $q.="PRIMARY KEY  (`itemId`), ";
     $q.="FULLTEXT KEY `title` (`title`), ";
     $q.="FULLTEXT KEY `description` (`description`));";
-    echo $q;
     $result = mysql_query($q);
-    echo "Result: ".$result;
+
+    $q="create table ".$config['prefix']."checklist (";
+    $q.="`checklistId` int(10) unsigned NOT NULL auto_increment, "; 
+    $q.="`title` text NOT NULL, "; 
+    $q.="`categoryId` int(10) unsigned NOT NULL, "; 
+    $q.="`description` longtext, ";
+    $q.="PRIMARY KEY  (`checklistId`)); ";
+    $result = mysql_query($q);
 
 
 	include_once('footer.php');
