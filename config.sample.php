@@ -5,6 +5,7 @@ $config = array(
     //connection information
         "host"                      => 'localhost', //the hostname of your database server
         "db"                        => '', //the name of your database
+        "prefix"					=> 'gtd_', // the GTD table prefix for your installation
         "user"                      => '', //username for database access
         "pass"                      => '', //database password
     //database information
