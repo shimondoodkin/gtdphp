@@ -90,7 +90,6 @@ function makemenu($list) {
 				<?php 
 				$thismenu[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Inbox item");
 				$thismenu[] = array('link'=>"note.php", 'title'=>"Create a reminder note", 'label'=>'Note'); 
-				$thismenu[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Inbox item");
 				$thismenu[] = array("link"=>"note.php", 'title'=>"Create a reminder note", 'label' => "Note");
 				$thismenu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
 				$thismenu[] = array("link"=>"item.php?type=a", 'title'=>"Create a new action", 'label' => "Action");
