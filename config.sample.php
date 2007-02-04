@@ -39,26 +39,23 @@ $config = array(
 //simplify all options down to a few...
 
 $sort = array(
-    "projectssummary"       => "`" . $config['prefix'] . "projects`.`name` ASC",
-    "spacecontextselectbox" => "`" . $config['prefix'] . "context`.`name` ASC",
-    "categoryselectbox"     => "`" . $config['prefix'] . "categories`.`category` ASC",
-    "checklistselectbox"    => "`" . $config['prefix'] . "checklist`.`title` ASC",
-    "listselectbox"         => "`" . $config['prefix'] . "list`.`title` ASC",
-    "parentselectbox"       => "`" . $config['prefix'] . "items`.`title` ASC",
-    "timecontextselectbox"  => "`" . $config['prefix'] . "timeitems`.`timeframe` DESC",
-    "getprojects"           => "`" . $config['prefix'] . "categories`.`category`, `" . $config['prefix'] . "projectattributes`.`deadline`, `" . $config['prefix'] . "projects`.`name` ASC",
-    "getlistitems"          => "`" . $config['prefix'] . "listItems`.`item` ASC",
-    "getcompleteditems"     => "`" . $config['prefix'] . "itemstatus`.`dateCompleted` DESC, `" . $config['prefix'] . "projects`.`name`, `" . $config['prefix'] . "items`.`title` ASC",
+    "spacecontextselectbox" => "cn.`name` ASC",
+    "categoryselectbox"     => "c.`category` ASC",
+    "checklistselectbox"    => "cl.`title` ASC",
+    "listselectbox"         => "l.`title` ASC",
+    "parentselectbox"       => "i.`title` ASC",
+    "timecontextselectbox"  => "ti.`timeframe` DESC",
+    "getlistitems"          => "li.`item` ASC",
     "getitemsandparent"     => "ptitle ASC, pcatname ASC, type ASC, deadline ASC, title ASC, dateCreated DESC",
-    "getorphaneditems"      => "`" . $config['prefix'] . "itemattributes`.`type` ASC, `" . $config['prefix'] . "items`.`title` ASC",
-    "selectchecklist"       => "`" . $config['prefix'] . "checklist`.`title` ASC",
-    "getchecklists"         => "`" . $config['prefix'] . "categories`.`category` ASC",
-    "getlists"              => "`" . $config['prefix'] . "categories`.`category` ASC",
-    "getchecklistitems"     => "`" . $config['prefix'] . "checklistItems`.`checked` DESC, `" . $config['prefix'] . "checklistItems`.`item` ASC",
-    "getchildren"           => "`" . $config['prefix'] . "itemattributes`.`type` ASC",
-    "getitems"              => "`" . $config['prefix'] . "categories`.`category`, `" . $config['prefix'] . "items`.`title` ASC ",
-    "getnotes"              => "`" . $config['prefix'] . "tickler`.`date` DESC ",
-    );
+    "getorphaneditems"      => "ia.`type` ASC, i.`title` ASC",
+    "selectchecklist"       => "cl.`title` ASC",
+    "getchecklists"         => "c.`category` ASC",
+    "getlists"              => "c.`category` ASC",
+    "getchecklistitems"     => "cli.`checked` DESC, cli.`item` ASC",
+    "getchildren"           => "ia.`type` ASC",
+    "getitems"              => "c.`category`, i.`title` ASC ",
+    "getnotes"              => "tk.`date` DESC ",
+);
 
 // Access keys defined.  Note IE only allows 26 access keys (a-z).
 $acckey = array(
