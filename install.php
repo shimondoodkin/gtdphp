@@ -36,7 +36,7 @@
     // we only handle 1 pont upgrades, so users must be at 0.7 to upgrade to
     // 0.8.
 
-    // check number of tables in db. 17=0.7, 0=new, 14=no upgrade neededi
+    // check number of tables in db. 17=0.7, 0=new, 15=no upgrade neededi
     $nt=0;
     $tables = mysql_list_tables($config['db']);
     while ($tbl = mysql_fetch_row($tables)){
@@ -198,6 +198,15 @@
        $q="INSERT INTO ".$config['prefix']."version (`version`) VALUES";
        $q.=" ('0.8rc-1');";
        $result = mysql_query($q);
+
+       $q="CREATE TABLE ".$config['prefix']."preferences (";
+       $q.="`id`  int(10) unsigned NOT NULL auto_increment, ";
+       $q.="`uid` int(10)  NOT NULL default '0', ";
+       $q.="`option`  text, ";
+       $q.="`value`  text, ";
+       $q.="PRIMARY KEY  (`id`)); ";
+       $result = mysql_query($q);
+       
 
        // give some direction about what happens next for the user.
        
