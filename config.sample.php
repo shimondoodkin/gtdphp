@@ -34,13 +34,11 @@ $config = array(
 // The following settings change settings for the user interface.  
 // These can be left at their default values, or changed if you have a different preference.
 
-$config = array(
-
-        "title"                     => 'GTD-PHP', // site name (appears at the top of each page)
-		"datemask"                  => 'Y-m-d D', // date format - required
-        "theme"                     => 'default', //default | menu_sidebar
-        "title_suffix"				=> false // true | false - add filename to title tag
-        );
+$config["title"]= 'GTD-PHP'; // site name (appears at the top of each page)
+$config["datemask"] = 'Y-m-d D'; // date format - required
+$config["theme"] = 'default'; //default | menu_sidebar
+$config["title_suffix"]	= false; // true | false - add filename to title tag
+        
 
 // These are the shortcut settings for menu options.  Add a key for any page or page view in the main menus.
 // Note IE only allows 26 access keys (a-z).
@@ -98,10 +96,9 @@ $acckey = array(
 // The following settings change how the interface behaves.  
 // These can be left at their default values, or changed if you have a different preference.
 
-$config = array(
-        "contextsummary"            => 'all',  //all | nextaction (Show all actions on context report, or nextactions only?)
-        "nextaction"                => 'multiple', //single | multiple (Allow single or multiple nextactions per project)
-		"afterCreate"				=> array (  // parent | item | list | another - default view after creating an item
+$config["contextsummary"] = 'all';  //all | nextaction (Show all actions on context report, or nextactions only?)
+$config["nextaction"] = 'multiple'; //single | multiple (Allow single or multiple nextactions per project)
+$config["afterCreate"]	= array (  // parent | item | list | another - default view after creating an item
 			'i'		=>	'another', // inbox preference
 			'a'		=>	'parent', // action preference
 			'w'		=>	'parent', // waiting-on preference
@@ -111,8 +108,7 @@ $config = array(
 			'v'		=>	'item', // vision preference
 			'o'		=>	'item', // role preference
 			'g'		=>	'list' // goal preference
-			)
-        );
+	    );
 
 
 
@@ -165,3 +161,5 @@ $sort = array(
 //You will probably want this to remain "false"
 
 $config["debug"] = 'false';  // false | true
+
+print_r($config);
