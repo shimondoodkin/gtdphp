@@ -121,8 +121,10 @@ $sql = array(
 										WHERE cl.`checklistId` = '{$values['checklistId']}' 
 										ORDER BY {$sort['getchecklistitems']}",
         
-		"getchecklists"			    => 	"SELECT cl.`checklistId`, cl.`title`, cl.`description`, cl.`categoryId`, c.`category` 
-										FROM `". $config['prefix'] ."checklist` as cl, `". $config['prefix'] ."categories` as c 
+		"getchecklists"			    => 	"SELECT cl.`checklistId`, cl.`title`, 
+												cl.`description`, cl.`categoryId`, c.`category` 
+										FROM `". $config['prefix'] ."checklist` as cl, 
+												`". $config['prefix'] ."categories` as c 
 										WHERE cl.`categoryId`=c.`categoryId` ".$values['filterquery']." 
 										ORDER BY {$sort['getchecklists']}",
 			
@@ -250,7 +252,7 @@ $sql = array(
         								ORDER BY {$sort['getlists']}",
         
         "getnotes"                  => "SELECT `ticklerId`, `title`, `note`, `date` 
-        								FROM `". $config['prefix'] . "tickler` ".$values['filterquery']." 
+        								FROM `". $config['prefix'] . "tickler` ".$values['filterquery']." as tk
         								ORDER BY {$sort['getnotes']}",
         								
         "getnextactions"            => "SELECT `parentId`, `nextaction` 
