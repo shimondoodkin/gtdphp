@@ -200,6 +200,21 @@
        $result = mysql_query($q);
 
        // give some direction about what happens next for the user.
+       
+       ?>
+       
+       <h2>Welcome to GTD-PHP</h2>
+       
+       <p>You have just successfully installed GTD-PHP.  There are some preliminary steps you should take to set up your installation for use and familiarize yourself with the system.</p>
+       <p>
+		   <ol>
+			   <li>You need to set up <a href="newContext.php">spacial</a> and <a href="newTimeContext.php">time contexts</a> that suit your situation.</li>
+			   <li>You need to enter ....</li>
+			   <li></li>
+			   <li></li>
+		   </ol>
+       </p>
+       <?php
 
        // end new install
     }else if($nt==17){

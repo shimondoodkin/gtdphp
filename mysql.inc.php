@@ -136,18 +136,18 @@ $sql = array(
         									its.`lastmodified`, ia.`categoryId`, 
         									c.`category`, ia.`contextId`, 
         									cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe` 
-										FROM (`". $config['prefix'] . "itemattributes`, 
-												`". $config['prefix'] . "lookup` as lu) as ia 
-											JOIN `". $config['prefix'] . "items` 
-												ON (ia.`itemId` = i.`itemId`) as i 
-											JOIN `". $config['prefix'] . "itemstatus` 
-												ON (ia.`itemId` = its.`itemId`) as its
-											LEFT OUTER JOIN `". $config['prefix'] . "context` 
-												ON (ia.`contextId` = cn.`contextId`) as cn 
-											LEFT OUTER JOIN `". $config['prefix'] ."categories` 
-												ON (ia.`categoryId` = c.`categoryId`) as c 
-											LEFT OUTER JOIN `". $config['prefix'] . "timeitems` 
-												ON (ia.`timeframeId` = ti.`timeframeId`) as ti 
+										FROM (`". $config['prefix'] . "itemattributes` as ia, 
+												`". $config['prefix'] . "lookup` as lu) 
+											JOIN `". $config['prefix'] . "items` as i
+												ON (ia.`itemId` = i.`itemId`)
+											JOIN `". $config['prefix'] . "itemstatus` as its
+												ON (ia.`itemId` = its.`itemId`)
+											LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+												ON (ia.`contextId` = cn.`contextId`) 
+											LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
+												ON (ia.`categoryId` = c.`categoryId`) 
+											LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti 
+												ON (ia.`timeframeId` = ti.`timeframeId`)
 										WHERE lu.`itemId`= ia.`itemId` 
 											AND lu.`parentId`= '{$values['parentId']}' ".$values['filterquery']." 
 										ORDER BY {$sort['getchildren']}",
@@ -192,16 +192,16 @@ $sql = array(
 														ti.`timeframe`, lu.`parentId` 
 												FROM 
 														`". $config['prefix'] . "itemattributes` as ia 
-													JOIN `". $config['prefix'] . "items` 
-														ON (ia.`itemId` = i.`itemId`) as i
-													JOIN `". $config['prefix'] . "itemstatus` 
-														ON (ia.`itemId` = its.`itemId`) as its
-													LEFT OUTER JOIN `". $config['prefix'] . "context` 
-														ON (ia.`contextId` = cn.`contextId`) as cn
-													LEFT OUTER JOIN `". $config['prefix'] ."categories` 
-														ON (ia.`categoryId` = c.`categoryId`) as c
-													LEFT OUTER JOIN `". $config['prefix'] . "timeitems` 
-														ON (ia.`timeframeId` = ti.`timeframeId`) as ti
+													JOIN `". $config['prefix'] . "items` as i
+														ON (ia.`itemId` = i.`itemId`) 
+													JOIN `". $config['prefix'] . "itemstatus` as its
+														ON (ia.`itemId` = its.`itemId`)
+													LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+														ON (ia.`contextId` = cn.`contextId`) 
+													LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
+														ON (ia.`categoryId` = c.`categoryId`)
+													LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
+														ON (ia.`timeframeId` = ti.`timeframeId`)
 													LEFT OUTER JOIN `". $config['prefix'] . "lookup` as lu 
 														ON (ia.`itemId` = lu.`itemId`)".$values['childfilterquery']."
 										) as x 
@@ -224,14 +224,14 @@ $sql = array(
 														ti.`timeframe` AS ptimeframe 
 												FROM 
 														`". $config['prefix'] . "itemattributes` as ia 
-													JOIN `". $config['prefix'] . "items` 
-														ON (ia.`itemId` = i.`itemId`) as i
-													JOIN `". $config['prefix'] . "itemstatus` 
-														ON (ia.`itemId` = its.`itemId`) as its
-													LEFT OUTER JOIN `". $config['prefix'] . "context` 
-														ON (ia.`contextId` = cn.`contextId`) as cn
-													LEFT OUTER JOIN `". $config['prefix'] . "categories` 
-														ON (ia.`categoryId` = c.`categoryId`) as c
+													JOIN `". $config['prefix'] . "items` as i
+														ON (ia.`itemId` = i.`itemId`)
+													JOIN `". $config['prefix'] . "itemstatus` as its
+														ON (ia.`itemId` = its.`itemId`)
+													LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+														ON (ia.`contextId` = cn.`contextId`)
+													LEFT OUTER JOIN `". $config['prefix'] . "categories` as c
+														ON (ia.`categoryId` = c.`categoryId`)
 													LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti 
 														ON (ia.`timeframeId` = ti.`timeframeId`)".$values['parentfilterquery']."
 											) as y 
@@ -247,18 +247,18 @@ $sql = array(
         
         "getlists"                  => "SELECT l.`listId`, l.`title`, l.`description`, l.`categoryId`, c.`category` 
         								FROM `". $config['prefix'] . "list` as l, 
-												". $config['prefix'] ."categories` as c 
+												`". $config['prefix'] ."categories` as c 
         								WHERE l.`categoryId`=c.`categoryId` ".$values['filterquery']." 
         								ORDER BY {$sort['getlists']}",
         
         "getnotes"                  => "SELECT `ticklerId`, `title`, `note`, `date` 
-        								FROM `". $config['prefix'] . "tickler` ".$values['filterquery']." as tk
+        								FROM `". $config['prefix'] . "tickler`  as tk".$values['filterquery']."
         								ORDER BY {$sort['getnotes']}",
         								
         "getnextactions"            => "SELECT `parentId`, `nextaction` 
         								FROM `". $config['prefix'] . "nextactions`",
         
-	"getorphaneditems"	    => 			"SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description` 
+		"getorphaneditems"	  		=> "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description` 
 										FROM `". $config['prefix'] . "itemattributes` as ia, 
 												`". $config['prefix'] . "items` as i,
 												`". $config['prefix'] . "itemstatus` as its 
@@ -434,11 +434,11 @@ $sql = array(
 												 `". $config['prefix'] . "itemattributes` as ia, 
 												 `". $config['prefix'] . "itemstatus` as its)
 											LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
-												ON (c.`categoryId`=`itemattributes`.`categoryId`)
-											LEFT OUTER JOIN `". $config['prefix'] . "context`
-												ON (cn.`contextId` = ia.`contextId`) as cn
-											LEFT OUTER JOIN `". $config['prefix'] . "timeitems`
-												ON (ti.`timeframeId` = ia.`timeframeId`) as ti
+												ON (c.`categoryId` = ia.`categoryId`)
+											LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+												ON (cn.`contextId` = ia.`contextId`)
+											LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
+												ON (ti.`timeframeId` = ia.`timeframeId`)
 										WHERE its.`itemId`=i.`itemId`
 											AND ia.`itemId`=i.`itemId`
 											AND i.`itemId` = '{$values['itemId']}'",
@@ -478,7 +478,7 @@ $sql = array(
 										WHERE `nextaction`='{$values['itemId']}'",
 
         "timecontextselectbox"      => "SELECT `timeframeId`, `timeframe`, `description`
-										FROM `". $config['prefix'] . "timeitems`".$values['timefilterquery']." as ti
+										FROM `". $config['prefix'] . "timeitems` as ti".$values['timefilterquery']."
 										ORDER BY {$sort['timecontextselectbox']}",
 
         "updatecategory"            => "UPDATE `". $config['prefix'] ."categories`
