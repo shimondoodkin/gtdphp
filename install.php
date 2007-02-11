@@ -128,7 +128,7 @@
        $q.="PRIMARY KEY  (`itemId`));";
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."list (";
+       $q="CREATE TABLE ".$config['prefix']."list (";
        $q.="`listId` int(10) unsigned NOT NULL auto_increment, ";
        $q.="`title` text NOT NULL, ";
        $q.="`categoryId` int(10) unsigned NOT NULL default '0', ";
@@ -139,7 +139,7 @@
        $q.="FULLTEXT KEY `title` (`title`));";
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."listItems (";
+       $q="CREATE TABLE ".$config['prefix']."listItems (";
        $q.="`listItemId` int(10) unsigned NOT NULL auto_increment, ";
        $q.="`item` text NOT NULL, ";
        $q.="`notes` text, ";
@@ -151,19 +151,19 @@
        $q.="FULLTEXT KEY `item` (`item`));"; 
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."lookup (";
+       $q="CREATE TABLE ".$config['prefix']."lookup (";
        $q.="`parentId` int(11) NOT NULL default '0', ";
        $q.="`itemId` int(10) unsigned NOT NULL default '0', ";
        $q.="PRIMARY KEY  (`parentId`,`itemId`) );";
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."nextactions (";
+       $q="CREATE TABLE ".$config['prefix']."nextactions (";
        $q.="`parentId` int(10) unsigned NOT NULL default '0', ";
        $q.="`nextaction` int(10) unsigned NOT NULL default '0', ";
        $q.="PRIMARY KEY  (`parentId`,`nextaction`));";
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."tickler (";
+       $q="CREATE TABLE ".$config['prefix']."tickler (";
        $q.="`ticklerId` int(10) unsigned NOT NULL auto_increment, ";
        $q.="`date` date NOT NULL default '0000-00-00', ";
        $q.="`title` text NOT NULL, ";
@@ -176,7 +176,7 @@
        $q.="FULLTEXT KEY `title` (`title`));";
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."timeitems (";
+       $q="CREATE TABLE ".$config['prefix']."timeitems (";
        $q.="`timeframeId` int(10) unsigned NOT NULL auto_increment, ";
        $q.="`timeframe` text NOT NULL, ";
        $q.="`description` text, ";
@@ -187,7 +187,7 @@
        $q.="FULLTEXT KEY `description` (`description`));"; 
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config[`prefix`]."version (";
+       $q="CREATE TABLE ".$config['prefix']."version (";
        $q.="`version` float unsigned NOT NULL, ";
        $q.="`updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update ";
        $q.=" CURRENT_TIMESTAMP);";
@@ -195,7 +195,7 @@
        
        # do we want to keep version somewhere more central? just updating here in
        # the install script kinda smells funny to me.
-       $q="INSERT INTO ".$config[`prefix`]."version (`version`) VALUES";
+       $q="INSERT INTO ".$config['prefix']."version (`version`) VALUES";
        $q.=" ('0.8rc-1');";
        $result = mysql_query($q);
 
