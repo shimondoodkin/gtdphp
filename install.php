@@ -313,7 +313,7 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
           }
-       // rename t_checklist to checklist
+       // rename t_checklistItems to checklistItems
        $q="drop table `checklistItems`";
        $result = mysql_query($q);
        $q="rename table ".$config['prefix']."t_checklistItems to `checklistItems`";
@@ -322,6 +322,416 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
           }
+
+
+       // context
+       $q="create table ".$config['prefix']."t_context (";
+       $q.="`contextId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`name` text NOT NULL, "; 
+       $q.="`description` text, "; 
+       $q.="PRIMARY KEY (`contextId`))"; 
+
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_context  SELECT * FROM `context`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       // rename t_context to context
+       $q="drop table `context`";
+       $result = mysql_query($q);
+       $q="rename table ".$config['prefix']."t_context to `context`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+
+
+       // goals
+       $q="create table ".$config['prefix']."t_goals (";
+       $q.="`id` int(11) NOT NULL auto_increment, "; 
+       $q.="`goal`   longtext, ";
+       $q.="`description`   longtext, ";
+       $q.="`created` date default NULL, ";
+       $q.="`deadline` date default NULL, ";
+       $q.="`completed` date default NULL, ";
+       $q.="`type` enum('weekly', 'quarterly') default NULL ,";
+       $q.="`projectId` int(11) default NULL, PRIMARY KEY (`id`) )";
+
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_goals  SELECT * FROM `goals`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       // rename t_goals to goals
+       $q="drop table `goals`";
+       $result = mysql_query($q);
+       $q="rename table ".$config['prefix']."t_goals to `goals`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+
+       // itemattributes
+       $q="create table ".$config['prefix']."t_itemattributes (";
+       $q.="`itemId` int(10) NOT NULL auto_increment, "; 
+       $q.="`type` enum('a', 'r', 'w') NOT NULL default 'a' ,";
+       $q.="`projectId` int(10) unsigned NOT NULL default '0', "; 
+       $q.="`contextId` int(10) unsigned NOT NULL default '0', "; 
+       $q.="`timeframeId` int(10) unsigned NOT NULL default '0', "; 
+       $q.="`deadline` date default NULL , ";
+       $q.="`repeat` int( 10 ) unsigned NOT NULL default '0', ";
+       $q.=" `suppress` enum( 'y', 'n' ) NOT NULL default 'n', ";
+       $q.="`suppressUntil` int( 10 ) unsigned default NULL , ";
+       $q.="PRIMARY KEY ( `itemId` ) , KEY `projectId` ( `projectId` ) ,";
+       $q.="KEY `contextId` ( `contextId` ) , ";
+       $q.="KEY `suppress` ( `suppress` ) , KEY `type` ( `type` ) ,";
+       $q.=" KEY `timeframeId` ( `timeframeId` ) )";
+
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_itemattributes  SELECT * FROM `itemattributes`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       // rename t_itemattributes to itemattributes
+       $q="drop table `itemattributes`";
+       $result = mysql_query($q);
+       $q="rename table ".$config['prefix']."t_itemattributes to `itemattributes`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       // items
+       $q="CREATE TABLE ".$config['prefix']."t_items ( ";
+       $q.=" `itemId` int( 10 ) unsigned NOT NULL auto_increment , `title`
+       text NOT NULL , `description` longtext, PRIMARY KEY ( `itemId` ) ,
+       FULLTEXT KEY `title` ( `title` ) , FULLTEXT KEY `description` (
+          `description` ) )" ;
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_items SELECT * from `items` ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+
+       $q="drop table `items`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="rename table ".$config['prefix']."t_items to `items`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="CREATE TABLE ".$config['prefix']."t_itemstatus ( ";
+       $q.="`itemId` int( 10 ) unsigned NOT NULL auto_increment ,";
+       $q.=" `dateCreated` date NOT NULL default '0000-00-00', ";
+       $q.="`lastModified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP , ";
+       $q.="`dateCompleted` date default NULL , ";
+       $q.=" `completed` int( 10 ) unsigned default NULL , ";
+       $q.="PRIMARY KEY ( `itemId` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."t_itemstatus SELECT * FROM `gtd`.`itemstatus`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `itemstatus`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="rename table ".$config['prefix']."t_itemstatus to `itemstatus`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       
+       $q="CREATE TABLE ".$config['prefix']."t_list ( ";
+       $q.="`listId` int( 10 ) unsigned NOT NULL auto_increment ,";
+       $q.=" `title` text NOT NULL , `categoryId` int( 10 ) unsigned NOT NULL
+       default '0', `description` text, PRIMARY KEY ( `listId` ) , KEY
+       `categoryId` ( `categoryId` ) , FULLTEXT KEY `description` (
+          `description` ) , FULLTEXT KEY `title` ( `title` ) )";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."t_list  SELECT * FROM `list` ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `list`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_list to `list`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="CREATE TABLE ".$config['prefix']."t_listItems ( ";
+       $q.="`listItemId` int( 10 ) unsigned NOT NULL auto_increment , ";
+       $q.="`item` text NOT NULL , `notes` text, ";
+       $q.="`listId` int( 10 ) unsigned NOT NULL default '0', ";
+       $q.="`dateCompleted` date default '0000-00-00', PRIMARY KEY (
+          `listItemId` ) , ";
+       $q.="KEY `listId` ( `listId` ) , FULLTEXT KEY `notes` ( `notes` ) , ";
+       $q.="FULLTEXT KEY `item` ( `item` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."t_listItems SELECT * FROM `listItems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `listItems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_listItems to `listItems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="CREATE TABLE ".$config['prefix']."t_nextactions ( ";
+       $q.="`projectId` int( 10 ) unsigned NOT NULL default '0', ";
+       $q.=" `nextaction` int( 10 ) unsigned NOT NULL default '0', ";
+       $q.=" PRIMARY KEY ( `projectId` , `nextaction` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."t_nextactions SELECT * FROM `nextactions`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `nextactions`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_nextactions to `nextactions`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="CREATE TABLE ".$config['prefix']."t_projectattributes ( ";
+       $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment , ";
+       $q.=" `categoryId` int( 10 ) unsigned NOT NULL default '1', ";
+       $q.="`isSomeday` enum( 'y', 'n' ) NOT NULL default 'n', ";
+       $q.=" `deadline` date default NULL , `repeat` int( 11 ) unsigned NOT
+       NULL default '0', ";
+       $q.="`suppress` enum( 'y', 'n' ) NOT NULL default 'n', ";
+       $q.=" `suppressUntil` int( 10 ) unsigned default NULL , PRIMARY KEY (
+          `projectId` ) ,";
+       $q.=" KEY `categoryId` ( `categoryId` ) , KEY `isSomeday` (
+          `isSomeday`) ,";
+          $q.="KEY `suppress` ( `suppress` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_projectattributes SELECT * FROM `projectattributes` ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="drop table `projectattributes`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_projectattributes to `projectattributes`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="CREATE TABLE ".$config['prefix']."t_projects ( ";
+       $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment , ";
+       $q.=" `name` text NOT NULL , `description` text, `desiredOutcome` text, ";
+       $q.="PRIMARY KEY ( `projectId` ) , FULLTEXT KEY `desiredOutcome` (
+          `desiredOutcome` ) , ";
+       $q.=" FULLTEXT KEY `name` ( `name` ) , FULLTEXT KEY `description` (
+          `description` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_projects SELECT * FROM `projects` ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="drop table `projects`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_projects to `projects`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="CREATE TABLE ".$config['prefix']."t_projectstatus ( ";
+       $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment ,
+       `dateCreated` date NOT NULL default '0000-00-00', `lastModified`
+       timestamp NOT NULL default CURRENT_TIMESTAMP on update
+       CURRENT_TIMESTAMP , `dateCompleted` date default NULL , PRIMARY KEY (
+          `projectId` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."t_projectstatus SELECT * FROM
+       `projectstatus`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `projectstatus`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_projectstatus to `projectstatus`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="CREATE TABLE ".$config['prefix']."t_tickler ( ";
+       $q.="`ticklerId` int( 10 ) unsigned NOT NULL auto_increment , ";
+       $q.="`date` date NOT NULL default '0000-00-00', `title` text NOT NULL ,
+       `note` longtext, PRIMARY KEY ( `ticklerId` ) , KEY `date` ( `date` ) ,
+       FULLTEXT KEY `notes` ( `note` ) ) ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."t_tickler  SELECT * FROM
+       `tickler`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `tickler`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_tickler to `tickler`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="CREATE TABLE  ".$config['prefix']."t_timeitems ( ";
+       $q.="`timeframeId` int( 10 ) unsigned NOT NULL auto_increment , ";
+       $q.=" `timeframe` text NOT NULL , `description` text, PRIMARY KEY (
+          `timeframeId` ) )";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="INSERT INTO ".$config['prefix']."t_timeitems SELECT * FROM
+       `timeitems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="drop table `timeitems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="rename table ".$config['prefix']."t_timeitems to `timeitems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+
+       createLookup();
+       createPreferences();
        createVersion();
 
     }else if($nt==15){
