@@ -46,7 +46,7 @@
     if($nt==0){
        # new install
        // start creating new tables
-       echo "<br>New install install";
+       echo "<br>New install";
        $q="create table ".$config['prefix']."categories (";
        $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
        $q.="`category` text NOT NULL, "; 
@@ -214,10 +214,13 @@
        
        <h2>Welcome to GTD-PHP</h2>
        
-       <p>You have just successfully installed GTD-PHP.  There are some preliminary steps you should take to set up your installation for use and familiarize yourself with the system.</p>
+       <p>You have just successfully installed GTD-PHP.
+       There are some preliminary steps you should take to set up your
+       installation for use and familiarize yourself with the system.</p>
        <p>
 		   <ol>
-			   <li>You need to set up <a href="newContext.php">spacial</a> and <a href="newTimeContext.php">time contexts</a> that suit your situation.</li>
+              <li>You need to set up <a href="newContext.php" target="_blank">spatial</a> and
+              <a href="newTimeContext.php" target="_blank">time contexts</a> that suit your situation.</li>
 			   <li>You need to enter ....</li>
 			   <li></li>
 			   <li></li>
@@ -232,11 +235,11 @@
        // update
        // keep a backup of the db?
        // move each of the old tables into the appropriate new tables
-    }else if($nt==14){
+    }else if($nt==15){
        //has a 0.8 db
        echo "<br>No upgrade needed";
     }else{
-       echo "You must be at version 0.7 to upgrade to 0.8.";
+       echo "<br>You must be at version 0.7 to upgrade to 0.8.";
     }
 	include_once('footer.php');
 ?>
