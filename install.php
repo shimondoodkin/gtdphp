@@ -42,6 +42,43 @@
     while ($tbl = mysql_fetch_row($tables)){
        $nt++;
     }
+
+    // new tables shared by upgrade and install paths
+    function createVersion()  {
+       $q="CREATE TABLE ".$config['prefix']."version (";
+       $q.="`version` float unsigned NOT NULL, ";
+       $q.="`updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update ";
+       $q.=" CURRENT_TIMESTAMP);";
+       $result = mysql_query($q);
+       # do we want to keep version somewhere more central? just updating here in
+       # the install script kinda smells funny to me.
+       $q="INSERT INTO ".$config['prefix']."version (`version`) VALUES";
+       $q.=" ('0.8rc-1');";
+       $result = mysql_query($q);
+    }
+
+    function createLookup() {
+    
+       $q="CREATE TABLE ".$config['prefix']."lookup (";
+       $q.="`parentId` int(11) NOT NULL default '0', ";
+       $q.="`itemId` int(10) unsigned NOT NULL default '0', ";
+       $q.="PRIMARY KEY  (`parentId`,`itemId`) );";
+       $result = mysql_query($q);
+    }
+
+      
+    function createPreferences() {
+       $q="CREATE TABLE ".$config['prefix']."preferences (";
+       $q.="`id`  int(10) unsigned NOT NULL auto_increment, ";
+       $q.="`uid` int(10)  NOT NULL default '0', ";
+       $q.="`option`  text, ";
+       $q.="`value`  text, ";
+       $q.="PRIMARY KEY  (`id`)); ";
+       $result = mysql_query($q);
+    }
+ 
+    
+
     echo "Number of tables: $nt";
     if($nt==0){
        # new install
@@ -151,11 +188,8 @@
        $q.="FULLTEXT KEY `item` (`item`));"; 
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config['prefix']."lookup (";
-       $q.="`parentId` int(11) NOT NULL default '0', ";
-       $q.="`itemId` int(10) unsigned NOT NULL default '0', ";
-       $q.="PRIMARY KEY  (`parentId`,`itemId`) );";
-       $result = mysql_query($q);
+       createLookup();
+       createPreferences();
 
        $q="CREATE TABLE ".$config['prefix']."nextactions (";
        $q.="`parentId` int(10) unsigned NOT NULL default '0', ";
@@ -187,26 +221,7 @@
        $q.="FULLTEXT KEY `description` (`description`));"; 
        $result = mysql_query($q);
 
-       $q="CREATE TABLE ".$config['prefix']."version (";
-       $q.="`version` float unsigned NOT NULL, ";
-       $q.="`updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update ";
-       $q.=" CURRENT_TIMESTAMP);";
-       $result = mysql_query($q);
-       
-       # do we want to keep version somewhere more central? just updating here in
-       # the install script kinda smells funny to me.
-       $q="INSERT INTO ".$config['prefix']."version (`version`) VALUES";
-       $q.=" ('0.8rc-1');";
-       $result = mysql_query($q);
-
-       $q="CREATE TABLE ".$config['prefix']."preferences (";
-       $q.="`id`  int(10) unsigned NOT NULL auto_increment, ";
-       $q.="`uid` int(10)  NOT NULL default '0', ";
-       $q.="`option`  text, ";
-       $q.="`value`  text, ";
-       $q.="PRIMARY KEY  (`id`)); ";
-       $result = mysql_query($q);
-       
+       createVersion();
 
        // give some direction about what happens next for the user.
        
@@ -235,6 +250,80 @@
        // update
        // keep a backup of the db?
        // move each of the old tables into the appropriate new tables
+
+       // if they were using 0.7 they were not using prefixes. do we need them
+       // here?
+
+       $q="create table ".$config['prefix']."t_categories (";
+       $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`category` text NOT NULL, "; 
+       $q.="`description` text, ";
+       $q.="PRIMARY KEY  (`categoryId`), ";
+       $q.="FULLTEXT KEY `category` (`category`), ";
+       $q.="FULLTEXT KEY `description` (`description`));";
+       $result = mysql_query($q);
+
+       $q="INSERT INTO ".$config['prefix']."t_categories select * from `categories`";
+       $result = mysql_query($q);
+
+       // drop categories
+       $q="drop table `categories`";
+       $result = mysql_query($q);
+
+       // rename t_categories to categories
+       $q="rename table ".$config['prefix']."t_categories to `categories`";
+       $result = mysql_query($q);
+
+       // checklist
+       $q="create table ".$config['prefix']."t_checklist (";
+       $q.="`checklistId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`title` text NOT NULL, "; 
+       $q.="`categoryId` int( 10 ) unsigned NOT NULL default '0', "; 
+       $q.="`description` text, ";
+       $q.="PRIMARY KEY  (`checklistId`)) ";
+       $result = mysql_query($q);
+
+       $q="INSERT INTO ".$config['prefix']."t_checklist  SELECT * FROM `checklist`";
+       $result = mysql_query($q);
+
+       // rename t_checklist to checklist
+       $q="drop table `checklist`";
+       $result = mysql_query($q);
+       $q="rename table ".$config['prefix']."t_checklist to `checklist`";
+       $result = mysql_query($q);
+
+       // checklistItems
+       $q="create table ".$config['prefix']."t_checklistItems (";
+       $q.="`checklistItemId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`item` text NOT NULL, "; 
+       $q.="`notes` text, "; 
+       $q.="`checklistId` int(10) unsigned NOT NULL default '0', "; 
+       $q.="`checked` enum ('y', 'n') NOT NULL default 'n', "; 
+       $q.="PRIMARY KEY (`checklistItemId`), KEY `checklistId` (`checklistId`),"; 
+       $q.="FULLTEXT KEY `notes` (`notes`), FULLTEXT KEY `item` (`item`))"; 
+
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       $q="INSERT INTO ".$config['prefix']."t_checklistItems  SELECT * FROM `checklistItems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       // rename t_checklist to checklist
+       $q="drop table `checklistItems`";
+       $result = mysql_query($q);
+       $q="rename table ".$config['prefix']."t_checklistItems to `checklistItems`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+          }
+       createVersion();
+
     }else if($nt==15){
        //has a 0.8 db
        echo "<br>No upgrade needed";
