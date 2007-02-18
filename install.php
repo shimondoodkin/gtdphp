@@ -730,10 +730,669 @@
        }
 
 
+       $q="ALTER TABLE ".$config['prefix']."tickler ADD `repeat` INT UNSIGNED
+       NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."tickler ADD `suppressUntil` INT
+       UNSIGNED NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
        createLookup();
+       $q="INSERT INTO ".$config['prefix']."lookup (`parentId`,`itemId`) SELECT `projectId`,`itemId`
+       FROM `itemattributes`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes DROP `projectId`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes ADD `isSomeday`
+       ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n' AFTER `type`, ADD `categoryId`
+       INT( 11 ) UNSIGNED NOT NULL DEFAULT '0' AFTER `isSomeday` ";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes ADD INDEX (
+          `isSomeday` )";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes ADD INDEX (
+          `categoryId`)";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."items ADD `desiredOutcome` TEXT
+       NULL";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."items ADD FULLTEXT
+       (`desiredOutcome`)";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemstatus DROP `completed`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `type`
+       `type` ENUM( 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' ) NOT NULL
+       DEFAULT 'i'";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."projectattributes ADD `type` ENUM(
+          'p' ) NOT NULL DEFAULT 'p' AFTER `projectId`";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."nextactions DROP PRIMARY KEY, ADD
+       PRIMARY KEY ( `projectId` , `nextaction`)";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."nextactions CHANGE `projectId`
+       `parentId` INT( 10 ) UNSIGNED NOT NULL DEFAULT'0'";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."items ADD `prikey` INT UNSIGNED
+       NOT NULL FIRST";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes ADD `prikey` INT
+       UNSIGNED NOT NULL FIRST";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemstatus ADD `prikey` INT
+       UNSIGNED NOT NULL FIRST";
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."items CHANGE `itemId` `itemId`
+       INT( 10 ) UNSIGNED NOT NULL";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       
+       $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `itemId`
+       `itemId` INT( 10 ) UNSIGNED NOT NULL";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemstatus CHANGE `itemId`
+       `itemId` INT( 10 ) UNSIGNED NOT NULL";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+
+       $q=" UPDATE ".$config['prefix']."items SET `prikey`=`itemId` +( 
+	CASE  WHEN (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0
+		ELSE (SELECT MAX(`id`) FROM `goals`)
+	END
+	)+(
+	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
+		ELSE (SELECT MAX(`projectId`) FROM `projects`)
+	END
+	)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+    $q="UPDATE ".$config['prefix']."itemattributes SET `prikey`=`itemId`+(
+	CASE  WHEN (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0
+		ELSE (SELECT MAX(`id`) FROM `goals`)
+	END
+	)+(
+	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
+		ELSE (SELECT MAX(`projectId`) FROM `projects`)
+	END
+	)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+      $q="UPDATE `itemstatus` SET `prikey`=`itemId`+(
+	CASE  WHEN (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0
+		ELSE (SELECT MAX(`id`) FROM `goals`)
+	END
+	)+(
+	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
+		ELSE (SELECT MAX(`projectId`) FROM `projects`)
+	END
+	)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."items DROP PRIMARY KEY, ADD
+       PRIMARY KEY (`prikey`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemattributes DROP PRIMARY KEY,
+       ADD PRIMARY KEY (`prikey`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemstatus DROP PRIMARY KEY, ADD
+       PRIMARY KEY (`prikey`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."items DROP `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemattributes DROP `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemstatus DROP `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."items CHANGE `prikey` `itemId`
+       INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `prikey`
+       `itemId` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemstatus CHANGE `prikey`
+       `itemId` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="DELETE FROM ".$config['prefix']."nextactions WHERE `nextaction`
+       ='0'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="UPDATE `nextactions` SET `nextaction`=`nextaction`+( CASE  WHEN
+       (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0 ELSE (SELECT MAX(`id`)
+       FROM `goals`) END)+( CASE  WHEN (SELECT MAX(`projectId`) FROM
+       `projects`) IS NULL THEN 0 ELSE (SELECT MAX(`projectId`) FROM
+       `projects`) END)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."lookup ADD `prikey` INT UNSIGNED
+       NOT NULL";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="UPDATE `lookup` SET `prikey` =`itemId`+( CASE  WHEN (SELECT
+       MAX(`id`) FROM `goals`) IS NULL THEN 0 ELSE (SELECT MAX(`id`) FROM
+       `goals`) END)+( CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS
+       NULL THEN 0 ELSE (SELECT MAX(`projectId`) FROM `projects`) END)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."lookup DROP PRIMARY KEY, ADD
+       PRIMARY KEY (`parentId` , `prikey`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."lookup DROP `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."lookup CHANGE `prikey` `itemId`
+       INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="INSERT INTO ".$config['prefix']."items
+       (`itemId`,`title`,`description`,`desiredOutcome`) SELECT
+       `projectId`,`name`,`description`,`desiredOutcome` FROM `projects`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="INSERT INTO
+       ".$config['prefix']."itemattributes(`itemId`,`type`,`categoryId`,`isSomeday`,`deadline`,`repeat`,`suppress`,`suppressUntil`)
+       SELECT
+       `projectId`,`type`,`categoryId`,`isSomeday`,`deadline`,`repeat`,`suppress`,`suppressUntil`
+       FROM `projectattributes`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="INSERT INTO ".$config['prefix']."itemstatus
+       (`itemId`,`dateCreated`, `lastModified`, `dateCompleted`) SELECT
+       `projectId`,`dateCreated`, `lastModified`, `dateCompleted` FROM
+       `projectstatus`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."goals ADD `prikey` INT UNSIGNED
+       NOT NULL FIRST";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."goals CHANGE `id` `id` INT( 10 )
+       UNSIGNED NOT NULL";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="UPDATE ".$config['prefix']."goals SET `prikey`=`id`+(
+	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
+		ELSE (SELECT MAX(`projectId`) FROM `projects`)
+	END
+	)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."goals DROP PRIMARY KEY, ADD
+       PRIMARY KEY (`prikey`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."goals DROP `id`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."goals CHANGE `prikey` `id` INT( 10
+    ) UNSIGNED NOT NULL DEFAULT '0'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."timeitems ADD `type` ENUM( 'v',
+       'o', 'g', 'p', 'a' ) NOT NULL DEFAULT 'a'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."timeitems ADD INDEX ( `type` )";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="ALTER TABLE ".$config['prefix']."goals ADD `timeframeId` INT
+       UNSIGNED NOT NULL";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="UPDATE `goals` SET `timeframeId`= (1 + (
+	CASE  WHEN (SELECT MAX(`timeframeId`) FROM `timeitems`) IS NULL THEN 0
+		ELSE (SELECT MAX(`timeframeId`) FROM `timeitems`)
+	END
+	)) WHERE `type`='weekly'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="UPDATE `goals` SET `timeframeId`= (2 + (
+	CASE  WHEN (SELECT MAX(`timeframeId`) FROM `timeitems`) IS NULL THEN 0
+		ELSE (SELECT MAX(`timeframeId`) FROM `timeitems`)
+	END
+	)) WHERE `type`='quarterly'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."goals CHANGE `type` `type`
+       ENUM('g') NOT NULL DEFAULT 'g'";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="INSERT INTO ".$config['prefix']."items
+       (`itemId`,`title`,`description`) SELECT `id`,`goal`,`description` FROM
+       `goals`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="INSERT INTO ".$config['prefix']."itemattributes
+       (`itemId`,`type`,`timeframeId`,`deadline`) SELECT
+       `id`,`type`,`timeframeId`, `deadline` FROM `goals`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="INSERT INTO ".$config['prefix']."itemattributes
+       (`itemId`,`type`,`timeframeId`,`deadline`) SELECT
+       `id`,`type`,`timeframeId`, `deadline` FROM `goals`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="INSERT INTO ".$config['prefix']."itemstatus
+       (`itemId`,`dateCreated`, `dateCompleted`) SELECT `id`, `created`,
+       `completed` FROM `goals`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="INSERT INTO ".$config['prefix']."lookup (`parentId`,`itemId`)
+       SELECT `projectId`,`id` FROM `goals`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="INSERT INTO ".$config['prefix']."timeitems ( `timeframeId` ,
+       `timeframe` , `description` , `type` ) VALUES (NULL , 'Weekly', NULL,
+       'g'), (NULL , 'Quarterly', NULL , 'g')";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="DROP TABLE
+       ".$config['prefix']."projectattributes,`projects`,`projectstatus`,`goals`
+       ";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."items  ORDER BY `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }       $q="ALTER TABLE ".$config['prefix']."itemattributes  ORDER BY `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemstatus  ORDER BY `itemId`";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="ALTER TABLE ".$config['prefix']."itemattributes ADD INDEX (
+          `isSomeday`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+
+       $q="ALTER TABLE ".$config['prefix']."items CHANGE `itemId` `itemId`
+       INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `itemId`
+       `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `itemId`
+       `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+        $q="ALTER TABLE ".$config['prefix']."itemstatus CHANGE `itemId`
+        `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."timeitems ADD FULLTEXT
+       (`timeframe`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."timeitems ADD FULLTEXT
+       (`description`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+       $q="ALTER TABLE ".$config['prefix']."tickler ADD FULLTEXT (`title`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."context ADD FULLTEXT (`name`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."context ADD FULLTEXT
+       (`description`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."checklist ADD FULLTEXT
+       (`description`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."checklist ADD FULLTEXT
+       (`description`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."checklist ADD FULLTEXT (`title`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."categories ADD FULLTEXT
+       (`category`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
+
+       $q="ALTER TABLE ".$config['prefix']."categories ADD FULLTEXT
+       (`description`)";
+       $result = mysql_query($q);
+       if (!result) {
+          echo $q;
+          die('Invalid query: ' . mysql_error());
+       }
        createPreferences();
        createVersion();
 
+       // drop waitingOn
+       // note this wasn't in database-upgrade-0.8.sql. do we need to move the
+       // waitingOn's over?
+       $q="drop table `waitingOn`";
+       $result = mysql_query($q);
     }else if($nt==15){
        //has a 0.8 db
        echo "<br>No upgrade needed";
