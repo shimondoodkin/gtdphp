@@ -80,8 +80,8 @@
     function fixDate($tableName,$columnName){
        // change dates of "0000-00-00" to NULL
        # fix date NULL versus 0000-00-00 issue
-       $q=" update ".$config['prefix'].$tableName." set ".$columnName.'=NULL where
-       dateCompleted="0000-00-00"';
+       $q=" update ".$config['prefix'].$tableName." set ".$columnName.'=NULL where ';
+       $q.=$columnName.'="0000-00-00"';
        $result = mysql_query($q);
        if (!$result) {
              echo $q;
@@ -395,6 +395,10 @@
              die('Invalid query: ' . mysql_error());
           }
 
+       fixDate('goals','created');
+       fixDate('goals','deadline');
+       fixDate('goals','completed');
+
        // itemattributes
        $q="create table ".$config['prefix']."t_itemattributes (";
        $q.="`itemId` int(10) NOT NULL auto_increment, "; 
@@ -431,6 +435,8 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
           }
+
+       fixDate('itemattributes','deadline');
        // items
        $q="CREATE TABLE ".$config['prefix']."t_items ( ";
        $q.=" `itemId` int( 10 ) unsigned NOT NULL auto_increment , `title`
@@ -558,6 +564,9 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
        }
+
+       fixDate('listItems','dateCompleted');
+
        $q="CREATE TABLE ".$config['prefix']."t_nextactions ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL default '0', ";
        $q.=" `nextaction` int( 10 ) unsigned NOT NULL default '0', ";
@@ -622,6 +631,9 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
        }
+
+       fixDate('projectattributes','deadline');
+
        $q="CREATE TABLE ".$config['prefix']."t_projects ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.=" `name` text NOT NULL , `description` text, `desiredOutcome` text, ";
@@ -683,6 +695,9 @@
              die('Invalid query: ' . mysql_error());
        }
 
+       fixDate('projectstatus','dateCreated');
+       fixDate('projectstatus','dateCompleted');
+
        $q="CREATE TABLE ".$config['prefix']."t_tickler ( ";
        $q.="`ticklerId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.="`date` date  default NULL, `title` text NOT NULL ,
@@ -712,6 +727,8 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
        }
+
+       fixDate('tickler','date');
 
        $q="CREATE TABLE  ".$config['prefix']."t_timeitems ( ";
        $q.="`timeframeId` int( 10 ) unsigned NOT NULL auto_increment , ";
