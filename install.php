@@ -77,7 +77,17 @@
        $result = mysql_query($q);
     }
  
-    
+    function fixDate($tableName,$columnName){
+       // change dates of "0000-00-00" to NULL
+       # fix date NULL versus 0000-00-00 issue
+       $q=" update ".$config['prefix'].$tableName." set ".$columnName.'=NULL where
+       dateCompleted="0000-00-00"';
+       $result = mysql_query($q);
+       if (!$result) {
+             echo $q;
+             die('Invalid query: ' . mysql_error());
+       }
+}
 
     echo "Number of tables: $nt";
     if($nt==0){
@@ -199,7 +209,7 @@
 
        $q="CREATE TABLE ".$config['prefix']."tickler (";
        $q.="`ticklerId` int(10) unsigned NOT NULL auto_increment, ";
-       $q.="`date` date NOT NULL default '0000-00-00', ";
+       $q.="`date` date  default NULL, ";
        $q.="`title` text NOT NULL, ";
        $q.="`note` longtext, ";
        $q.="`repeat` int(10) unsigned NOT NULL default '0', ";
@@ -455,7 +465,7 @@
 
        $q="CREATE TABLE ".$config['prefix']."t_itemstatus ( ";
        $q.="`itemId` int( 10 ) unsigned NOT NULL auto_increment ,";
-       $q.=" `dateCreated` date NOT NULL default '0000-00-00', ";
+       $q.=" `dateCreated` date default NULL, ";
        $q.="`lastModified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP , ";
        $q.="`dateCompleted` date default NULL , ";
        $q.=" `completed` int( 10 ) unsigned default NULL , ";
@@ -483,6 +493,10 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
        }
+
+       fixDate('itemstatus','dateCreated');
+       fixDate('itemstatus','dateCompleted');
+
        
        $q="CREATE TABLE ".$config['prefix']."t_list ( ";
        $q.="`listId` int( 10 ) unsigned NOT NULL auto_increment ,";
@@ -517,7 +531,7 @@
        $q.="`listItemId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.="`item` text NOT NULL , `notes` text, ";
        $q.="`listId` int( 10 ) unsigned NOT NULL default '0', ";
-       $q.="`dateCompleted` date default '0000-00-00', PRIMARY KEY (
+       $q.="`dateCompleted` date default NULL, PRIMARY KEY (
           `listItemId` ) , ";
        $q.="KEY `listId` ( `listId` ) , FULLTEXT KEY `notes` ( `notes` ) , ";
        $q.="FULLTEXT KEY `item` ( `item` ) ) ";
@@ -640,7 +654,7 @@
        }
        $q="CREATE TABLE ".$config['prefix']."t_projectstatus ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment ,
-       `dateCreated` date NOT NULL default '0000-00-00', `lastModified`
+       `dateCreated` date  default NULL, `lastModified`
        timestamp NOT NULL default CURRENT_TIMESTAMP on update
        CURRENT_TIMESTAMP , `dateCompleted` date default NULL , PRIMARY KEY (
           `projectId` ) ) ";
@@ -671,7 +685,7 @@
 
        $q="CREATE TABLE ".$config['prefix']."t_tickler ( ";
        $q.="`ticklerId` int( 10 ) unsigned NOT NULL auto_increment , ";
-       $q.="`date` date NOT NULL default '0000-00-00', `title` text NOT NULL ,
+       $q.="`date` date  default NULL, `title` text NOT NULL ,
        `note` longtext, PRIMARY KEY ( `ticklerId` ) , KEY `date` ( `date` ) ,
        FULLTEXT KEY `notes` ( `note` ) ) ";
        $result = mysql_query($q);
