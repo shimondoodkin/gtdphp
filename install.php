@@ -465,7 +465,7 @@
              echo $q;
              die('Invalid query: ' . mysql_error());
        }
-       $q="INSERT INTO ".$config['prefix']."t_itemstatus SELECT * FROM `gtd`.`itemstatus`";
+       $q="INSERT INTO ".$config['prefix']."t_itemstatus SELECT * FROM `itemstatus`";
        $result = mysql_query($q);
        if (!$result) {
              echo $q;

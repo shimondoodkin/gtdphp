@@ -366,7 +366,8 @@ $sql = array(
 											AND ia.`type`='{$values['ptype']}'
 											AND (its.`dateCompleted` IS NULL
 											OR its.`dateCompleted` = '0000-00-00')
-										ORDER BY {$sort['parentselectbox']}",
+										ORDER BY i.`title`",
+										#ORDER BY {$sort['parentselectbox']}",
 
 
         "reassigncategory"          => "UPDATE `". $config['prefix'] . "itemattributes`
