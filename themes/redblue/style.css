@@ -1,0 +1,9 @@
+@import url(../default/style.css);
+
+h1,h2,a,a:link,a:visited,a:hover  {
+	color: #000B86;
+}
+
+a.nextactionlink {
+	color: #F80;
+}	
