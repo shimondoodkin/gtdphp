@@ -1,0 +1,37 @@
+!DO NOT USE THIS BRANCH ON YOUR LIVE DATA. MAKE A COPY, AND TEST ON THAT!
+
+2007-03-25
+Summary of stuff going on in this branch:
+
+!DO NOT USE THIS BRANCH ON YOUR LIVE DATA. MAKE A COPY, AND TEST ON THAT!
+
+1) all updates to items (actions, projects, ... values) happen ONLY 
+in processItems.php , and NOWHERE ELSE
+
+2) several bugs with next actions have been fixed
+
+3) next action status can be toggled for several actions at once,
+from the actions list or from the project report screen.
+If on the latter, then when multiple next actions are permitted,
+checkboxes are offered to mark next actions.  If only single next
+actions are allowed, then radio boxes are presented.
+
+4) Recurring actions and recurring next actions should now behave
+properly. There's a new config option, storeRecurrences, 
+to define whether you want completed recurred actions to be stored,
+or not.
+
+5) there's a new debug option value, freezedb, which should prevent any
+updates to the items tables: use it to see what would happen if...
+
+6) when using the debug=developer option, processitems.php dumps loads 
+of data to the screen, and prevents the automatic refresh to the
+destination screen, allowing you to study the debug dump before 
+pressing a link at the bottom of the page to go to the next page.
+
+7) there's a new config option trimLength to specify what length
+item descriptions should be trimmed at (formerly this was hard-coded at
+72 characters). There's a clever function to trim to that number of
+VISIBLE characters, so that html tags are not included in the length.
+
+!DO NOT USE THIS BRANCH ON YOUR LIVE DATA. MAKE A COPY, AND TEST ON THAT!
