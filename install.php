@@ -118,7 +118,7 @@
        $q.="`item` text NOT NULL, "; 
        $q.="`notes` text, "; 
        $q.="`checklistId` int(10) unsigned NOT NULL default '0', "; 
-       $q.="`checkedd` enum('y','n') NOT NULL default 'n', "; 
+       $q.="`checked` enum('y','n') NOT NULL default 'n', "; 
        $q.="PRIMARY KEY  (`checklistItemId`), ";
        $q.="KEY `checklistId` (`checklistId`), ";
        $q.="FULLTEXT KEY `notes` (`notes`), ";
