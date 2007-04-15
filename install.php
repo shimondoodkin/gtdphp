@@ -74,6 +74,7 @@
        // I just suggest that any time we're going to do the same thing over & over
        // we should put it into a function.
 
+		// categories
 		create_table("categories");
 
        $q="INSERT INTO ".$config['prefix']. $temp . "categories select * from `categories`";
@@ -152,7 +153,7 @@
        // items
 		create_table("items");
 
-       $q="INSERT INTO ".$config['prefix']. $temp . "items SELECT * from `items` ";
+       $q="INSERT INTO ".$config['prefix']. $temp . "items (itemId,title,description) SELECT * from `items` ";
        send_query($q);
 
 		move_temp("items");
@@ -255,8 +256,7 @@
 
 		create_table("tickler");
        
-       $q="INSERT INTO ".$config['prefix']. $temp . "tickler  SELECT * FROM
-       `tickler`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "tickler (ticklerId,date,title,note) SELECT * FROM `tickler`";
        send_query($q);
 
 		move_temp("tickler");
@@ -274,14 +274,6 @@
        send_query($q);
 
 		move_temp("timeitems");
-
-       $q="ALTER TABLE ".$config['prefix']."tickler ADD `repeat` INT UNSIGNED
-       NOT NULL DEFAULT '0'";
-       send_query($q);
-       
-       $q="ALTER TABLE ".$config['prefix']."tickler ADD `suppressUntil` INT
-       UNSIGNED NOT NULL DEFAULT '0'";
-       send_query($q);
        
        createLookup();
        
@@ -301,12 +293,6 @@
           `categoryId`)";
        send_query($q);
 
-       $q="ALTER TABLE ".$config['prefix']."items ADD `desiredOutcome` TEXT
-       NULL";
-       send_query($q);
-       $q="ALTER TABLE ".$config['prefix']."items ADD FULLTEXT
-       (`desiredOutcome`)";
-       send_query($q);
        $q="ALTER TABLE ".$config['prefix']."itemstatus DROP `completed`";
        send_query($q);
        $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `type`
@@ -520,24 +506,26 @@
        $q="ALTER TABLE ".$config['prefix']."goals CHANGE `type` `type`
        ENUM('g') NOT NULL DEFAULT 'g'";
        send_query($q);
+       
+		$q="ALTER TABLE ".$config['prefix']."goals ADD `prikey` INT UNSIGNED NOT NULL FIRST";
+       send_query($q);
+       
+       $q= "UPDATE `".$config['prefix']."goals` SET `prikey`=`id`+(SELECT MAX(`itemId`) FROM `".$config['prefix']."items`)";
+       send_query($q);
+
        $q="INSERT INTO ".$config['prefix']."items
-       (`itemId`,`title`,`description`) SELECT `id`,`goal`,`description` FROM
-       `goals`";
+       (`itemId`,`title`,`description`) SELECT `prikey`,`goal`,`description` FROM
+       `".$config['prefix']."goals`";
        send_query($q);
 
        $q="INSERT INTO ".$config['prefix']."itemattributes
        (`itemId`,`type`,`timeframeId`,`deadline`) SELECT
-       `id`,`type`,`timeframeId`, `deadline` FROM `goals`";
-       send_query($q);
-
-       $q="INSERT INTO ".$config['prefix']."itemattributes
-       (`itemId`,`type`,`timeframeId`,`deadline`) SELECT
-       `id`,`type`,`timeframeId`, `deadline` FROM `goals`";
+       `prikey`,`type`,`timeframeId`, `deadline` FROM `".$config['prefix']."goals`";
        send_query($q);
 
        $q="INSERT INTO ".$config['prefix']."itemstatus
-       (`itemId`,`dateCreated`, `dateCompleted`) SELECT `id`, `created`,
-       `completed` FROM `goals`";
+       (`itemId`,`dateCreated`, `dateCompleted`) SELECT `prikey`, `created`,
+       `completed` FROM `".$config['prefix']."goals`";
        send_query($q);
 
 
@@ -710,6 +698,7 @@ function create_tables() {
 	}
 
 function drop_table($name){
+		global $drop;
 		if ($drop) drop_table("$name");
        send_query($q);
 	}
@@ -723,7 +712,7 @@ function send_query($q) {
 	}
 
 function move_temp($name) {
-	global $config, $temp;
+	global $config, $temp, $drop;
 		if ($drop) drop_table($name);
        // rename t_categories to categories
        $q="rename table ".$config['prefix']. $temp . $name . " to `".$config['prefix']. $name . "`";
