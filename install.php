@@ -3,7 +3,7 @@
 	
 	// for testing!  Set to true once tested, or if not using table prefixes.
 	$drop = false;
-
+	
     //helper functions
 	function report($tableName,$success){
 		$html="<tr><td>$tableName</td><td>";
@@ -118,6 +118,10 @@
 
        // end new install
     }else if($nt==17 || $nt==16){
+    
+    	// temp table prefix
+		$temp =  "t_";
+
        //upgrading from 0.7
        echo "<br>Upgrading from 0.7";
        // update
@@ -126,8 +130,11 @@
 
        // if they were using 0.7 they were not using prefixes. do we need them
        // here?
+       // Crisses:  Yes, because people may want to MOVE to prefixed tables.
+       // I just suggest that any time we're going to do the same thing over & over
+       // we should put it into a function.
 
-       $q="create table ".$config['prefix']."t_categories (";
+       $q="create table ".$config['prefix']. $temp . "categories (";
        $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
        $q.="`category` text NOT NULL, "; 
        $q.="`description` text, ";
@@ -136,18 +143,13 @@
        $q.="FULLTEXT KEY `description` (`description`));";
        send_query($q);
 
-       $q="INSERT INTO ".$config['prefix']."t_categories select * from `categories`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "categories select * from `categories`";
        send_query($q);
-
-       // drop categories
-		if ($drop) drop_table("categories");
-
-       // rename t_categories to categories
-       $q="rename table ".$config['prefix']."t_categories to `".$config['prefix']."categories`";
-       send_query($q);
+		
+		move_temp("categories");
 
        // checklist
-       $q="create table ".$config['prefix']."t_checklist (";
+       $q="create table ".$config['prefix']. $temp . "checklist (";
        $q.="`checklistId` int(10) unsigned NOT NULL auto_increment, "; 
        $q.="`title` text NOT NULL, "; 
        $q.="`categoryId` int( 10 ) unsigned NOT NULL default '0', "; 
@@ -155,16 +157,13 @@
        $q.="PRIMARY KEY  (`checklistId`)) ";
        send_query($q);
 
-       $q="INSERT INTO ".$config['prefix']."t_checklist  SELECT * FROM `checklist`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "checklist  SELECT * FROM `checklist`";
        send_query($q);
 
-       // rename t_checklist to checklist
-		if ($drop) drop_table("checklist");
-       $q="rename table ".$config['prefix']."t_checklist to `".$config['prefix']."checklist`";
-       send_query($q);
+		move_temp("checklist");
 
        // checklistItems
-       $q="create table ".$config['prefix']."t_checklistItems (";
+       $q="create table ".$config['prefix']. $temp . "checklistItems (";
        $q.="`checklistItemId` int(10) unsigned NOT NULL auto_increment, "; 
        $q.="`item` text NOT NULL, "; 
        $q.="`notes` text, "; 
@@ -175,32 +174,26 @@
 
        send_query($q);
 
-       $q="INSERT INTO ".$config['prefix']."t_checklistItems  SELECT * FROM `checklistItems`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "checklistItems  SELECT * FROM `checklistItems`";
        send_query($q);
 
-       // rename t_checklistItems to checklistItems
-		if ($drop) drop_table("checklistItems");
-       $q="rename table ".$config['prefix']."t_checklistItems to `".$config['prefix']."checklistItems`";
-       send_query($q);
+		move_temp("checklistItems");
 
        // context
-       $q="create table ".$config['prefix']."t_context (";
+       $q="create table ".$config['prefix']. $temp . "context (";
        $q.="`contextId` int(10) unsigned NOT NULL auto_increment, "; 
        $q.="`name` text NOT NULL, "; 
        $q.="`description` text, "; 
        $q.="PRIMARY KEY (`contextId`))"; 
 
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_context  SELECT * FROM `context`";
-       send_query($q);
-       // rename t_context to context
-		if ($drop) drop_table("context");
-       $q="rename table ".$config['prefix']."t_context to `".$config['prefix']."context`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "context  SELECT * FROM `context`";
        send_query($q);
 
+		move_temp("context");
 
        // goals
-       $q="create table ".$config['prefix']."t_goals (";
+       $q="create table ".$config['prefix']. $temp . "goals (";
        $q.="`id` int(11) NOT NULL auto_increment, "; 
        $q.="`goal`   longtext, ";
        $q.="`description`   longtext, ";
@@ -211,19 +204,17 @@
        $q.="`projectId` int(11) default NULL, PRIMARY KEY (`id`) )";
 
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_goals  SELECT * FROM `goals`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "goals  SELECT * FROM `goals`";
        send_query($q);
-       // rename t_goals to goals
-		if ($drop) drop_table("goals");
-       $q="rename table ".$config['prefix']."t_goals to `".$config['prefix']."goals`";
-       send_query($q);
+
+		move_temp("goals");
 
        fixDate('goals','created');
        fixDate('goals','deadline');
        fixDate('goals','completed');
 
        // itemattributes
-       $q="create table ".$config['prefix']."t_itemattributes (";
+       $q="create table ".$config['prefix']. $temp . "itemattributes (";
        $q.="`itemId` int(10) NOT NULL auto_increment, "; 
        $q.="`type` enum('a', 'r', 'w') NOT NULL default 'a' ,";
        $q.="`projectId` int(10) unsigned NOT NULL default '0', "; 
@@ -239,31 +230,25 @@
        $q.=" KEY `timeframeId` ( `timeframeId` ) )";
 
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_itemattributes  SELECT * FROM `itemattributes`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "itemattributes  SELECT * FROM `itemattributes`";
        send_query($q);
-       // rename t_itemattributes to itemattributes
-		if ($drop) drop_table("itemattributes");
-       $q="rename table ".$config['prefix']."t_itemattributes to `".$config['prefix']."itemattributes`";
-       send_query($q);
+
+		move_temp("itemattributes");
 
        fixDate('itemattributes','deadline');
        // items
-       $q="CREATE TABLE ".$config['prefix']."t_items ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "items ( ";
        $q.=" `itemId` int( 10 ) unsigned NOT NULL auto_increment , `title`
        text NOT NULL , `description` longtext, PRIMARY KEY ( `itemId` ) ,
        FULLTEXT KEY `title` ( `title` ) , FULLTEXT KEY `description` (
           `description` ) )" ;
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_items SELECT * from `items` ";
+       $q="INSERT INTO ".$config['prefix']. $temp . "items SELECT * from `items` ";
        send_query($q);
 
-		if ($drop) drop_table("items");
+		move_temp("items");
 
-       $q="rename table ".$config['prefix']."t_items to `".$config['prefix']."items`";
-       send_query($q);
-
-
-       $q="CREATE TABLE ".$config['prefix']."t_itemstatus ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "itemstatus ( ";
        $q.="`itemId` int( 10 ) unsigned NOT NULL auto_increment ,";
        $q.=" `dateCreated` date default NULL, ";
        $q.="`lastModified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP , ";
@@ -271,31 +256,28 @@
        $q.=" `completed` int( 10 ) unsigned default NULL , ";
        $q.="PRIMARY KEY ( `itemId` ) ) ";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_itemstatus SELECT * FROM `itemstatus`";
-       send_query($q);
-		if ($drop) drop_table("itemstatus");
+       $q="INSERT INTO ".$config['prefix']. $temp . "itemstatus SELECT * FROM `itemstatus`";
 
-       $q="rename table ".$config['prefix']."t_itemstatus to `".$config['prefix']."itemstatus`";
-       send_query($q);
+
+		move_temp("itemstatus");
 
        fixDate('itemstatus','dateCreated');
        fixDate('itemstatus','dateCompleted');
 
        
-       $q="CREATE TABLE ".$config['prefix']."t_list ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "list ( ";
        $q.="`listId` int( 10 ) unsigned NOT NULL auto_increment ,";
        $q.=" `title` text NOT NULL , `categoryId` int( 10 ) unsigned NOT NULL
        default '0', `description` text, PRIMARY KEY ( `listId` ) , KEY
        `categoryId` ( `categoryId` ) , FULLTEXT KEY `description` (
           `description` ) , FULLTEXT KEY `title` ( `title` ) )";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_list  SELECT * FROM `list` ";
+       $q="INSERT INTO ".$config['prefix']. $temp . "list  SELECT * FROM `list` ";
        send_query($q);
-		if ($drop) drop_table("list");
 
-       $q="rename table ".$config['prefix']."t_list to `".$config['prefix']."list`";
-       send_query($q);
-       $q="CREATE TABLE ".$config['prefix']."t_listItems ( ";
+		move_temp("list");
+
+       $q="CREATE TABLE ".$config['prefix']. $temp . "listItems ( ";
        $q.="`listItemId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.="`item` text NOT NULL , `notes` text, ";
        $q.="`listId` int( 10 ) unsigned NOT NULL default '0', ";
@@ -304,29 +286,24 @@
        $q.="KEY `listId` ( `listId` ) , FULLTEXT KEY `notes` ( `notes` ) , ";
        $q.="FULLTEXT KEY `item` ( `item` ) ) ";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_listItems SELECT * FROM `listItems`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "listItems SELECT * FROM `listItems`";
        send_query($q);
-		if ($drop) drop_table("listItems");
 
-       $q="rename table ".$config['prefix']."t_listItems to `".$config['prefix']."listItems`";
-       send_query($q);
+		move_temp("listItems");
 
        fixDate('listItems','dateCompleted');
 
-       $q="CREATE TABLE ".$config['prefix']."t_nextactions ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "nextactions ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL default '0', ";
        $q.=" `nextaction` int( 10 ) unsigned NOT NULL default '0', ";
        $q.=" PRIMARY KEY ( `projectId` , `nextaction` ) ) ";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_nextactions SELECT * FROM `nextactions`";
-       send_query($q);
-		if ($drop) drop_table("nextactions");
-
-       $q="rename table ".$config['prefix']."t_nextactions to `".$config['prefix']."nextactions`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "nextactions SELECT * FROM `nextactions`";
        send_query($q);
 
+		move_temp("nextactions");
 
-       $q="CREATE TABLE ".$config['prefix']."t_projectattributes ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "projectattributes ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.=" `categoryId` int( 10 ) unsigned NOT NULL default '1', ";
        $q.="`isSomeday` enum( 'y', 'n' ) NOT NULL default 'n', ";
@@ -339,16 +316,15 @@
           `isSomeday`) ,";
           $q.="KEY `suppress` ( `suppress` ) ) ";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_projectattributes SELECT * FROM `projectattributes` ";
+       $q="INSERT INTO ".$config['prefix']. $temp . "projectattributes SELECT * FROM `projectattributes` ";
        send_query($q);
-		if ($drop) drop_table("projectattributes");
 
-       $q="rename table ".$config['prefix']."t_projectattributes to `".$config['prefix']."projectattributes`";
-       send_query($q);
+
+		move_temp("projectattributes");
 
        fixDate('projectattributes','deadline');
 
-       $q="CREATE TABLE ".$config['prefix']."t_projects ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "projects ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.=" `name` text NOT NULL , `description` text, `desiredOutcome` text, ";
        $q.="PRIMARY KEY ( `projectId` ) , FULLTEXT KEY `desiredOutcome` (
@@ -357,68 +333,64 @@
           `description` ) ) ";
        send_query($q);
 
-       $q="INSERT INTO ".$config['prefix']."t_projects SELECT * FROM `projects` ";
+       $q="INSERT INTO ".$config['prefix']. $temp . "projects SELECT * FROM `projects` ";
        send_query($q);
-		if ($drop) drop_table("projects");
 
-       $q="rename table ".$config['prefix']."t_projects to `".$config['prefix']."projects`";
-       send_query($q);
-       $q="CREATE TABLE ".$config['prefix']."t_projectstatus ( ";
+		move_temp("projects");
+
+       $q="CREATE TABLE ".$config['prefix']. $temp . "projectstatus ( ";
        $q.="`projectId` int( 10 ) unsigned NOT NULL auto_increment ,
        `dateCreated` date  default NULL, `lastModified`
        timestamp NOT NULL default CURRENT_TIMESTAMP on update
        CURRENT_TIMESTAMP , `dateCompleted` date default NULL , PRIMARY KEY (
           `projectId` ) ) ";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_projectstatus SELECT * FROM
+       $q="INSERT INTO ".$config['prefix']. $temp . "projectstatus SELECT * FROM
        `projectstatus`";
        send_query($q);
-		if ($drop) drop_table("projectstatus");
 
-       $q="rename table ".$config['prefix']."t_projectstatus to `".$config['prefix']."projectstatus`";
-       send_query($q);
+
+		move_temp("projectstatus");
 
        fixDate('projectstatus','dateCreated');
        fixDate('projectstatus','dateCompleted');
 
-       $q="CREATE TABLE ".$config['prefix']."t_tickler ( ";
+       $q="CREATE TABLE ".$config['prefix']. $temp . "tickler ( ";
        $q.="`ticklerId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.="`date` date  default NULL, `title` text NOT NULL ,
        `note` longtext, PRIMARY KEY ( `ticklerId` ) , KEY `date` ( `date` ) ,
        FULLTEXT KEY `notes` ( `note` ) ) ";
        send_query($q);
-       $q="INSERT INTO ".$config['prefix']."t_tickler  SELECT * FROM
+       $q="INSERT INTO ".$config['prefix']. $temp . "tickler  SELECT * FROM
        `tickler`";
        send_query($q);
-		if ($drop) drop_table("tickler");
 
-       $q="rename table ".$config['prefix']."t_tickler to `".$config['prefix']."tickler`";
-       send_query($q);
+		move_temp("tickler");
 
        fixDate('tickler','date');
 
-       $q="CREATE TABLE  ".$config['prefix']."t_timeitems ( ";
+       $q="CREATE TABLE  ".$config['prefix']. $temp . "timeitems ( ";
        $q.="`timeframeId` int( 10 ) unsigned NOT NULL auto_increment , ";
        $q.=" `timeframe` text NOT NULL , `description` text, PRIMARY KEY (
           `timeframeId` ) )";
        send_query($q);
 
-       $q="INSERT INTO ".$config['prefix']."t_timeitems SELECT * FROM
+       $q="INSERT INTO ".$config['prefix']. $temp . "timeitems SELECT * FROM
        `timeitems`";
        send_query($q);
-		if ($drop) drop_table("timeitems");
 
-       $q="rename table ".$config['prefix']."t_timeitems to `".$config['prefix']."timeitems`";
-       send_query($q);
-
+		move_temp("timeitems");
 
        $q="ALTER TABLE ".$config['prefix']."tickler ADD `repeat` INT UNSIGNED
        NOT NULL DEFAULT '0'";
        send_query($q);
+       
        $q="ALTER TABLE ".$config['prefix']."tickler ADD `suppressUntil` INT
        UNSIGNED NOT NULL DEFAULT '0'";
        send_query($q);
+       
        createLookup();
+       
        $q="INSERT INTO ".$config['prefix']."lookup (`parentId`,`itemId`) SELECT `projectId`,`itemId`
        FROM `itemattributes`";
        send_query($q);
@@ -928,4 +900,13 @@ function send_query($q) {
              echo "<br />" .$q;
              die('<br />Invalid query: ' . mysql_error());
        }
+}
+
+function move_temp($name) {
+	global $config, $temp;
+		if ($drop) drop_table($name);
+       // rename t_categories to categories
+       $q="rename table ".$config['prefix']. $temp . $name . " to `".$config['prefix']. $name . "`";
+       send_query($q);
+
 }
