@@ -38,6 +38,7 @@ $config["title"]= 'GTD-PHP'; // site name (appears at the top of each page)
 $config["datemask"] = 'Y-m-d D'; // date format - required
 $config["theme"] = 'default'; //default | menu_sidebar
 $config["title_suffix"]	= false; // true | false - add filename to title tag
+$config["trimLength"] = 72;     // max visible length of descriptions when listing items
         
 
 // These are the shortcut settings for menu options.  Add a key for any page or page view in the main menus.
@@ -45,7 +46,7 @@ $config["title_suffix"]	= false; // true | false - add filename to title tag
 
 $acckey = array(
 	"about.php"								=> "", // License
-	"achivements.php"						=> "", // Achievements
+	"achievements.php"						=> "", // Achievements
 	"credits.php"							=> "", // Credits
 	"donate.php"							=> "", // Donate
 	"item.php?type=a"						=> "", // add Action
@@ -153,13 +154,11 @@ $sort = array(
     "getnotes"              => "tk.`date` DESC ",
 );
 
-
+$config["storeRecurrences"] = true; // false | true - when recurring items are completed, store each occurrence as a completed item
 
 /*********  Developer Settings ************/
 
 // This setting is generally for the developers of the application.  
 //You will probably want this to remain "false"
 
-$config["debug"] = 'false';  // false | true
-
-print_r($config);
+$config["debug"] = 'false';  // false | true | debug | developer | freezedb

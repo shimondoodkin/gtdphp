@@ -37,8 +37,8 @@ $sql = array(
 										WHERE `checklistId` = '{$values['checklistId']}'",
         
         "completeitem"              => "UPDATE `". $config['prefix'] ."itemstatus` 
-										SET `dateCompleted`='{$values['date']}' 
-										WHERE `itemId`='{$values['completedNa']}'",
+										SET `dateCompleted`='{$values['dateCompleted']}' 
+										WHERE `itemId`='{$values['itemId']}'",
 
         "completelistitem"          => "UPDATE `". $config['prefix'] ."listItems` 
 										SET `dateCompleted`='{$values['date']}' 
@@ -48,7 +48,12 @@ $sql = array(
 										VALUES ('{$values['parentId']}','{$values['newitemId']}') 
 										ON DUPLICATE KEY UPDATE `nextaction`='{$values['newitemId']}'",
         
-
+        "countchildren"             => "SELECT il.`itemId`
+										FROM `". $config['prefix'] ."lookup` as il, 
+												`". $config['prefix'] ."itemstatus` as its 
+										WHERE il.`itemId`=its.`itemId` 
+										    AND il.`parentId`='{$values['parentId']}' 
+											AND its.`dateCompleted` IS NULL",
 
         "countitems"                => "SELECT `type`, COUNT(*) AS nitems 
 										FROM `". $config['prefix'] ."itemattributes` as ia, 
@@ -67,8 +72,7 @@ $sql = array(
 										WHERE its.`itemId`=ia.`itemId` 
 											AND  na.`nextaction` = its.`itemId`
 											AND ia.`isSomeday`='n' 
-											AND (its.`dateCompleted` IS NULL 
-											OR its.`dateCompleted`='0000-00-00') 
+											AND (its.`dateCompleted` IS NULL) 
 										GROUP BY ia.`contextId`, ia.`timeframeId`",
         
         "countcontextreport_all"    => "SELECT ia.`contextId`, ia.`timeframeId`, 
@@ -78,8 +82,7 @@ $sql = array(
 										WHERE its.`itemId`=ia.`itemId` 
 											AND ia.`type`='a' 
 											AND ia.`isSomeday`='n' 
-											AND (its.`dateCompleted` IS NULL 
-											OR its.`dateCompleted`='0000-00-00')  
+											AND (its.`dateCompleted` IS NULL)  
 										GROUP BY ia.`contextId`, ia.`timeframeId`",
 										
         "countspacecontexts"        => "SELECT COUNT(`name`) AS ncontexts 
@@ -103,8 +106,12 @@ $sql = array(
         								WHERE `listItemId`='{$values['listItemId']}'",
         "deletelookup"              => "DELETE FROM `". $config['prefix'] ."lookup` 
         								WHERE `itemId` ='{$values['itemId']}'",
+        "deletelookupparents"       => "DELETE FROM `". $config['prefix'] ."lookup` 
+        								WHERE `parentId` ='{$values['itemId']}'",
         "deletenextaction"          => "DELETE FROM `". $config['prefix'] ."nextactions` 
         								WHERE `nextAction`='{$values['itemId']}'",
+        "deletenextactionparents"   => "DELETE FROM `". $config['prefix'] ."nextactions` 
+        								WHERE `parentId` ='{$values['itemId']}'",
         "deletenote"                => "DELETE FROM `". $config['prefix'] ."tickler` 
         								WHERE `ticklerId`='{$values['noteId']}'",
         "deletespacecontext"        => "DELETE FROM `". $config['prefix'] ."context` 
@@ -255,7 +262,7 @@ $sql = array(
         								FROM `". $config['prefix'] . "tickler`  as tk".$values['filterquery']."
         								ORDER BY {$sort['getnotes']}",
         								
-        "getnextactions"            => "SELECT `parentId`, `nextaction` 
+        "getnextactions"            => "SELECT `nextaction` 
         								FROM `". $config['prefix'] . "nextactions`",
         
 		"getorphaneditems"	  		=> "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description` 
@@ -264,8 +271,7 @@ $sql = array(
 												`". $config['prefix'] . "itemstatus` as its 
 										WHERE i.`itemId`=ia.`itemId` 
 											AND its.`itemId`=ia.`itemId` 
-											AND (its.`dateCompleted` IS NULL 
-											OR its.`dateCompleted`='0000-00-00') 
+											AND (its.`dateCompleted` IS NULL) 
 											AND ia.`type`!='m' 
 											AND ia.`type`!='i' 
 											AND 
@@ -292,7 +298,7 @@ $sql = array(
 										WHERE l.`categoryId`=c.`categoryId`
 										ORDER BY {$sort['listselectbox']}",
 
-        "lookupparent"              => "SELECT `parentId`, `itemId`
+        "lookupparent"              => "SELECT `parentId`
 										FROM `". $config['prefix'] . "lookup` 
 										WHERE `itemId`='{$values['itemId']}'",
 
@@ -364,8 +370,7 @@ $sql = array(
 										WHERE ia.`itemId`=i.`itemId`
 											AND its.`itemId`=i.`itemId`
 											AND ia.`type`='{$values['ptype']}'
-											AND (its.`dateCompleted` IS NULL
-											OR its.`dateCompleted` = '0000-00-00')
+											AND (its.`dateCompleted` IS NULL)
 										ORDER BY i.`title`",
 										#ORDER BY {$sort['parentselectbox']}",
 
@@ -472,7 +477,7 @@ $sql = array(
 
         "testitemrepeat"            => "SELECT `itemattributes`.`repeat`
 										FROM `". $config['prefix'] . "itemattributes` 
-										WHERE `itemattributes`.`itemId`='{$values['completedNa']}'",
+										WHERE `itemattributes`.`itemId`='{$values['itemId']}'",
 
         "testnextaction"            => "SELECT `parentId`, `nextaction`
 										FROM `". $config['prefix'] . "nextactions` 

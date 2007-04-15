@@ -13,7 +13,7 @@ $row = query("selectlist",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
 	echo "<h2>Edit List: {$values['listTitle']}</h2>\n";
-	echo '<form action="updateList.php?listId='.$values['listId'].'" method="POST">'."\n";
+	echo '<form action="updateList.php?listId='.$values['listId'].'" method="post">'."\n";
 ?>
 
 	<div class='form'>
@@ -41,6 +41,7 @@ $row = query("selectlist",$config,$values,$options,$sort);
                 <input type="hidden" name="listId" value="<?php echo $values['listId'] ?>" />
 		<label for='delete'>Delete&nbsp;List</label>
 	</div>
+	</form>
 
 <?php
 	include_once('footer.php');
