@@ -4,19 +4,6 @@
 	// for testing!  Set to true once tested, or if not using table prefixes.
 	$drop = false;
 	
-    //helper functions
-	function report($tableName,$success){
-		$html="<tr><td>$tableName</td><td>";
-		if($success){
-			$html .= '<font color="green">Success';
-		}else{
-			$html .= '<font color="red">Failure';
-		}
-		$html .= "</td></tr>\n";
-		return $html;
-	}
-
-
     // some reporting 
     // get server information for problem reports
     echo "<h2>gtd-php installation/upgrade</h2>\n";
@@ -26,8 +13,6 @@
     $v.="</li>\n<li>";
     $v.="mysql: ".mysql_get_server_info()."</li></ul>\n";
     echo $v;
-
-
 
     //check if db exists
     $msg='<font color="red">Unable to select gtd database.<br>Please create the ';
@@ -45,51 +30,6 @@
     while ($tbl = mysql_fetch_row($tables)){
        $nt++;
     }
-
-    // new tables shared by upgrade and install paths
-    function createVersion()  {
-    	global $config;
-       $q="CREATE TABLE ".$config['prefix']."version (";
-       $q.="`version` float unsigned NOT NULL, ";
-       $q.="`updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update ";
-       $q.=" CURRENT_TIMESTAMP);";
-       send_query($q);
-       # do we want to keep version somewhere more central? just updating here in
-       # the install script kinda smells funny to me.
-       $q="INSERT INTO ".$config['prefix']."version (`version`) VALUES";
-       $q.=" ('0.8rc-1');";
-       send_query($q);
-    }
-
-    function createLookup() {
-    	global $config;
-       $q="CREATE TABLE ".$config['prefix']."lookup (";
-       $q.="`parentId` int(11) NOT NULL default '0', ";
-       $q.="`itemId` int(10) unsigned NOT NULL default '0', ";
-       $q.="PRIMARY KEY  (`parentId`,`itemId`) );";
-       send_query($q);
-    }
-
-      
-    function createPreferences() {
-    	global $config;
-       $q="CREATE TABLE ".$config['prefix']."preferences (";
-       $q.="`id`  int(10) unsigned NOT NULL auto_increment, ";
-       $q.="`uid` int(10)  NOT NULL default '0', ";
-       $q.="`option`  text, ";
-       $q.="`value`  text, ";
-       $q.="PRIMARY KEY  (`id`)); ";
-       send_query($q);
-    }
- 
-    function fixDate($tableName,$columnName){
-    	global $config;
-       // change dates of "0000-00-00" to NULL
-       # fix date NULL versus 0000-00-00 issue
-       $q=" update ".$config['prefix'].$tableName." set ".$columnName.'=NULL where ';
-       $q.=$columnName.'="0000-00-00"';
-       send_query($q);
-}
 
     echo "Number of tables: $nt";
     if($nt==0){
@@ -134,14 +74,7 @@
        // I just suggest that any time we're going to do the same thing over & over
        // we should put it into a function.
 
-       $q="create table ".$config['prefix']. $temp . "categories (";
-       $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`category` text NOT NULL, "; 
-       $q.="`description` text, ";
-       $q.="PRIMARY KEY  (`categoryId`), ";
-       $q.="FULLTEXT KEY `category` (`category`), ";
-       $q.="FULLTEXT KEY `description` (`description`));";
-       send_query($q);
+		create_table("categories");
 
        $q="INSERT INTO ".$config['prefix']. $temp . "categories select * from `categories`";
        send_query($q);
@@ -149,13 +82,7 @@
 		move_temp("categories");
 
        // checklist
-       $q="create table ".$config['prefix']. $temp . "checklist (";
-       $q.="`checklistId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`title` text NOT NULL, "; 
-       $q.="`categoryId` int( 10 ) unsigned NOT NULL default '0', "; 
-       $q.="`description` text, ";
-       $q.="PRIMARY KEY  (`checklistId`)) ";
-       send_query($q);
+		create_table("checklist");
 
        $q="INSERT INTO ".$config['prefix']. $temp . "checklist  SELECT * FROM `checklist`";
        send_query($q);
@@ -163,16 +90,7 @@
 		move_temp("checklist");
 
        // checklistItems
-       $q="create table ".$config['prefix']. $temp . "checklistItems (";
-       $q.="`checklistItemId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`item` text NOT NULL, "; 
-       $q.="`notes` text, "; 
-       $q.="`checklistId` int(10) unsigned NOT NULL default '0', "; 
-       $q.="`checked` enum ('y', 'n') NOT NULL default 'n', "; 
-       $q.="PRIMARY KEY (`checklistItemId`), KEY `checklistId` (`checklistId`),"; 
-       $q.="FULLTEXT KEY `notes` (`notes`), FULLTEXT KEY `item` (`item`))"; 
-
-       send_query($q);
+		create_table("checklistItems");
 
        $q="INSERT INTO ".$config['prefix']. $temp . "checklistItems  SELECT * FROM `checklistItems`";
        send_query($q);
@@ -180,13 +98,7 @@
 		move_temp("checklistItems");
 
        // context
-       $q="create table ".$config['prefix']. $temp . "context (";
-       $q.="`contextId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`name` text NOT NULL, "; 
-       $q.="`description` text, "; 
-       $q.="PRIMARY KEY (`contextId`))"; 
-
-       send_query($q);
+		create_table("context");
        $q="INSERT INTO ".$config['prefix']. $temp . "context  SELECT * FROM `context`";
        send_query($q);
 
@@ -236,13 +148,10 @@
 		move_temp("itemattributes");
 
        fixDate('itemattributes','deadline');
+
        // items
-       $q="CREATE TABLE ".$config['prefix']. $temp . "items ( ";
-       $q.=" `itemId` int( 10 ) unsigned NOT NULL auto_increment , `title`
-       text NOT NULL , `description` longtext, PRIMARY KEY ( `itemId` ) ,
-       FULLTEXT KEY `title` ( `title` ) , FULLTEXT KEY `description` (
-          `description` ) )" ;
-       send_query($q);
+		create_table("items");
+
        $q="INSERT INTO ".$config['prefix']. $temp . "items SELECT * from `items` ";
        send_query($q);
 
@@ -255,6 +164,7 @@
        $q.="`dateCompleted` date default NULL , ";
        $q.=" `completed` int( 10 ) unsigned default NULL , ";
        $q.="PRIMARY KEY ( `itemId` ) ) ";
+       
        send_query($q);
        $q="INSERT INTO ".$config['prefix']. $temp . "itemstatus SELECT * FROM `itemstatus`";
 
@@ -264,28 +174,16 @@
        fixDate('itemstatus','dateCreated');
        fixDate('itemstatus','dateCompleted');
 
-       
-       $q="CREATE TABLE ".$config['prefix']. $temp . "list ( ";
-       $q.="`listId` int( 10 ) unsigned NOT NULL auto_increment ,";
-       $q.=" `title` text NOT NULL , `categoryId` int( 10 ) unsigned NOT NULL
-       default '0', `description` text, PRIMARY KEY ( `listId` ) , KEY
-       `categoryId` ( `categoryId` ) , FULLTEXT KEY `description` (
-          `description` ) , FULLTEXT KEY `title` ( `title` ) )";
-       send_query($q);
+		create_table('list');       
+
        $q="INSERT INTO ".$config['prefix']. $temp . "list  SELECT * FROM `list` ";
        send_query($q);
 
 		move_temp("list");
 
-       $q="CREATE TABLE ".$config['prefix']. $temp . "listItems ( ";
-       $q.="`listItemId` int( 10 ) unsigned NOT NULL auto_increment , ";
-       $q.="`item` text NOT NULL , `notes` text, ";
-       $q.="`listId` int( 10 ) unsigned NOT NULL default '0', ";
-       $q.="`dateCompleted` date default NULL, PRIMARY KEY (
-          `listItemId` ) , ";
-       $q.="KEY `listId` ( `listId` ) , FULLTEXT KEY `notes` ( `notes` ) , ";
-       $q.="FULLTEXT KEY `item` ( `item` ) ) ";
-       send_query($q);
+
+		create_table("listItems");
+
        $q="INSERT INTO ".$config['prefix']. $temp . "listItems SELECT * FROM `listItems`";
        send_query($q);
 
@@ -355,12 +253,8 @@
        fixDate('projectstatus','dateCreated');
        fixDate('projectstatus','dateCompleted');
 
-       $q="CREATE TABLE ".$config['prefix']. $temp . "tickler ( ";
-       $q.="`ticklerId` int( 10 ) unsigned NOT NULL auto_increment , ";
-       $q.="`date` date  default NULL, `title` text NOT NULL ,
-       `note` longtext, PRIMARY KEY ( `ticklerId` ) , KEY `date` ( `date` ) ,
-       FULLTEXT KEY `notes` ( `note` ) ) ";
-       send_query($q);
+		create_table("tickler");
+       
        $q="INSERT INTO ".$config['prefix']. $temp . "tickler  SELECT * FROM
        `tickler`";
        send_query($q);
@@ -749,45 +643,12 @@ function create_tables() {
 	global $config;
        // start creating new tables
        echo "<br>New install";
-       $q="create table ".$config['prefix']."categories (";
-       $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`category` text NOT NULL, "; 
-       $q.="`description` text, ";
-       $q.="PRIMARY KEY  (`categoryId`), ";
-       $q.="FULLTEXT KEY `category` (`category`), ";
-       $q.="FULLTEXT KEY `description` (`description`));";
-       send_query($q);
+       
+		create_table("categories");
+		create_table("checklist");
+		create_table("checklistItems");
+		create_table("context");
 
-       $q="create table ".$config['prefix']."checklist (";
-       $q.="`checklistId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`title` text NOT NULL, "; 
-       $q.="`categoryId` int(10) unsigned NOT NULL default '0', "; 
-       $q.="`description` text, ";
-       $q.="PRIMARY KEY  (`checklistId`),    ";
-       $q.="FULLTEXT KEY `description` (`description`), ";
-       $q.="FULLTEXT KEY `title` (`title`)); ";
-       send_query($q);
-
-       $q="create table ".$config['prefix']."checklistItems (";
-       $q.="`checklistItemId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`item` text NOT NULL, "; 
-       $q.="`notes` text, "; 
-       $q.="`checklistId` int(10) unsigned NOT NULL default '0', "; 
-       $q.="`checked` enum('y','n') NOT NULL default 'n', "; 
-       $q.="PRIMARY KEY  (`checklistItemId`), ";
-       $q.="KEY `checklistId` (`checklistId`), ";
-       $q.="FULLTEXT KEY `notes` (`notes`), ";
-       $q.="FULLTEXT KEY `item` (`item`)); ";
-       send_query($q);
-
-       $q="create table ".$config['prefix']."context (";
-       $q.="`contextId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`name` text NOT NULL, "; 
-       $q.="`description` text, "; 
-       $q.="PRIMARY KEY  (`contextId`), ";
-       $q.="FULLTEXT KEY `name` (`name`), ";
-       $q.="FULLTEXT KEY `description` (`description`)); ";
-       send_query($q);
 
        $q="create table ".$config['prefix']."itemattributes (";
        $q.="`itemId` int(10) unsigned NOT NULL auto_increment, "; 
@@ -810,17 +671,7 @@ function create_tables() {
        $q.="KEY `isSomeday_2` (`isSomeday`));";
        send_query($q);
 
-       $q="create table ".$config['prefix']."items (";
-       $q.="`itemId` int(10) unsigned NOT NULL auto_increment, "; 
-       $q.="`title` text NOT NULL, "; 
-       $q.="`description` longtext, ";
-       $q.="`desiredOutcome` text, ";
-       $q.="PRIMARY KEY  (`itemId`), ";
-       $q.="FULLTEXT KEY `title` (`title`), ";
-       $q.="FULLTEXT KEY `desiredOutcome` (`desiredOutcome`), ";
-       $q.="FULLTEXT KEY `description` (`description`));";
-       send_query($q);
-
+		create_table("items");
 
        $q="create table ".$config['prefix']."itemstatus (";
        $q.="`itemId` int(10) unsigned NOT NULL auto_increment, ";
@@ -830,29 +681,9 @@ function create_tables() {
        $q.="PRIMARY KEY  (`itemId`));";
        send_query($q);
 
-       $q="CREATE TABLE ".$config['prefix']."list (";
-       $q.="`listId` int(10) unsigned NOT NULL auto_increment, ";
-       $q.="`title` text NOT NULL, ";
-       $q.="`categoryId` int(10) unsigned NOT NULL default '0', ";
-       $q.="`description` text, ";
-       $q.="PRIMARY KEY  (`listId`), ";
-       $q.="KEY `categoryId` (`categoryId`), ";
-       $q.="FULLTEXT KEY `description` (`description`), ";
-       $q.="FULLTEXT KEY `title` (`title`));";
-       send_query($q);
+		create_table('list');       
 
-       $q="CREATE TABLE ".$config['prefix']."listItems (";
-       $q.="`listItemId` int(10) unsigned NOT NULL auto_increment, ";
-       $q.="`item` text NOT NULL, ";
-       $q.="`notes` text, ";
-       $q.="`listId` int(10) unsigned NOT NULL default '0', ";
-       $q.="`dateCompleted` date default NULL, ";
-       $q.="PRIMARY KEY  (`listItemId`), ";
-       $q.="KEY `listId` (`listId`), ";
-       $q.="FULLTEXT KEY `notes` (`notes`), ";
-       $q.="FULLTEXT KEY `item` (`item`));"; 
-       send_query($q);
-
+		create_table("listItems");
        createLookup();
        createPreferences();
 
@@ -862,18 +693,7 @@ function create_tables() {
        $q.="PRIMARY KEY  (`parentId`,`nextaction`));";
        send_query($q);
 
-       $q="CREATE TABLE ".$config['prefix']."tickler (";
-       $q.="`ticklerId` int(10) unsigned NOT NULL auto_increment, ";
-       $q.="`date` date  default NULL, ";
-       $q.="`title` text NOT NULL, ";
-       $q.="`note` longtext, ";
-       $q.="`repeat` int(10) unsigned NOT NULL default '0', ";
-       $q.="`suppressUntil` int(10) unsigned NOT NULL default '0', ";
-       $q.="PRIMARY KEY  (`ticklerId`), ";
-       $q.="KEY `date` (`date`), ";
-       $q.="FULLTEXT KEY `notes` (`note`), ";
-       $q.="FULLTEXT KEY `title` (`title`));";
-       send_query($q);
+		create_table("tickler");
 	
        $q="CREATE TABLE ".$config['prefix']."timeitems (";
        $q.="`timeframeId` int(10) unsigned NOT NULL auto_increment, ";
@@ -887,12 +707,12 @@ function create_tables() {
        send_query($q);
 
        createVersion();
-}
+	}
 
 function drop_table($name){
 		if ($drop) drop_table("$name");
        send_query($q);
-}
+	}
 
 function send_query($q) {
        $result = mysql_query($q);
@@ -900,7 +720,7 @@ function send_query($q) {
              echo "<br />" .$q;
              die('<br />Invalid query: ' . mysql_error());
        }
-}
+	}
 
 function move_temp($name) {
 	global $config, $temp;
@@ -909,4 +729,164 @@ function move_temp($name) {
        $q="rename table ".$config['prefix']. $temp . $name . " to `".$config['prefix']. $name . "`";
        send_query($q);
 
+}
+
+    // new tables shared by upgrade and install paths
+    function createVersion()  {
+    	global $config;
+       $q="CREATE TABLE ".$config['prefix']."version (";
+       $q.="`version` float unsigned NOT NULL, ";
+       $q.="`updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update ";
+       $q.=" CURRENT_TIMESTAMP);";
+       send_query($q);
+       # do we want to keep version somewhere more central? just updating here in
+       # the install script kinda smells funny to me.
+       $q="INSERT INTO ".$config['prefix']."version (`version`) VALUES";
+       $q.=" ('0.8rc-1');";
+       send_query($q);
+    }
+
+    function createLookup() {
+    	global $config;
+       $q="CREATE TABLE ".$config['prefix']."lookup (";
+       $q.="`parentId` int(11) NOT NULL default '0', ";
+       $q.="`itemId` int(10) unsigned NOT NULL default '0', ";
+       $q.="PRIMARY KEY  (`parentId`,`itemId`) );";
+       send_query($q);
+    }
+
+      
+    function createPreferences() {
+    	global $config;
+       $q="CREATE TABLE ".$config['prefix']."preferences (";
+       $q.="`id`  int(10) unsigned NOT NULL auto_increment, ";
+       $q.="`uid` int(10)  NOT NULL default '0', ";
+       $q.="`option`  text, ";
+       $q.="`value`  text, ";
+       $q.="PRIMARY KEY  (`id`)); ";
+       send_query($q);
+    }
+ 
+    function fixDate($tableName,$columnName){
+    	global $config;
+       // change dates of "0000-00-00" to NULL
+       # fix date NULL versus 0000-00-00 issue
+       $q=" update ".$config['prefix'].$tableName." set ".$columnName.'=NULL where ';
+       $q.=$columnName.'="0000-00-00"';
+       send_query($q);
+	}
+
+    //helper functions
+	function report($tableName,$success){
+		$html="<tr><td>$tableName</td><td>";
+		if($success){
+			$html .= '<font color="green">Success';
+		}else{
+			$html .= '<font color="red">Failure';
+		}
+		$html .= "</td></tr>\n";
+		return $html;
+	}
+	
+// Table Creation Queries
+function create_table ($name) {
+	global $config, $temp;
+
+	switch ($name) {
+	case "categories":
+       $q="create table ".$config['prefix']. $temp . "categories (";
+       $q.="`categoryId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`category` text NOT NULL, "; 
+       $q.="`description` text, ";
+       $q.="PRIMARY KEY  (`categoryId`), ";
+       $q.="FULLTEXT KEY `category` (`category`), ";
+       $q.="FULLTEXT KEY `description` (`description`));";
+       send_query($q);
+    break;
+    case "checklist":
+       $q="create table ".$config['prefix']. $temp . "checklist (";
+       $q.="`checklistId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`title` text NOT NULL, "; 
+       $q.="`categoryId` int(10) unsigned NOT NULL default '0', "; 
+       $q.="`description` text, ";
+       $q.="PRIMARY KEY  (`checklistId`),    ";
+       $q.="FULLTEXT KEY `description` (`description`), ";
+       $q.="FULLTEXT KEY `title` (`title`)); ";
+       send_query($q);
+	break;
+	case "checklistItems":
+	   $q="create table ".$config['prefix']. $temp . "checklistItems (";
+       $q.="`checklistItemId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`item` text NOT NULL, "; 
+       $q.="`notes` text, "; 
+       $q.="`checklistId` int(10) unsigned NOT NULL default '0', "; 
+       $q.="`checked` enum ('y', 'n') NOT NULL default 'n', "; 
+       $q.="PRIMARY KEY (`checklistItemId`), KEY `checklistId` (`checklistId`),"; 
+       $q.="FULLTEXT KEY `notes` (`notes`), FULLTEXT KEY `item` (`item`))"; 
+       send_query($q);
+    break;
+    case "context":
+       $q="create table ".$config['prefix']. $temp . "context (";
+       $q.="`contextId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`name` text NOT NULL, "; 
+       $q.="`description` text, "; 
+       $q.="PRIMARY KEY  (`contextId`), ";
+       $q.="FULLTEXT KEY `name` (`name`), ";
+       $q.="FULLTEXT KEY `description` (`description`)); ";
+       send_query($q);
+	break;
+	case "items":
+       $q="CREATE TABLE ".$config['prefix']. $temp . "items ( ";
+       $q.="`itemId` int(10) unsigned NOT NULL auto_increment, "; 
+       $q.="`title` text NOT NULL, "; 
+       $q.="`description` longtext, ";
+       $q.="`desiredOutcome` text, ";
+       $q.="PRIMARY KEY  (`itemId`), ";
+       $q.="FULLTEXT KEY `title` (`title`), ";
+       $q.="FULLTEXT KEY `desiredOutcome` (`desiredOutcome`), ";
+       $q.="FULLTEXT KEY `description` (`description`));";
+       send_query($q);
+	break;
+	case "list":
+       $q="CREATE TABLE ".$config['prefix']. $temp . "list ( ";
+       $q.="`listId` int(10) unsigned NOT NULL auto_increment, ";
+       $q.="`title` text NOT NULL, ";
+       $q.="`categoryId` int(10) unsigned NOT NULL default '0', ";
+       $q.="`description` text, ";
+       $q.="PRIMARY KEY  (`listId`), ";
+       $q.="KEY `categoryId` (`categoryId`), ";
+       $q.="FULLTEXT KEY `description` (`description`), ";
+       $q.="FULLTEXT KEY `title` (`title`));";
+       send_query($q);
+	break;
+	case "listItems":
+       $q="CREATE TABLE ".$config['prefix']. $temp . "listItems ( ";
+       $q.="`listItemId` int(10) unsigned NOT NULL auto_increment, ";
+       $q.="`item` text NOT NULL, ";
+       $q.="`notes` text, ";
+       $q.="`listId` int(10) unsigned NOT NULL default '0', ";
+       $q.="`dateCompleted` date default NULL, ";
+       $q.="PRIMARY KEY  (`listItemId`), ";
+       $q.="KEY `listId` (`listId`), ";
+       $q.="FULLTEXT KEY `notes` (`notes`), ";
+       $q.="FULLTEXT KEY `item` (`item`));"; 
+       send_query($q);
+	break;
+	case "tickler":
+       $q="CREATE TABLE ".$config['prefix']. $temp . "tickler ( ";
+       $q.="`ticklerId` int(10) unsigned NOT NULL auto_increment, ";
+       $q.="`date` date  default NULL, ";
+       $q.="`title` text NOT NULL, ";
+       $q.="`note` longtext, ";
+       $q.="`repeat` int(10) unsigned NOT NULL default '0', ";
+       $q.="`suppressUntil` int(10) unsigned NOT NULL default '0', ";
+       $q.="PRIMARY KEY  (`ticklerId`), ";
+       $q.="KEY `date` (`date`), ";
+       $q.="FULLTEXT KEY `notes` (`note`), ";
+       $q.="FULLTEXT KEY `title` (`title`));";
+       send_query($q);
+	break;
+    default:
+    break;
+    }
 }
