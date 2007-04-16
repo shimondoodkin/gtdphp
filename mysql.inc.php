@@ -52,7 +52,7 @@ $sql = array(
 										FROM `". $config['prefix'] ."lookup` as il, 
 												`". $config['prefix'] ."itemstatus` as its 
 										WHERE il.`itemId`=its.`itemId` 
-										    AND il.`parentId`='{$values['parentId']}' 
+										    AND il.`parentId`=". $values['parentId'] . " 
 											AND its.`dateCompleted` IS NULL",
 
         "countitems"                => "SELECT `type`, COUNT(*) AS nitems 

@@ -149,6 +149,7 @@
        
        send_query($q);
        $q="INSERT INTO ".$config['prefix']. $temp . "itemstatus SELECT * FROM `itemstatus`";
+       send_query($q);
 
 
 		move_temp("itemstatus");
