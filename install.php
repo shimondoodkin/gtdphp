@@ -255,18 +255,22 @@
        send_query($q);
 
 		move_temp("timeitems");
-       
+
+
+		// Dealing with the lookup table       
        createLookup();
-       
        $q="INSERT INTO ".$config['prefix']."lookup (`parentId`,`itemId`) SELECT `projectId`,`itemId`
        FROM `itemattributes`";
        send_query($q);
+
        $q="ALTER TABLE ".$config['prefix']."itemattributes DROP `projectId`";
        send_query($q);
+
        $q="ALTER TABLE ".$config['prefix']."itemattributes ADD `isSomeday`
        ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n' AFTER `type`, ADD `categoryId`
        INT( 11 ) UNSIGNED NOT NULL DEFAULT '0' AFTER `isSomeday` ";
        send_query($q);
+
        $q="ALTER TABLE ".$config['prefix']."itemattributes ADD INDEX (
           `isSomeday` )";
        send_query($q);
@@ -284,6 +288,7 @@
        $q="ALTER TABLE ".$config['prefix']."projectattributes ADD `type` ENUM(
           'p' ) NOT NULL DEFAULT 'p' AFTER `projectId`";
        send_query($q);
+       
        $q="ALTER TABLE ".$config['prefix']."nextactions DROP PRIMARY KEY, ADD
        PRIMARY KEY ( `projectId` , `nextaction`)";
        send_query($q);
@@ -303,6 +308,7 @@
        UNSIGNED NOT NULL FIRST";
        send_query($q);
 
+
        $q="ALTER TABLE ".$config['prefix']."items CHANGE `itemId` `itemId`
        INT( 10 ) UNSIGNED NOT NULL";
        send_query($q);
@@ -315,9 +321,9 @@
        `itemId` INT( 10 ) UNSIGNED NOT NULL";
        send_query($q);
 
+	// migrate actions
 
-
-       $q=" UPDATE ".$config['prefix']."items SET `prikey`=`itemId` +( 
+$maxnum = " +( 
 	CASE  WHEN (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0
 		ELSE (SELECT MAX(`id`) FROM `goals`)
 	END
@@ -326,36 +332,20 @@
 		ELSE (SELECT MAX(`projectId`) FROM `projects`)
 	END
 	)";
-       send_query($q);
 
-
-    $q="UPDATE ".$config['prefix']."itemattributes SET `prikey`=`itemId`+(
-	CASE  WHEN (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0
-		ELSE (SELECT MAX(`id`) FROM `goals`)
-	END
-	)+(
-	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
-		ELSE (SELECT MAX(`projectId`) FROM `projects`)
-	END
-	)";
-       send_query($q);
-
-
-      $q="UPDATE `".$config['prefix']."itemstatus` SET `prikey`=`itemId`+(
-	CASE  WHEN (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0
-		ELSE (SELECT MAX(`id`) FROM `goals`)
-	END
-	)+(
-	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
-		ELSE (SELECT MAX(`projectId`) FROM `projects`)
-	END
-	)";
-       send_query($q);
+		
+		$q=" UPDATE ".$config['prefix']."items SET `prikey`=`itemId`" . $maxnum;
+		send_query($q);
+		
+		$q="UPDATE ".$config['prefix']."itemattributes SET `prikey`=`itemId`" . $maxnum;
+		send_query($q);
+		
+		$q="UPDATE `".$config['prefix']."itemstatus` SET `prikey`=`itemId`" . $maxnum;
+		send_query($q);
 
        $q="ALTER TABLE ".$config['prefix']."items DROP PRIMARY KEY, ADD
        PRIMARY KEY (`prikey`)";
        send_query($q);
-
        $q="ALTER TABLE ".$config['prefix']."itemattributes DROP PRIMARY KEY,
        ADD PRIMARY KEY (`prikey`)";
        send_query($q);
@@ -365,7 +355,6 @@
 
        $q="ALTER TABLE ".$config['prefix']."items DROP `itemId`";
        send_query($q);
-
        $q="ALTER TABLE ".$config['prefix']."itemattributes DROP `itemId`";
        send_query($q);
        $q="ALTER TABLE ".$config['prefix']."itemstatus DROP `itemId`";
@@ -374,33 +363,25 @@
        $q="ALTER TABLE ".$config['prefix']."items CHANGE `prikey` `itemId`
        INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
        send_query($q);
-
        $q="ALTER TABLE ".$config['prefix']."itemattributes CHANGE `prikey`
        `itemId` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
        send_query($q);
-
        $q="ALTER TABLE ".$config['prefix']."itemstatus CHANGE `prikey`
        `itemId` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
        send_query($q);
+
        $q="DELETE FROM ".$config['prefix']."nextactions WHERE `nextaction`
-       ='0'";
+       =0";
        send_query($q);
 
-       $q="UPDATE `".$config['prefix']."nextactions` SET `nextaction`=`nextaction`+( CASE  WHEN
-       (SELECT MAX(`id`) FROM `goals`) IS NULL THEN 0 ELSE (SELECT MAX(`id`)
-       FROM `goals`) END)+( CASE  WHEN (SELECT MAX(`projectId`) FROM
-       `projects`) IS NULL THEN 0 ELSE (SELECT MAX(`projectId`) FROM
-       `projects`) END)";
+       $q="UPDATE `".$config['prefix']."nextactions` SET `nextaction`=`nextaction`" . $maxnum;
        send_query($q);
 
        $q="ALTER TABLE ".$config['prefix']."lookup ADD `prikey` INT UNSIGNED
        NOT NULL";
        send_query($q);
 
-       $q="UPDATE `".$config['prefix']."lookup` SET `prikey` =`itemId`+( CASE  WHEN (SELECT
-       MAX(`id`) FROM `goals`) IS NULL THEN 0 ELSE (SELECT MAX(`id`) FROM
-       `goals`) END)+( CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS
-       NULL THEN 0 ELSE (SELECT MAX(`projectId`) FROM `projects`) END)";
+       $q="UPDATE `".$config['prefix']."lookup` SET `prikey` =`itemId`" . $maxnum;
        send_query($q);
 
        $q="ALTER TABLE ".$config['prefix']."lookup DROP PRIMARY KEY, ADD
@@ -413,6 +394,9 @@
        $q="ALTER TABLE ".$config['prefix']."lookup CHANGE `prikey` `itemId`
        INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'";
        send_query($q);
+
+	// Migrate Projects
+
 
        $q="INSERT INTO ".$config['prefix']."items
        (`itemId`,`title`,`description`,`desiredOutcome`) SELECT
@@ -433,18 +417,22 @@
        `projectstatus`";
        send_query($q);
 
-       $q="ALTER TABLE ".$config['prefix']."goals ADD `prikey` INT UNSIGNED
-       NOT NULL FIRST";
+	// Migrate Goals
+$maxnum = "+(
+	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
+		ELSE (SELECT MAX(`projectId`) FROM `projects`)
+	END
+	)";
+
+       $q="ALTER TABLE ".$config['prefix']."goals ADD `prikey` INT
+       UNSIGNED NOT NULL FIRST";
        send_query($q);
 
        $q="ALTER TABLE ".$config['prefix']."goals CHANGE `id` `id` INT( 10 )
        UNSIGNED NOT NULL";
        send_query($q);
-       $q="UPDATE ".$config['prefix']."goals SET `prikey`=`id`+(
-	CASE  WHEN (SELECT MAX(`projectId`) FROM `projects`) IS NULL THEN 0
-		ELSE (SELECT MAX(`projectId`) FROM `projects`)
-	END
-	)";
+
+       $q="UPDATE ".$config['prefix']."goals SET `prikey`=`id`" . $maxnum;
        send_query($q);
 
        $q="ALTER TABLE ".$config['prefix']."goals DROP PRIMARY KEY, ADD
@@ -465,7 +453,6 @@
        $q="ALTER TABLE ".$config['prefix']."timeitems ADD INDEX ( `type` )";
        send_query($q);
 
-
        $q="ALTER TABLE ".$config['prefix']."goals ADD `timeframeId` INT
        UNSIGNED NOT NULL";
        send_query($q);
@@ -483,47 +470,35 @@
 	END
 	)) WHERE `type`='quarterly'";
        send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."goals CHANGE `type` `type`
-       ENUM('g') NOT NULL DEFAULT 'g'";
-       send_query($q);
        
-		$q="ALTER TABLE ".$config['prefix']."goals ADD `prikey` INT UNSIGNED NOT NULL FIRST";
-       send_query($q);
-       
-       $q= "UPDATE `".$config['prefix']."goals` SET `prikey`=`id`+(SELECT MAX(`itemId`) FROM `".$config['prefix']."items`)";
-       send_query($q);
-
        $q="INSERT INTO ".$config['prefix']."items
-       (`itemId`,`title`,`description`) SELECT `prikey`,`goal`,`description` FROM
+       (`itemId`,`title`,`description`) SELECT `id`,`goal`,`description` FROM
        `".$config['prefix']."goals`";
        send_query($q);
 
        $q="INSERT INTO ".$config['prefix']."itemattributes
        (`itemId`,`type`,`timeframeId`,`deadline`) SELECT
-       `prikey`,`type`,`timeframeId`, `deadline` FROM `".$config['prefix']."goals`";
+       `id`, 'g',`timeframeId`, `deadline` FROM `".$config['prefix']."goals`";
        send_query($q);
 
        $q="INSERT INTO ".$config['prefix']."itemstatus
-       (`itemId`,`dateCreated`, `dateCompleted`) SELECT `prikey`, `created`,
+       (`itemId`,`dateCreated`, `dateCompleted`) SELECT `id`, `created`,
        `completed` FROM `".$config['prefix']."goals`";
        send_query($q);
-
 
        $q="INSERT INTO ".$config['prefix']."lookup (`parentId`,`itemId`)
        SELECT `projectId`,`id` FROM `goals`";
        send_query($q);
-
 
        $q="INSERT INTO ".$config['prefix']."timeitems ( `timeframeId` ,
        `timeframe` , `description` , `type` ) VALUES (NULL , 'Weekly', NULL,
        'g'), (NULL , 'Quarterly', NULL , 'g')";
        send_query($q);
 
-       if ($drop) {
-       		$droptables = array ( "projectattributes","projects","projectstatus","goals");
-       		foreach ($droptables as $thistable) {drop_table($thistable);}
-       }
+	drop_table ($config['prefix'].'projectattributes');
+	drop_table ($config['prefix'].'projects');
+	drop_table ($config['prefix'].'projectstatus');
+	drop_table ($config['prefix'].'goals');
 
        $q="ALTER TABLE ".$config['prefix']."items  ORDER BY `itemId`";
        send_query($q);
@@ -533,7 +508,6 @@
 
        $q="ALTER TABLE ".$config['prefix']."itemstatus  ORDER BY `itemId`";
        send_query($q);
-
 
        $q="ALTER TABLE ".$config['prefix']."itemattributes ADD INDEX (
           `isSomeday`)";
@@ -554,6 +528,8 @@
         $q="ALTER TABLE ".$config['prefix']."itemstatus CHANGE `itemId`
         `itemId` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT";
        send_query($q);
+
+
        $q="ALTER TABLE ".$config['prefix']."timeitems ADD FULLTEXT
        (`timeframe`)";
        send_query($q);
@@ -566,6 +542,9 @@
        createVersion();
        
        fixDate('itemattributes','deadline');
+       fixDate('itemstatus','dateCompleted');
+       fixDate('itemstatus','lastModified');
+       fixDate('itemstatus','dateCreated');
 
        // drop waitingOn
        // note this wasn't in database-upgrade-0.8.sql. do we need to move the
@@ -655,6 +634,7 @@ function create_tables() {
 function drop_table($name){
 		global $drop;
 		if ($drop) drop_table("$name");
+		$q = "drop table `$name`";
        send_query($q);
 	}
 
