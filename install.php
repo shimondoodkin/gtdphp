@@ -3,6 +3,7 @@
 	
 	// for testing!  Set to true once tested, or if not using table prefixes.
 	$drop = false;
+	$debug = false; // use just to spit out the queries in this file
 	
     // some reporting 
     // get server information for problem reports
@@ -76,50 +77,32 @@
 
 		// categories
 		create_table("categories");
-
-       $q="INSERT INTO ".$config['prefix']. $temp . "categories select * from `categories`";
-       send_query($q);
-		
+		$q="INSERT INTO ".$config['prefix']. $temp . "categories select * from `categories`";
+		send_query($q);
 		move_temp("categories");
 
-       // checklist
+		// checklist
 		create_table("checklist");
-
-       $q="INSERT INTO ".$config['prefix']. $temp . "checklist  SELECT * FROM `checklist`";
-       send_query($q);
-
+		$q="INSERT INTO ".$config['prefix']. $temp . "checklist  SELECT * FROM `checklist`";
+		send_query($q);
 		move_temp("checklist");
 
-       // checklistItems
+		// checklistItems
 		create_table("checklistItems");
-
-       $q="INSERT INTO ".$config['prefix']. $temp . "checklistItems  SELECT * FROM `checklistItems`";
-       send_query($q);
-
+		$q="INSERT INTO ".$config['prefix']. $temp . "checklistItems  SELECT * FROM `checklistItems`";
+		send_query($q);
 		move_temp("checklistItems");
 
-       // context
+		// context
 		create_table("context");
-       $q="INSERT INTO ".$config['prefix']. $temp . "context  SELECT * FROM `context`";
-       send_query($q);
-
+		$q="INSERT INTO ".$config['prefix']. $temp . "context SELECT * FROM `context`";
+		send_query($q);
 		move_temp("context");
 
-       // goals
-       $q="create table ".$config['prefix']. $temp . "goals (";
-       $q.="`id` int(11) NOT NULL auto_increment, "; 
-       $q.="`goal`   longtext, ";
-       $q.="`description`   longtext, ";
-       $q.="`created` date default NULL, ";
-       $q.="`deadline` date default NULL, ";
-       $q.="`completed` date default NULL, ";
-       $q.="`type` enum('weekly', 'quarterly') default NULL ,";
-       $q.="`projectId` int(11) default NULL, PRIMARY KEY (`id`) )";
-
-       send_query($q);
-       $q="INSERT INTO ".$config['prefix']. $temp . "goals  SELECT * FROM `goals`";
-       send_query($q);
-
+		// goals
+		create_table("goals");
+		$q="INSERT INTO ".$config['prefix']. $temp . "goals  SELECT * FROM `goals`";
+		send_query($q);
 		move_temp("goals");
 
        fixDate('goals','created');
@@ -147,8 +130,6 @@
        send_query($q);
 
 		move_temp("itemattributes");
-
-       fixDate('itemattributes','deadline');
 
        // items
 		create_table("items");
@@ -580,37 +561,11 @@
        $q="ALTER TABLE ".$config['prefix']."timeitems ADD FULLTEXT
        (`description`)";
        send_query($q);
-       $q="ALTER TABLE ".$config['prefix']."tickler ADD FULLTEXT (`title`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."context ADD FULLTEXT (`name`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."context ADD FULLTEXT
-       (`description`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."checklist ADD FULLTEXT
-       (`description`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."checklist ADD FULLTEXT
-       (`description`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."checklist ADD FULLTEXT (`title`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."categories ADD FULLTEXT
-       (`category`)";
-       send_query($q);
-
-       $q="ALTER TABLE ".$config['prefix']."categories ADD FULLTEXT
-       (`description`)";
-       send_query($q);
 
        createPreferences();
        createVersion();
+       
+       fixDate('itemattributes','deadline');
 
        // drop waitingOn
        // note this wasn't in database-upgrade-0.8.sql. do we need to move the
@@ -704,6 +659,8 @@ function drop_table($name){
 	}
 
 function send_query($q) {
+		global $debug;
+		if ($debug) echo "<br />\n". $q . "<br />\n";
        $result = mysql_query($q);
        if (!$result) {
              echo "<br />" .$q;
@@ -717,11 +674,10 @@ function move_temp($name) {
        // rename t_categories to categories
        $q="rename table ".$config['prefix']. $temp . $name . " to `".$config['prefix']. $name . "`";
        send_query($q);
-
 }
 
     // new tables shared by upgrade and install paths
-    function createVersion()  {
+function createVersion()  {
     	global $config;
        $q="CREATE TABLE ".$config['prefix']."version (";
        $q.="`version` float unsigned NOT NULL, ";
@@ -761,7 +717,7 @@ function move_temp($name) {
        // change dates of "0000-00-00" to NULL
        # fix date NULL versus 0000-00-00 issue
        $q=" update ".$config['prefix'].$tableName." set ".$columnName.'=NULL where ';
-       $q.=$columnName.'="0000-00-00"';
+       $q.=$columnName."='0000-00-00'";
        send_query($q);
 	}
 
@@ -873,6 +829,18 @@ function create_table ($name) {
        $q.="KEY `date` (`date`), ";
        $q.="FULLTEXT KEY `notes` (`note`), ";
        $q.="FULLTEXT KEY `title` (`title`));";
+       send_query($q);
+	break;
+	case "goals":
+	   $q="create table ".$config['prefix']. $temp . "goals (";
+       $q.="`id` int(11) NOT NULL auto_increment, "; 
+       $q.="`goal`   longtext, ";
+       $q.="`description`   longtext, ";
+       $q.="`created` date default NULL, ";
+       $q.="`deadline` date default NULL, ";
+       $q.="`completed` date default NULL, ";
+       $q.="`type` enum('weekly', 'quarterly') default NULL ,";
+       $q.="`projectId` int(11) default NULL, PRIMARY KEY (`id`) )";
        send_query($q);
 	break;
     default:
