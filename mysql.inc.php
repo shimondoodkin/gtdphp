@@ -37,8 +37,8 @@ $sql = array(
 										WHERE `checklistId` = '{$values['checklistId']}'",
         
         "completeitem"              => "UPDATE `". $config['prefix'] ."itemstatus` 
-										SET `dateCompleted`='{$values['dateCompleted']}' 
-										WHERE `itemId`='{$values['itemId']}'",
+										SET `dateCompleted`=" . $values['dateCompleted']. "
+										WHERE `itemId`=" . $values['itemId'],
 
         "completelistitem"          => "UPDATE `". $config['prefix'] ."listItems` 
 										SET `dateCompleted`='{$values['date']}' 
@@ -475,9 +475,9 @@ $sql = array(
 										FROM `". $config['prefix'] . "context` as cn
 										ORDER BY {$sort['spacecontextselectbox']}",
 
-        "testitemrepeat"            => "SELECT `itemattributes`.`repeat`
-										FROM `". $config['prefix'] . "itemattributes` 
-										WHERE `itemattributes`.`itemId`='{$values['itemId']}'",
+        "testitemrepeat"            => "SELECT ia.`repeat`
+										FROM `". $config['prefix'] . "itemattributes` as ia
+										WHERE ia.`itemId`='{$values['itemId']}'",
 
         "testnextaction"            => "SELECT `parentId`, `nextaction`
 										FROM `". $config['prefix'] . "nextactions` 
