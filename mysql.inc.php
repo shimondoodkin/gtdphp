@@ -415,12 +415,12 @@ $sql = array(
 											AND cl.`checklistId`='{$values['checklistId']}' ".$values['filterquery']."
 										ORDER BY {$sort['selectchecklist']}",
 
-        "selectchecklistitem"       => "SELECT `checklistItems`.`checklistItemId`, 
-												`checklistItems`.`item`, 
-												`checklistItems`.`notes`, 
-												`checklistItems`.`checklistId`, 
-												`checklistItems`.`checked`
-										FROM `". $config['prefix'] . "checklistItems` 
+        "selectchecklistitem"       => "SELECT `checklistItemId`, 
+												`item`, 
+												`notes`, 
+												`checklistId`, 
+												`checked`
+										FROM `". $config['prefix'] . "checklistItems`
 										WHERE `checklistItemId` = '{$values['checklistItemId']}'",
 
         "selectcontext"             => "SELECT `contextId`, `name`, `description`
