@@ -2,7 +2,7 @@
 
 $sqlparts = array(
     "activeitems"               =>  " ((CURDATE()>=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) OR ia.`suppress`!='y') ",
-    "activelistitems"           =>  " li.`dateCompleted` IS NOT NULL ",
+    "activelistitems"           =>  " li.`dateCompleted` IS NULL ",
     "activeparents"             =>  " ((CURDATE()>=DATE_ADD(y.`pdeadline`, INTERVAL -(y.`psuppressUntil`) DAY)) OR y.`psuppress`!='y' OR y.`psuppress` IS NULL)",
     "categoryfilter"            =>  " ia.`categoryId` = '{$values['categoryId']}' ",
     "categoryfilter-parent"     =>  " y.`pcategoryId` = '{$values['categoryId']}' ",

@@ -337,7 +337,7 @@ $sql = array(
 
         "newlistitem"               => "INSERT INTO `". $config['prefix'] . "listItems`
 										VALUES (NULL, '{$values['item']}', 
-												'{$values['notes']}', '{$values['listId']}', 'n')",
+												'{$values['notes']}', '{$values['listId']}', NULL)",
 
         "newnextaction"             => "INSERT INTO `". $config['prefix'] . "nextactions` 
         										(`parentId`,`nextaction`)
