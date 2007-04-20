@@ -162,3 +162,4 @@ $config["storeRecurrences"] = true; // false | true - when recurring items are c
 //You will probably want this to remain "false"
 
 $config["debug"] = 'false';  // false | true | debug | developer | freezedb
+$config["debugKey"] = 'H'; // the key that will toggle the display of debug text - a letter here must typed in upper case.

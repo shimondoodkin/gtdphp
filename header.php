@@ -31,6 +31,9 @@ $title .= "</title>\n";
 
 echo $title;
 
+if ($config['debug']==='developer')
+	echo '<style type="text/css">pre,.debug {}</style>';
+
 $config['theme']=$_SESSION['theme'];
 ?>
 
@@ -63,6 +66,10 @@ $config['theme']=$_SESSION['theme'];
 
 	<!-- sort tables -->
 	<script type="text/javascript" src="gtdfuncs.js"></script>
+    
+    <?php if ($config['debug']==='developer')
+		echo '<script type="text/javascript">aps_debugInit("',$config['debugKey'],'");</script>'; ?>
+    
 </head>
 <body>
 
