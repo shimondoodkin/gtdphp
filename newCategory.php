@@ -27,8 +27,8 @@ if (!isset($_POST['submit'])) {
 
 else {
     $values = array();
-    $values['category'] = ($_POST['category']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a category name</p>') : mysql_escape_string($_POST['category']);
-    $values['description'] =  mysql_escape_string($_POST['description']);
+    $values['category'] = ($_POST['category']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a category name</p>') : $_POST['category'];
+    $values['description'] =  $_POST['description'];
 
     $result = query("newcategory",$config,$values);
 

@@ -28,8 +28,8 @@ if (!isset($_POST['submit'])) {
 else {
 
     $values = array();
-    $values['name'] = ($_POST['name']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>') : mysql_real_escape_string($_POST['name']);
-    $values['description'] = mysql_real_escape_string($_POST['description']);
+    $values['name'] = ($_POST['name']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>') : $_POST['name'];
+    $values['description'] = $_POST['description'];
 
    $result = query("newspacecontext",$config,$values);
 

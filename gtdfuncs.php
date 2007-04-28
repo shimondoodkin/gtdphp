@@ -94,8 +94,13 @@ function sqlparts($part,$config,$values)  {
         break;
         case "msql":require("msqlparts.inc.php");
         break;
-        case "mysql":require("mysqlparts.inc.php");
-        break;
+        case "mysql":
+   			require_once("mysql.funcs.inc.php");
+			array_walk($values,'safeIntoDB');
+		    if ($config['debug']=="developer")
+		        echo '<pre>Sanitised values in sqlparts: ',print_r($values,true),'</pre>';
+			require("mysqlparts.inc.php");
+        	break;
         case "mssql":require("mssqlparts.inc.php");
         break;
         case "postgres":require("postgresparts.inc.php");

@@ -205,9 +205,9 @@ function retrieveFormVars() { // extract the item values from the HTTP GET and P
 
 	// key variables
 	if (isset($_POST['type']))           $values['type']           = $_POST['type'];
-	if (isset($_POST['title']))          $values['title']          = mysql_real_escape_string($_POST['title']);
-	if (isset($_POST['description']))    $values['description']    = mysql_real_escape_string($_POST['description']);
-	if (isset($_POST['desiredOutcome'])) $values['desiredOutcome'] = mysql_real_escape_string($_POST['desiredOutcome']);
+	if (isset($_POST['title']))          $values['title']          = $_POST['title'];
+	if (isset($_POST['description']))    $values['description']    = $_POST['description'];
+	if (isset($_POST['desiredOutcome'])) $values['desiredOutcome'] = $_POST['desiredOutcome'];
 
 	// session variables
 	$values['categoryId']  = getVarFromGetPost('categoryId',0);

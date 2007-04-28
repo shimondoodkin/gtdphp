@@ -19,26 +19,6 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         print_r($sort);
         echo "</pre>";
     }
-/*
-    //sanitize input variables
-    echo "<p>Sanitizing...</p>\n";
-
-    //testing after sanitization
-    echo "<p>Query label: ".$querylabel."<br />";
-    echo "Config: ";
-    print_r($config);
-    echo "<br />Options: ";
-    print_r($options);
-    echo "<br />Values: ";
-    print_r($values);
-    echo "</p>";
-
-    //parse options array (logic)
-        //sort order
-        //single NA or not?
-        //others
-
-*/
 
     //include correct SQL query library as chosen in config
     switch ($config['dbtype']) {
@@ -46,8 +26,13 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         break;
         case "msql":require("msql.inc.php");
         break;
-        case "mysql":require("mysql.inc.php");require_once("mysql.funcs.inc.php");
-        break;
+        case "mysql":
+			require_once("mysql.funcs.inc.php");
+			array_walk($values,'safeIntoDB');
+		    if ($config['debug']=="developer")
+		        echo '<pre>Sanitised values: ',print_r($values,true),'</pre>';
+			require("mysql.inc.php");
+	        break;
         case "mssql":require("mssql.inc.php");
         break;
         case "postgres":require("postgres.inc.php");
@@ -55,13 +40,6 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         case "sqlite":require("sqlite.inc.php");
         break;
         }
-
-	$values=safeIntoDB($values); // make values safe - function must be in the SQL query library, as loaded above
-    if ($config['debug']=="developer") {
-        echo "<pre>Sanitised values: ";
-        print_r($values);
-        echo "</pre>";
-    }
 
     //grab correct query string from query library array
     //values automatically inserted into array

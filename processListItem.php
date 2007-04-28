@@ -5,8 +5,8 @@ include_once('header.php');
 //RETRIEVE URL AND FORM VARIABLES
 $values=array();
 $values['listId']=(int) $_POST['listId'];
-$values['item']=mysql_real_escape_string($_POST['item']);
-$values['notes']=mysql_real_escape_string($_POST['notes']);
+$values['item']=$_POST['item'];
+$values['notes']=$_POST['notes'];
 
 $nextURL='listReport.php?listId='.$values['listId'];
 if ($config['debug']==='false') {

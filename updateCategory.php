@@ -4,8 +4,8 @@ include_once('header.php');
 //GET URL AND FORM DATA
 $values=array();
 $values['categoryId'] = (int) $_GET['categoryId'];
-$values['category']=mysql_real_escape_string($_POST['category']);
-$values['description']=mysql_real_escape_string($_POST['description']);
+$values['category']=$_POST['category'];
+$values['description']=$_POST['description'];
 $values['delete']=$_POST['delete']{0};
 $values['newCategoryId']=(int) $_POST['newCategoryId'];
 
