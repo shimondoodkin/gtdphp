@@ -35,7 +35,7 @@ if (!isset($_POST['submit'])) {
 }
 else {
 $values = array();
-$values['name'] = ($_POST['name']=="") ? die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>') : $_POST['name'])
+if ($_POST['name']=="") {die('<META HTTP-EQUIV="Refresh" CONTENT="2; url=newCategory.php" /><p>Error: Enter a context name</p>');} else {$values['name'] = $_POST['name'];}
 $values['description'] = $_POST['description'];
 $values['type'] = $_POST['type'];
 
