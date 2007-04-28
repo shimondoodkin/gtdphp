@@ -210,7 +210,16 @@ HTML1;
 HTML2;
 		break;	 
 	 case '0.8rc-3': // already at latest release ============================================================
-	   $endMsg='<p>No upgrade needed</p>';
+		// if source prefix != install prefix, should copy tables. 
+		create_tables();
+		global $tablesByVersion;
+		foreach ($tablesByVersion['0.8rc-2'] as $table){
+			if ($table =="version") continue;
+			$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
+			send_query($q);
+		}
+		
+	   $endMsg='<p>Database copied.  No upgrade needed</p>';
 	   break;
 	 case '0.8rc-2':  // upgrade from 0.8rc-2 =================================================================
 		$q = "drop table `{$config['prefix']}version`";
