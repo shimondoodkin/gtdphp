@@ -2,7 +2,7 @@
 function safeIntoDB(&$value,$key=NULL) {
 	// don't clean arrays - clean individual strings/values
 	if (is_array($value)) {
-		foreach ($value as $key=>$string) $value[$key] = safeIntoDB($string);
+		foreach ($value as $key=>$string) $value[$key] = safeIntoDB($string,$key);
 		return $value;
 	} else {
 		// don't clean filters - we've cleaned those separately in the sqlparts function
