@@ -977,7 +977,7 @@ function create_table ($name) {
        $q.="`description` text, ";
        $q.="PRIMARY KEY  (`categoryId`), ";
        $q.=_FULLTEXT." KEY `category` (`category`), ";
-       $q.=_FULLTEXT."KEY `description` (`description`))"._CREATESUFFIX;
+       $q.=_FULLTEXT." KEY `description` (`description`))"._CREATESUFFIX;
        send_query($q);
     break;
     case "checklist":

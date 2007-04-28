@@ -39,6 +39,7 @@ $config["datemask"] = 'Y-m-d D'; // date format - required
 $config["theme"] = 'default'; //default | menu_sidebar
 $config["title_suffix"]	= false; // true | false - add filename to title tag
 $config["trimLength"] = 72;     // max visible length of descriptions when listing items
+$config["firstDayOfWeek"] = 0; // 0=Sunday, 1=Monday, ... 6=Saturday
         
 
 // These are the shortcut settings for menu options.  Add a key for any page or page view in the main menus.
