@@ -35,11 +35,12 @@ else {
 
     if ($GLOBALS['ecode']=="0") echo "Context ".$values['name']." inserted.";
     else echo "Context NOT inserted.";
-    if (($config['debug']=="true" || $config['debug']=="developer") && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
+    if (($config['debug'] & _GTD_ERRORS) && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
 
     echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=newContext.php" />';
     }
 
 include_once('footer.php');
 ?>
+
 

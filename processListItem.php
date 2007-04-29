@@ -9,10 +9,10 @@ $values['item']=$_POST['item'];
 $values['notes']=$_POST['notes'];
 
 $nextURL='listReport.php?listId='.$values['listId'];
-if ($config['debug']==='false') {
-	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=',$nextURL,'" />';
-} else {
+if ($config['debug'] & _GTD_DEBUG) {
 	echo '<p>Next page is <a href="',$nextURL,'">&lt;',htmlspecialchars($nextURL),'&gt;</a> (would be auto-refresh in non-debug mode)</p>';
+} else {
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=',$nextURL,'" />';
 }
 
 $result = query("newlistitem",$config,$values);

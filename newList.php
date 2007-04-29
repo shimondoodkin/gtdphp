@@ -46,11 +46,12 @@ else {
     
     if ($GLOBALS['ecode']=="0") echo "List: ".$values['title']." inserted.";
     else echo "List NOT inserted.";
-    if (($config['debug']=="true" || $config['debug']=="developer") && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
+    if (($config['debug'] & _GTD_ERRORS) && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
 
     echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=listReport.php?listId='.mysql_insert_id().'&listTitle='.urlencode($values['title']).'">';
     }
 
 include_once('footer.php');
 ?>
+
 

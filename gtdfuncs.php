@@ -97,7 +97,7 @@ function sqlparts($part,$config,$values)  {
         case "mysql":
    			require_once("mysql.funcs.inc.php");
 			foreach ($values as $key=>$value) $values[$key] = safeIntoDB($value, $key);
-		    if ($config['debug']=="developer")
+		    if ($config['debug'] & _GTD_DEBUG)
 		        echo '<pre>Sanitised values in sqlparts: ',print_r($values,true),'</pre>';
 			require("mysqlparts.inc.php");
         	break;

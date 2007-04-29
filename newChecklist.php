@@ -45,16 +45,17 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 
     if ($GLOBALS['ecode']=="0") echo "Checklist: ".$values['title']." inserted.";
     else echo "Checklist NOT inserted.";
-    if (($config['debug']=="true" || $config['debug']=="developer") && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
+    if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
 
 	$nextURL='checklistReport.php?checklistId='.mysql_insert_id();
-	if ($config['debug']==='false') {
-		echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=',$nextURL,'">';
-	} else {
+	if ($config['debug'] & _GTD_DEBUG) {
 		echo '<p>Next page is <a href="',$nextURL,'">&lt;',htmlspecialchars($nextURL),'&gt;</a> (would be auto-refresh in non-debug mode)</p>';
+} else {
+		echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=',$nextURL,'">';
 	}
 }
 
 include_once('footer.php');
 ?>
+
 

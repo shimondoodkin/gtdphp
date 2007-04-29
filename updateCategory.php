@@ -19,7 +19,7 @@ else $result = query("updatecategory",$config,$values);
     if ($GLOBALS['ecode']=="0") echo "Category ".$values['category']." updated.";
     else {
         echo "Category NOT updated.";
-        if ($config['debug']=="true" || $config['debug']=="developer") echo $GLOBALS['ecode'].": ".$GLOBALS['etext'];
+        if ($config['debug'] & _GTD_ERRORS) echo $GLOBALS['ecode'].": ".$GLOBALS['etext'];
         }
 
 echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listProjects.php"/>';
