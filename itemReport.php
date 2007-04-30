@@ -188,11 +188,11 @@ foreach ($completed as $comp) foreach ($childtype as $value) {
 
                         if ($comp=="n") {                                
                                     //Calculate reminder date as # suppress days prior to deadline
-                                    if ($row['suppress']=="y") {
+                                    if ($row['suppress']==='y' && $row['deadline']!=='') {
 										$reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
                                     echo "         <td>".date($config['datemask'],$reminddate)."</td>\n";
                                     }
-                                    else echo "<td></td>";
+                                    else echo "<td>&nbsp;</td>";
                                     
 				echo prettyDueDate('td',$row['deadline'],$config['datemask']),"\n";
 

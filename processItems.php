@@ -132,6 +132,7 @@ function createItem() { // create an item and its parent-child relationships
 	$result = query("newitemattributes",$config,$values);
 	$result = query("newitemstatus",$config,$values);
 	
+	if($config['debug'] & _GTD_DEBUG) echo '<pre>',print_r($updateGlobals['parents'],true),'</pre>';
 	foreach ($updateGlobals['parents'] as $values['parentId']) if (((int) $values['parentId'])>0) {
 		$result = query("newparent",$config,$values);
 		if($values['nextAction']==='y') $result = query("newnextaction",$config,$values);	
@@ -185,8 +186,10 @@ function makeNextAction() { // mark the current item as a next action
 	$thisquery='updatenextaction';
     $parentresult = query("lookupparent",$config,$values);
     if ($parentresult!="-1")
-		foreach ($parentresult[0] as $values['parentId'])
+		foreach ($parentresult as $parent) {
+			$values['parentId']=$parent['parentId'];
 			query($thisquery,$config,$values);
+		}
 }
 
 function removeNextAction() { // remove the next action reference for the current item
@@ -238,18 +241,24 @@ function retrieveFormVars() { // extract the item values from the HTTP GET and P
 }
 
 function getItemCopy() { // retrieve all the values for the current item, and store in the $values array
-	// NB this doesn't get parents - we currently assume that they are available in $updateGlobals['parents'] . This is not a problem for now, but might be, later!
-	global $config,$values;
+	global $config,$values,$updateGlobals;
 	$copyresult = query("selectitem",$config,$values,$options,$sort);
 	foreach ($copyresult[0] as $key=>$thisvalue) $values[$key]=$thisvalue;
+	// now get parents
+	$result=query("lookupparent",$config,$values,$options,$sort);
+	$updateGlobals['parents']=array();
+	if (is_array($result))
+		foreach ($result as $parent)
+			array_push($updateGlobals['parents'],$parent['parentId']); 
 	if ($config['debug'] & _GTD_DEBUG) {
 		echo '<pre>Retrieved record for copying: </pre>';
 		literaldump('$values');
+		echo '<pre>Parents:',print_r($updateGlobals['parents'],true),'</pre>';
 	}
 }
 
 function recurItem() { // mark a recurring item completed, and set up the recurrence
-	global $config,$values;
+	global $config,$values,$updateGlobals;
 	// calculate date to recur to, based on: date completed + number of days between recurrences
 	$dateArray=explode("-", str_replace("'",'',$values['dateCompleted']));
 	$unixdateCompleted=mktime(12,0,0,$dateArray[1],$dateArray[2],$dateArray[0]);
@@ -258,6 +267,8 @@ function recurItem() { // mark a recurring item completed, and set up the recurr
 	if ($config['storeRecurrences']) {
 		makeComplete();
 		getItemCopy();
+		if (in_array($values['itemId'],$updateGlobals['isNA']))
+			$values['nextAction']='y';
 	}
 
 	$values['dateCompleted']="NULL"; 
@@ -309,8 +320,11 @@ function nextPage() { // set up the forwarding to the next page
 
 function literaldump($varname) { // dump a variable name, and its contents
 	echo "<pre><b>$varname</b>=";
-	eval("print_r((isset($varname))?$varname:\$GLOBALS['".substr($varname,1)."']);"); // var_dump
-	echo '</pre>';
+	$tst="print_r((isset($varname))?($varname):(\$GLOBALS['".substr($varname,1)."']));return 1;";
+	if (eval($tst))
+		echo '</pre>';
+	else
+		echo "<br />Failed to display variable value: $tst <br />";
 }
 
 ?>
