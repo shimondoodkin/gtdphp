@@ -243,15 +243,16 @@ HTML2;
     		$q = "drop table `{$config['prefix']}version`";
 			send_query($q);
 	   		createVersion();
-		} else
+		} else {
 			create_tables();
-			
-   		foreach ($tablesByVersion['0.8rc-1'] as $table){
-			if ($table!="version") {
-				$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
-				send_query($q);
+	   		foreach ($tablesByVersion['0.8rc-1'] as $table){
+				if ($table!="version") {
+					$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
+					send_query($q);
+				}
 			}
 		}
+			
 	    fixAllDates();
 	    $endMsg='<p>GTD-PHP 0.8 upgraded from rc1 to rc3 - thanks for your beta-testing</p>';
 	    break;
