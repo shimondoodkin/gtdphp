@@ -22,9 +22,9 @@
 	array_push($tablesByVersion['0.8rc-2'],'preferences');
 	
 	if (_DEBUG) {
-		echo '<pre>';
-		if (_DRY_RUN) echo 'Executing Dry run - no tables should be amended in this run<br />';
-		echo 'POST variables: ',print_r($_POST,true),"</pre>\n";
+		echo '<pre>'
+			,(_DRY_RUN)?'Executing Dry run - no tables will be amended in this run':'This is a <b>live</b> run'
+			,'<br />POST variables: ',print_r($_POST,true),"</pre>\n";
 	}
 	
 	// are we doing the install, or the pre-install checks? Use the post variable to decide:
@@ -97,7 +97,11 @@ function checkInstall() {
 	foreach ($gotPrefixes as $thisPreference) {
 		$thisPrefix=substr($thisPreference,0,-11);
 		$thisVer=checkPrefixedTables($thisPrefix);
-		if ($thisVer)
+		if ($thisVer==3 && $thisPrefix==$config['prefix']) {
+			// oh dear: this destination is already in use!
+			$goodToGo=false;
+			echo "<p class='error'>The prefix '{$config['prefix']}' is already in use in an installation of 0.8rc3</p>";
+		} elseif ($thisVer)
 			$gotVersions["0.8rc-{$thisVer}={$thisPrefix}"]=$thisVer;
 	}
 	// only check for 0.8rc-1 if there is no unprefixed 0.8rc-2/3 installation
@@ -146,14 +150,19 @@ function checkInstall() {
 			echo '<input type="hidden" name="prefix" value="',$config['prefix'],"\" />\n";
 			echo '<input type="submit" name="submit" value="Do it" />',"\n";
 		}
+		echo '</form>';
+	} else {
+		// not good to go
+		echo '<pre class="error">Unable to continue. The config file was read in as: ',print_r($config,true),'</pre>';
 	}
-	echo '</form>';
+	
 }
 /*
    ======================================================================================
 */
 function doInstall() {
-	global $config,$drop,$temp;
+	global $config,$drop,$temp,$tablesByVersion;
+;
 		
 	// for testing!  Set to true once tested, or if not using table prefixes.
 	$drop = false;
@@ -211,14 +220,15 @@ HTML2;
 		break;	 
 	 case '0.8rc-3': // already at latest release ============================================================
 		// if source prefix != install prefix, should copy tables. 
-		create_tables();
-		global $tablesByVersion;
-		foreach ($tablesByVersion['0.8rc-2'] as $table){
-			if ($table =="version") continue;
-			$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
-			send_query($q);
-		}
-		
+    	if ($fromPrefix!==$config['prefix']){
+			create_tables();
+			foreach ($tablesByVersion['0.8rc-2'] as $table){
+				if ($table!='version') {
+					$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
+					send_query($q);
+				}
+			}
+		}		
 	   $endMsg='<p>Database copied.  No upgrade needed</p>';
 	   break;
 	 case '0.8rc-2':  // upgrade from 0.8rc-2 =================================================================
@@ -228,13 +238,23 @@ HTML2;
 	   $endMsg='<p>GTD-PHP 0.8 upgraded from rc2 to rc3 - thanks for your beta-testing</p>';
 	   break;
 	 case '0.8rc-1':  // upgrade from 0.8rc-1 =================================================================
-		$q = "drop table `version`";
-       send_query($q);
-	   createVersion();
-       createPreferences();	   
-	   fixAllDates();
-	   $endMsg='<p>GTD-PHP 0.8 upgraded from rc1 to rc3 - thanks for your beta-testing</p>';
-	   break;
+        // if there's a prefix, and there wasn't before, copy tables over
+    	if ($fromPrefix==$config['prefix']) {
+    		$q = "drop table `{$config['prefix']}version`";
+			send_query($q);
+	   		createVersion();
+		} else
+			create_tables();
+			
+   		foreach ($tablesByVersion['0.8rc-1'] as $table){
+			if ($table!="version") {
+				$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
+				send_query($q);
+			}
+		}
+	    fixAllDates();
+	    $endMsg='<p>GTD-PHP 0.8 upgraded from rc1 to rc3 - thanks for your beta-testing</p>';
+	    break;
 	  case '0.7': // upgrade from 0.7 =============================================================================
     
     	// temp table prefix
@@ -750,9 +770,10 @@ function fixAllDates() {
    fixDate('tickler','date');
 }
 
-function tabulateOption($val,$from) {
+function tabulateOption($val,$msg) {
 	static $isChecked=' checked="checked" ';
-	$result='<tr><td><input type="radio" name="install" value="'.$val."\" $isChecked /></td><td>$from</td><td>$to</td></tr>\n";
+	if (_DEBUG) echo "<p class='debug'> option: $val , $msg</p>";
+	$result='<tr><td><input type="radio" name="install" value="'.$val."\" $isChecked /></td><td>$msg</td></tr>\n";
 	$isChecked='';
 	return $result;
 }
