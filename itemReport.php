@@ -108,37 +108,41 @@ echo "</p>\n";
 
 
 if ($childtype!=NULL) {
-echo '<form action="processItems.php" method="post">'."\n";
-$values['parentId']=$values['itemId'];
-
-//Create iteration arrays
-$completed = array("n","y");
-
-//table display loop
-foreach ($completed as $comp) foreach ($childtype as $value) {
-	echo "<div class='reportsection'>\n";
-
-    //Select items by type
-    $values['type']=$value;
-    $values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
-    if ($comp=="y") {
-		$values['filterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
-		$result = query("getchildren",$config,$values,$options,$sort);
-	} else {
-		$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);  //suppressed items will be shown on report page
-		$result = query("getchildren",$config,$values,$options,$sort);
-	}
-
-	echo ($result != "-1")?'<h2>':'<h3>No '
-		,($comp=="y")?('Completed&nbsp;'):('<a href="item.php?parentId='.$values['itemId'].'&amp;action=create&amp;type='.$value.'" title="Add new '.$typename[$value].'">')
-		,$typename[$value],'s'
-		,($comp=="y")?'':'</a>'
-		,($result != "-1")?'</h2>':'</h3>'
-		,"\n";
-
-    if ($result != "-1") {
+	echo '<form action="processItems.php" method="post">'."\n";
+	$values['parentId']=$values['itemId'];
+	
+	//Create iteration arrays
+	$completed = array("n","y");
+	
+	//table display loop
+	foreach ($completed as $comp) foreach ($childtype as $thistype) {
+		echo "<div class='reportsection'>\n";
+	
+	    //Select items by type
+	    $values['type']=$thistype;
+	    $values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
+	    if ($comp=="y") {
+			$values['filterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
+			$result = query("getchildren",$config,$values,$options,$sort);
+		} else {
+			$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);  //suppressed items will be shown on report page
+			$result = query("getchildren",$config,$values,$options,$sort);
+		}
+	
+		echo ($result != "-1")?'<h2>':'<h3>No '
+			,($comp=="y")?('Completed&nbsp;'):('<a href="item.php?parentId='.$values['itemId'].'&amp;action=create&amp;type='.$thistype.'" title="Add new '.$typename[$value].'">')
+			,$typename[$thistype],'s'
+			,($comp=="y")?'':'</a>'
+			,($result != "-1")?'</h2>':'</h3>'
+			,"\n";
+	
+	    if ($result == "-1") {
+	    	echo '</div>';
+			continue;
+		}
 		$shownext=( ($comp==="n") && ($values['type']==="a" || $values['type']==="w") );
 		$counter=0;
+		$suppressed=0;
 		echo '<table class="datatable sortable" id="itemtable'.$completed.'" summary="table of children of this item">'."\n";
 		echo "	<thead><tr>\n";
         if ($shownext) echo "          <td>Next</td>\n";
@@ -157,6 +161,17 @@ foreach ($completed as $comp) foreach ($childtype as $value) {
 		echo "	</tr></thead>\n";
 
 		foreach ($result as $row) {
+			if ($comp=="n") {                                
+                //Calculate reminder date as # suppress days prior to deadline
+                if ($row['suppress']==='y' && $row['deadline']!=='') {
+					$reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
+					if ($reminddate>time()) { // item is not yet tickled - count it, then skip displaying it
+						$suppressed++;
+						continue;
+					}
+				} else
+					$reminddate=''; 			
+			}
 			$cleaned=makeClean($row['title']);
 			echo '<tr';
 			if ($shownext) {
@@ -183,43 +198,39 @@ foreach ($completed as $comp) foreach ($childtype as $value) {
 
 			echo '		<td>'.nl2br(stripslashes($row['description']))."</td>\n";
 			echo '		<td><a href = "reportContext.php?contextId='.$row['contextId'].'" title="Go to '.htmlspecialchars(stripslashes($row['cname'])).' context report">'.htmlspecialchars(stripslashes($row['cname']))."</a></td>\n";
-
-                                echo "          <td>".date($config['datemask'],strtotime($row['dateCreated']))."</td>\n";
-
-                        if ($comp=="n") {                                
-                                    //Calculate reminder date as # suppress days prior to deadline
-                                    if ($row['suppress']==='y' && $row['deadline']!=='') {
-										$reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
-                                    echo "         <td>".date($config['datemask'],$reminddate)."</td>\n";
-                                    }
-                                    else echo "<td>&nbsp;</td>";
-                                    
+            echo "          <td>".date($config['datemask'],strtotime($row['dateCreated']))."</td>\n";
+			if ($comp=="n") {
+				echo '<td>'
+					,($reminddate=='')?'&nbsp;':date($config['datemask'],$reminddate)
+					,"</td>\n";
 				echo prettyDueDate('td',$row['deadline'],$config['datemask']),"\n";
-
 				echo "		<td>".((($row['repeat'])=="0")?'&nbsp;':($row['repeat']))."</td>\n";
-
-				echo '		<td align=center><input type="checkbox" name="isMarked[]" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" value="';
-				echo $row['itemId'];
-				echo '" /></td>'."\n";
+				echo '		<td align=center><input type="checkbox" name="isMarked[]" title="Complete '
+					,htmlspecialchars(stripslashes($row['title'])),'" value="'
+					,$row['itemId'],'" /></td>',"\n";
 			} else {
 				echo "		<td>".date($config['datemask'],strtotime($row['dateCompleted']))."</td>\n";
 			}
-
 			echo "	</tr>\n";
 			$counter = $counter+1;
 		}
 		echo "</table>\n";
+		if ($suppressed) {
+			echo '<p><a href="listItems.php?tickler=true&amp;type=',$thistype
+				,"&amp;parentId=",$values['parentId']
+				,'"> There '
+				,($suppressed===1)?'is also 1 tickler item':"are also $suppressed tickler items"
+				," not yet due for action</a></p>\n";
+		}
 		$thisurl=parse_url($_SERVER['PHP_SELF']);
 		echo '<input type="hidden" name="referrer" value="',basename($thisurl['path']),'?itemId=',$values['itemId'],"\"\n";
 		echo '<input type="hidden" name="multi" value="y" />'."\n";
 		echo '<input type="hidden" name="action" value="complete" />'."\n";
 		echo '<input type="hidden" name="wasNAonEntry" value="'.implode(',',$wasNAonEntry).'" />'."\n"; 
-		if ($comp=="n") echo '<input type="submit" align="right" class="button" value="Update '.$typename[$value].'s" name="submit" />'."\n";
+		if ($comp=="n") echo '<input type="submit" align="right" class="button" value="Update '.$typename[$thistype].'s" name="submit" />'."\n";
 
-			if($counter==0){
-				echo 'No&nbsp;'.$typename[$value]."&nbsp;items\n";
-				}
-			}
+		if($counter==0)
+			echo 'No&nbsp;'.$typename[$thistype]."&nbsp;items\n";
 
 		echo "</div>\n";
 }
