@@ -27,7 +27,9 @@ $filter['nextonly']       =getVarFromGetPost('nextonly');          //next action
 $filter['completed']      =getVarFromGetPost('completed');         //status:pending/completed (empty)
 $filter['dueonly']        =getVarFromGetPost('dueonly');           //has due date:true/empty
 $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeating:true/empty
+$filter['parentId']       =getVarFromGetPost('parentId');
 
+$values['parentId']       =$filter['parentId'];
 $values['type']           =$filter['type'];
 $values['contextId']      =$filter['contextId'];
 $values['categoryId']     =$filter['categoryId'];
@@ -152,9 +154,10 @@ else {
     }
 
 //problem: need to get all items with suppressed parents(even if child is not marked suppressed), as well as all suppressed items
-if ($filter['tickler']=="true") $values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
-
-else {
+if ($filter['tickler']=="true") {
+	$values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
+	$values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
+} else {
     $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
     $values['filterquery'] .= " AND ".sqlparts("activeparents",$config,$values);
     }

@@ -11,6 +11,7 @@ $sqlparts = array(
     "completedlistitems"        =>  " li.`dateCompleted` IS NOT NULL ",
     "contextfilter"             =>  " ia.`contextId` = '{$values['contextId']}' ",
     "due"                       =>  " (CURDATE()>=ia.`deadline` AND ia.`deadline` IS NOT NULL) ",
+    "hasparent"                 =>  " y.`parentId` = '{$values['parentId']}' ",
     "isnotcompleteditem"        =>  " its.`dateCompleted` is  NULL",
     "issomeday"                 =>  " ia.`isSomeday` = '{$values['isSomeday']}' ",
     "issomeday-parent"          =>  " y.`pisSomeday` = '{$values['isSomeday']}' OR y.`pisSomeday` IS NULL",
