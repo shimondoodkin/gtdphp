@@ -155,7 +155,7 @@ else {
 
 //problem: need to get all items with suppressed parents(even if child is not marked suppressed), as well as all suppressed items
 if ($filter['tickler']=="true") {
-	$values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
+	if ($values['parentId']!='') $values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
 	$values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
 } else {
     $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
