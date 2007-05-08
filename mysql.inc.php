@@ -94,7 +94,7 @@ $sql = array(
         								FROM `". $config['prefix'] ."context`",
         
         "deletecategory"            => "DELETE FROM `". $config['prefix'] ."categories` 
-        								WHERE `categoryId`='{$values['categoryId']}'",
+        								WHERE `categoryId`='{$values['id']}'",
         "deletechecklist"           => "DELETE FROM `". $config['prefix'] ."checklist` 
         								WHERE `checklistId`='{$values['checklistId']}'",
         "deletechecklistitem"       => "DELETE FROM `". $config['prefix'] ."checklistItems` 
@@ -120,9 +120,9 @@ $sql = array(
         "deletenote"                => "DELETE FROM `". $config['prefix'] ."tickler` 
         								WHERE `ticklerId`='{$values['noteId']}'",
         "deletespacecontext"        => "DELETE FROM `". $config['prefix'] ."context` 
-        								WHERE `contextId`='{$values['contextId']}'",
+        								WHERE `contextId`='{$values['id']}'",
         "deletetimecontext"         => "DELETE FROM `". $config['prefix'] ."timeitems` 
-        								WHERE `timeframeId`='{$values['tcId']}'",
+        								WHERE `timeframeId`='{$values['id']}'",
         
         
         "getchecklistitems"         => "SELECT cli.`checklistitemId`, cli.`item`, cli.`notes`, 
@@ -381,16 +381,16 @@ $sql = array(
 
 
         "reassigncategory"          => "UPDATE `". $config['prefix'] . "itemattributes`
-										SET `categoryId`='{$values['newCategoryId']}' 
-										WHERE `categoryId`='{$values['categoryId']}'",
+										SET `categoryId`='{$values['newId']}'
+										WHERE `categoryId`='{$values['id']}'",
 
         "reassignspacecontext"      => "UPDATE `". $config['prefix'] . "itemattributes`
-										SET `contextId`='{$values['newContextId']}' 
-										WHERE `contextId`='{$values['contextId']}'",
+										SET `contextId`='{$values['newId']}'
+										WHERE `contextId`='{$values['id']}'",
 
         "reassigntimecontext"       => "UPDATE `". $config['prefix'] . "itemattributes`
-										SET `timeframeId`='{$values['ntcId']}' 
-										WHERE `timeframeId`='{$values['tcId']}'",
+										SET `timeframeId`='{$values['newId']}'
+										WHERE `timeframeId`='{$values['id']}'",
 
 
         "removechecklistitems"      => "DELETE
@@ -493,9 +493,9 @@ $sql = array(
 										ORDER BY {$sort['timecontextselectbox']}",
 
         "updatecategory"            => "UPDATE `". $config['prefix'] ."categories`
-										SET `category` ='{$values['category']}', 
+										SET `category` ='{$values['name']}',
 												`description` ='{$values['description']}' 
-										WHERE `categoryId` ='{$values['categoryId']}'",
+										WHERE `categoryId` ='{$values['id']}'",
 
         "updatechecklist"           => "UPDATE `". $config['prefix'] ."checklist`
 										SET `title` = '{$values['newchecklistTitle']}', 
@@ -512,7 +512,7 @@ $sql = array(
         "updatespacecontext"        => "UPDATE `". $config['prefix'] . "context`
 										SET `name` ='{$values['name']}', 
 												`description`='{$values['description']}' 
-										WHERE `contextId` ='{$values['contextId']}'",
+										WHERE `contextId` ='{$values['id']}'",
 
         "updateitem"                => "UPDATE `". $config['prefix'] . "items`
 										SET `description` = '{$values['description']}', 
@@ -568,7 +568,6 @@ $sql = array(
 
         "updatetimecontext"         => "UPDATE `". $config['prefix'] . "timeitems`
 										SET `timeframe` ='{$values['name']}', 
-												`description`='{$values['description']}', 
-												`type`='{$values['type']}' 
-										WHERE `timeframeId` ='{$values['tcId']}'",
+												`description`='{$values['description']}' 
+										WHERE `timeframeId` ='{$values['id']}'",
     );

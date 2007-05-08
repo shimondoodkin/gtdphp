@@ -1,3 +1,107 @@
+var formValid;
+var formErrorMessage;
+
+function validate(form) {
+
+    // Ensure validate is being used correctly
+
+    if(form.elements['required'] == null) {
+        document.getElementById("errorMessage").innerHTML="Error: Validate function needs 'required' form field.";
+        return false;
+    }
+    if(form.elements['dateformat'] == null) {
+        document.getElementById("errorMessage").innerHTML="Error: Validate function needs 'dateformat' form field.";
+        return false;
+    }
+    
+    // Init variables
+    formValid = true;
+    formErrorMessage = "Please correct the following:<br /><br />";
+    
+    // Parse required list and check each required field
+    var requiredList = form.required.value.split(",");
+    var requiredItem;
+    
+    // remove any previous error flags
+    for(var i = 0;i<requiredList.length;i++){
+        requiredItem = requiredList[i].split(":");
+        form.elements[requiredItem[0]].className='';
+        if (requiredItem[1]=='depends') form.elements[requiredItem[3]].className='';
+    }
+    
+    for(var i = 0;i<requiredList.length;i++){
+        requiredItem = requiredList[i].split(":");
+        var thisfield = form.elements[requiredItem[0]];
+        var checkType = requiredItem[1];
+        var itemErrorMessage = requiredItem[2];
+        var itemValue = thisfield.value;
+        var passed;
+            
+        switch (checkType) {
+            case "date":
+                dateFormat = form.elements['dateformat'].value;
+                passed=checkDate(thisfield,dateFormat);
+                break;
+            case "notnull":
+        		passed=!checkForNull(thisfield);
+                break;
+            case "depends":
+            	fieldRequires = form.elements[requiredItem[3]];
+            	passed=checkForNull(thisfield) || !checkForNull(fieldRequires);
+            	if (!passed) fieldRequires.className='formerror';
+				break; 
+            default:
+                document.getElementById("errorMessage").innerHTML="Error: Required type not valid.";
+                return false;                
+        }
+        markField(thisfield,passed,itemErrorMessage);
+    }
+        
+    if(!formValid) {
+        document.getElementById("errorMessage").innerHTML=formErrorMessage;
+    }
+    return formValid;
+}
+
+function markField(thisfield,passed,error) {        
+    if (!passed) {
+		formErrorMessage += error + "<br />";
+    	formValid = false;
+    	thisfield.className='formerror';
+    }
+}
+
+function checkForNull(field) {
+    switch (field.type) {
+    	case "text":
+    		var tst=field.value;
+			tst.replace(" ","");
+		    var isblank=(tst == "");
+		    return isblank;
+		case "checkbox":
+			return !field.checked;
+		default:
+			return false;
+	}
+}
+
+function checkDate(field,dateFormat) {
+    if (checkForNull(field)) return true;
+    // The validity of the format itself should be checked when set in user preferences.  This function assumes that the format passed in is valid.
+
+    // Build the regular expression
+    var format = dateFormat;
+    format = format.replace(/([^mcyd])/,'[$1]');         // Any char that is not m, c, y, or d is a literal
+    format = format.replace(/dd/,'[0-3][0-9]');          // First char of a day can be 0-3, second 0-9
+    format = format.replace(/mm/,'[0-1][0-9]');          // First char of a month can be 0 or 1, second 0-9
+    format = format.replace(/yy/,'[0-9][0-9]');          // Year must be two chars
+    format = format.replace(/cc/,'[0-9][0-9]');          // Century must be two chars
+
+    var dateRegEx = new RegExp(format);
+    var tst=field.value;
+    return (tst.match(dateRegEx));
+}
+
 function completeToday(datefield) {
 	var now=new Date();
 	var m  = now.getMonth()+1;
@@ -17,7 +121,7 @@ function aps_keyUpHandler(e) {
 	if (!e) var e = window.event;
 	if (e.target && e.target.nodeName) {
 		var targetNodeName = e.target.nodeName.toLowerCase();
-		if (targetNodeName == "textarea" || (targetNodeName == "input" && event.target.type && event.target.type.toLowerCase() == "text"))
+		if (targetNodeName == "textarea" || (targetNodeName == "input" && e.target.type && e.target.type.toLowerCase() == "text"))
 			return false;
 	}
 	if (e.keyCode) code = e.keyCode;

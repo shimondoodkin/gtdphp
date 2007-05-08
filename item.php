@@ -79,14 +79,16 @@ $tshtml = timecontextselectbox($config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
 echo '<h2>',($values['itemId']>0)?'Edit ':'New ',$typename,"</h2>\n";
-echo '	<form action="processItems.php" method="post">';
+echo '	<form action="processItems.php" method="post" onsubmit="return validate(this);">',"<div class='form'>\n";
 
 echo "<input type='hidden' name='action' value='",
 	($values['itemId']>0)?("fullUpdate' />\n<input type=\"hidden\" name=\"itemId\" value=\"{$values['itemId']}\" "):"create'"
 	," /> \n";
 ?>	
-        <div class='form'>
-
+        <div class='formrow'><span class="error" id='errorMessage'></span></div>
+		<input type='hidden' name='required'
+		value='title:notnull:Title can not be blank.,deadline:date:Deadline must be a valid date.,dateCompleted:date:Completion date is not valid.,suppress:depends:You must set a deadline to base the tickler on:deadline,suppress:depends:You must set a number of days for the tickler to be active from:suppressUntil' /> 
+ 		<input type='hidden' name='dateformat' value='ccyy-mm-dd' />         
                 <div class='formrow'>
                         <label for='title' class='left first'>Title:</label>
                         <input type="text" name="title" id="title" value="<?php echo htmlspecialchars(stripslashes($currentrow['title'])); ?>" />

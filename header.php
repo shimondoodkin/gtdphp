@@ -11,12 +11,12 @@ $config = array();
 $options = array();
 $sort = array();
 require_once("config.php");
-if ($config['debug']) {
-/*	if (version_compare(PHP_VERSION, "5.0.0", ">="))
-		error_reporting( E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE | E_STRICT);
-	else
-*/		error_reporting( E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE);
-}
+if ($config['debug'])
+		error_reporting(E_USER_ERROR);
+else/*if (version_compare(PHP_VERSION, "5.0.0", ">="))
+		error_reporting( (E_STRICT | E_ALL) ^ E_NOTICE);
+else*/
+		error_reporting(E_ALL ^ E_NOTICE);
 //CONNECT TO DATABASE: this will need modification to connect to other dtabases (use SWITCH)
 $connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
 mysql_select_db($config['db']) or die ("Unable to select database!");

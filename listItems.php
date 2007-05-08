@@ -58,7 +58,7 @@ if ($filter['tickler']=="true") {
 //Select items
 
 //set default table column display options (kludge-- needs to be divided into multidimensional array for each table type and added to preferences table
-$show['parent']=FALSE;
+$show['parent']=TRUE;
 $show['title']=TRUE;
 $show['description']=TRUE;
 $show['desiredOutcome']=FALSE;
@@ -77,7 +77,7 @@ $show['checkbox']=TRUE;
 
 //determine item and parent labels, set a few defaults
     switch ($values['type']) {
-        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
         case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
         case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
         case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
@@ -308,7 +308,7 @@ if ($filter['tickler']=="true") {
 			//item title
 			if ($show['title']!=FALSE) {
 				$cleaned=htmlspecialchars(stripslashes($row['title']));
-				$tablehtml .= '         <td><a href = "itemReport.php?itemId='
+				$tablehtml .= '         <td class="maincolumn"><a href = "itemReport.php?itemId='
 								.$row['itemId'].'"><img src="themes/'.$config['theme']
 								.'/report.gif" alt="Go to '.$cleaned
 								.' report" /></a><a href = "item.php?itemId='.$row['itemId']
@@ -329,7 +329,7 @@ if ($filter['tickler']=="true") {
 			//item category
 			if ($show['category']!=FALSE) {
 				$cleaned = makeClean($row['category']);
-				$tablehtml .= '          <td><a href="reportCategory.php#'.urlencode($row['category']).'" title="Go to the  '.$cleaned.' category">'.$cleaned."</a></td>\n";
+				$tablehtml .= '          <td><a href="editCat.php?categoryId='.$row['categoryId'].'" title="Edit the  '.$cleaned.' category">'.$cleaned."</a></td>\n";
 			}
 
 			//item context name

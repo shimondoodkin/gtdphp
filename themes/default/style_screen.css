@@ -86,3 +86,6 @@
 #menudiv li li {
 	background: #998;
 }
+.formerror {
+	background:yellow;
+}

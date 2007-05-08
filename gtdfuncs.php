@@ -219,5 +219,11 @@ function getNextActionsArray($config,$values,$options,$sort) {
 	if(is_array($result))foreach ($result as $row) array_push ($nextactions,$row['nextaction']);
 	return $nextactions;
 }
-
+function nextScreen($url,$config) {
+if ($config['debug'])
+    $txt='Next screen is <a href="'.$url.'">'.htmlspecialchars($url).'</a> - would be auto-refresh in non-debug mode</p>';
+else
+    $txt='<META HTTP-EQUIV="Refresh" CONTENT="0; url='.$url.'"/>';
+return $txt;
+}
 ?>

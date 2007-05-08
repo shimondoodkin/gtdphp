@@ -273,6 +273,8 @@ td.overdue, span.overdue {
 	color: #F00;
 }
 
+td.maincolumn { background-color:#eee}
+
 #container {
 	background: none;
 }

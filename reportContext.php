@@ -36,11 +36,11 @@ echo "<h2>Contexts Summary</h2>\n";
 echo "<h3>Spatial Context (row), Temporal Context (column)</h3>\n";
 
 //context table
-echo '<table class="datatable sortable" summary="table of contexts" id="contexttable">'."\n";
+echo '<table class="datatable" summary="table of contexts" id="contexttable">'."\n";
 echo "	<thead><tr>\n";
 echo "		<td>Context</td>\n";
 foreach ($timeframeNames as $tcId => $tname) {
-	echo '		<td><a href="editTimeContext.php?tcId='.$tcId.'" title="Edit the '.htmlspecialchars(stripslashes($tname)).' time context">'.stripslashes($tname)."</a></td>\n";
+	echo '		<td><a href="editCat.php?timecontextId='.$tcId.'" title="Edit the '.htmlspecialchars(stripslashes($tname)).' time context">'.stripslashes($tname)."</a></td>\n";
 	}
 echo "		<td>Total</td>\n";
 echo "	</tr></thead>\n";
@@ -49,7 +49,7 @@ $timeframeTotal=0;
 foreach ($contextNames as $contextId => $cname) {
 	$contextCount=0;
 	echo "	<tr>\n";
-	echo '		<td><a href="editContext.php?contextId='.$contextId.'" title="Edit the '.htmlspecialchars(stripslashes($cname)).' context">'.$cname."</a></td>\n";
+	echo '		<td><a href="editCat.php?contextId='.$contextId.'" title="Edit the '.htmlspecialchars(stripslashes($cname)).' context">'.$cname."</a></td>\n";
 	foreach ($timeframeNames as $timeframeId => $tname) {
 		if ($contextArray[$contextId][$timeframeId]!="") {
 			$count=$contextArray[$contextId][$timeframeId];
@@ -84,11 +84,13 @@ echo "<p>To move to a particular space-time context, select the number.<br />To 
 foreach ($contextArray as $values['contextId'] => $timeframe) {
 
     echo '<a name="'.$contextNames[$values['contextId']].'"></a>'."\n";
-    echo '<h2><a href="editContext.php?contextId='.$values['contextId'].'" title="Edit the '.$contextNames[$values['contextId']].' context">Context:&nbsp;'.$contextNames[$values['contextId']]."</a></h2>\n";
+    echo '<h2><a href="editCat.php?contextId='.$values['contextId'].'" title="Edit the '.$contextNames[$values['contextId']].' context">Context:&nbsp;'.$contextNames[$values['contextId']]."</a></h2>\n";
 
     foreach ($timeframe as $values['timeframeId'] => $itemCount) {
         echo '<a name="'.$contextNames[$values['contextId']].'_'.$values['timeframeId'].'"></a>'."\n";
-        echo '<h3>Time Context:&nbsp;'.$timeframeNames[$values['timeframeId']]."</h3>\n";
+        echo '<h3>Time Context:&nbsp;<a href="editCat.php?timecontextId='
+            ,$values['timeframeId'],'">'
+            ,$timeframeNames[$values['timeframeId']]."</a></h3>\n";
 
         $values['type'] = "a";
         $values['isSomeday'] = "n";
