@@ -2,10 +2,10 @@
 //INCLUDES
 include_once('header.php');
 
-//RETRIVE FORM VARIABLES
+//RETRIEVE FORM VARIABLES
 $values=array();
 $values['date'] = $_POST['date'];
-$values['title'] = $_POST['title']);
+$values['title'] = $_POST['title'];
 $values['note'] = $_POST['note'];
 $values['repeat'] = (int) $_POST['repeat'];
 $values['suppressUntil'] = $_POST['suppressUntil'];

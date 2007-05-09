@@ -86,7 +86,7 @@ function makemenu($list) {
 		$output = "<li><a href='".$info['link']."' title='".$info['title']."'";
 		if ((isset($acckey[$thislink])) && ($acckey[$thislink] !== '')) $output .= " accesskey='".$acckey[$thislink]."'";
 		$output .= ">".$info['label']."";
-		if ((isset($acckey[$thislink])) && ($acckey[$thislink] !== ''))  $output .= " (<u>".$acckey[$thislink]."</u>)";
+		if ((isset($acckey[$thislink])) && ($acckey[$thislink] !== ''))  $output .= " ($acckey[$thislink])";
 		$output .= "</a></li>\r\n";
 		echo $output;
 	}
@@ -120,7 +120,7 @@ function makemenu($list) {
 				unset($thismenu);
 				?>
 			</ul>
-
+        </li>
 		<li>Process
 			<ul>
 				<?php 
@@ -142,7 +142,7 @@ function makemenu($list) {
 				?>
 
 			</ul>
-
+        </li>
 		<li>Review
 			<ul>
 				<?php
@@ -162,8 +162,8 @@ function makemenu($list) {
 				?>
 
 			</ul>
-
-                <li>Lists
+        </li>
+        <li>Lists
 			<ul>
 				<?php
 				$thismenu[] = array("link"=>"listList.php", 'title'=>"General-purpose lists", 'label' => "Lists");
@@ -173,10 +173,9 @@ function makemenu($list) {
 				unset($thismenu);
 				?>
 			</ul>
-
-                <li>Configure
-
-			<ul><!-- need to change from capture to management view  //-->
+        </li>
+        <li>Configure
+    		<ul><!-- need to change from capture to management view  //-->
 				<?php
 				$thismenu[] = array("link"=>"newCategory.php", 'title'=>"Meta-categories", 'label' => "Categories");
 				$thismenu[] = array("link"=>"newContext.php", 'title'=>"Spatial contexts", 'label' => "Space Contexts");
@@ -187,7 +186,7 @@ function makemenu($list) {
 				unset($thismenu);
 				?>
 			</ul>
-
+        </li>
 		<li>About
 			<ul>
 				<?php
@@ -203,7 +202,7 @@ function makemenu($list) {
 				unset($thismenu);
 				?>
 			</ul>
+        </li>
 	</ul>
 </div>
-
 <div id="main">

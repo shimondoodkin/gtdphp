@@ -219,11 +219,30 @@ function getNextActionsArray($config,$values,$options,$sort) {
 	if(is_array($result))foreach ($result as $row) array_push ($nextactions,$row['nextaction']);
 	return $nextactions;
 }
+
 function nextScreen($url,$config) {
 if ($config['debug'])
     $txt='Next screen is <a href="'.$url.'">'.htmlspecialchars($url).'</a> - would be auto-refresh in non-debug mode</p>';
 else
     $txt='<META HTTP-EQUIV="Refresh" CONTENT="0; url='.$url.'"/>';
 return $txt;
+}
+
+function getChildType($parentType) {
+$childtype=array();
+switch ($parentType) {
+    case "m" : $childtype=array("v"); break;
+    case "v" : $childtype=array("o"); break;
+    case "o" : $childtype=array("g"); break;
+    case "g" : $childtype=array("p","s"); break;
+    case "p" : $childtype=array("a","w","r","p","s",); break;
+    case "s" : $childtype=array("a","w","r","s",); break;
+    case "a" : $childtype=NULL; break;
+    case "w" : $childtype=NULL; break;
+    case "r" : $childtype=NULL; break;
+    case "i" : $childtype=NULL; break;
+    default  : $childtype=NULL;
+    }
+return $childtype;
 }
 ?>

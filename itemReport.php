@@ -69,19 +69,7 @@ $typename=array("m" => "Value",
 
 $childtype=array();  //I don't like this... but it's the best solution at the moment...
 
-switch ($item['type']) {
-    case "m" : $childtype=array("v"); break;
-    case "v" : $childtype=array("o"); break;
-    case "o" : $childtype=array("g"); break;
-    case "g" : $childtype=array("p","s"); break;
-    case "p" : $childtype=array("a","w","r","p","s",); break;
-    case "s" : $childtype=array("a","w","r","s",); break;
-    case "a" : $childtype=NULL; break;
-    case "w" : $childtype=NULL; break;
-    case "r" : $childtype=NULL; break;
-    case "i" : $childtype=NULL; break;
-    default  : $childtype=NULL;
-    }
+$childtype=getChildType($item['type']);
 
 echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".htmlspecialchars(stripslashes($item['title']))."</h1>\n";
 
@@ -154,7 +142,7 @@ if ($childtype!=NULL) {
                         echo "          <td>SuppressUntil</td>\n";
 			echo "		<td>Deadline</td>\n";
 			echo "		<td>Repeat</td>\n";
-			echo "		<td>Completed</td>\n";
+			echo "		<td>Complete</td>\n";
 		} else {
 			echo "		<td>Date Completed</td>\n";
 		}
@@ -205,7 +193,7 @@ if ($childtype!=NULL) {
 					,"</td>\n";
 				echo prettyDueDate('td',$row['deadline'],$config['datemask']),"\n";
 				echo "		<td>".((($row['repeat'])=="0")?'&nbsp;':($row['repeat']))."</td>\n";
-				echo '		<td align=center><input type="checkbox" name="isMarked[]" title="Complete '
+				echo '		<td align=center><input type="checkbox" name="isMarked[]" title="Mark '
 					,htmlspecialchars(stripslashes($row['title'])),'" value="'
 					,$row['itemId'],'" /></td>',"\n";
 			} else {
@@ -227,7 +215,7 @@ if ($childtype!=NULL) {
 		echo '<input type="hidden" name="multi" value="y" />'."\n";
 		echo '<input type="hidden" name="action" value="complete" />'."\n";
 		echo '<input type="hidden" name="wasNAonEntry" value="'.implode(',',$wasNAonEntry).'" />'."\n"; 
-		if ($comp=="n") echo '<input type="submit" align="right" class="button" value="Update '.$typename[$thistype].'s" name="submit" />'."\n";
+		if ($comp=="n") echo '<input type="submit" align="right" class="button" value="Update marked '.$typename[$thistype].'s" name="submit" />'."\n";
 
 		if($counter==0)
 			echo 'No&nbsp;'.$typename[$thistype]."&nbsp;items\n";
