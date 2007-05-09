@@ -8,7 +8,7 @@ function makeClean($textIn) {
 function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified) 	// TOFIX -  we don't handle "%XX" strings yet.
 	// constants - might move permittedTags to config file
 	$permittedTags=array(
-		 array('/^<a href="[~"]*">/i','</a>')
+		 array('/^<a (href)|(file)=[^>]+>/i','</a>')
 		,array('/^<b>/i','</b>')
 		,array('/^<i>/i','</i>')
 		,array('/^<ul>/i','</ul>')
@@ -118,7 +118,7 @@ function categoryselectbox($config,$values,$options,$sort) {
     if ($result!="-1") {
         foreach($result as $row) {
             $cashtml .= '   <option value="'.$row['categoryId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-            if($row['categoryId']==$values['categoryId']) $cashtml .= ' SELECTED';
+            if($row['categoryId']==$values['categoryId']) $cashtml .= ' selected="selected"';
             $cashtml .= '>'.htmlspecialchars(stripslashes($row['category']))."</option>\n";
             }
         }
@@ -131,7 +131,7 @@ function contextselectbox($config,$values,$options,$sort) {
     if ($result!="-1") {
             foreach($result as $row) {
             $cshtml .= '                    <option value="'.$row['contextId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-            if($row['contextId']==$values['contextId']) $cshtml .= ' SELECTED';
+            if($row['contextId']==$values['contextId']) $cshtml .= ' selected="selected"';
             $cshtml .= '>'.htmlspecialchars(stripslashes($row['name']))."</option>\n";
             }
         }
@@ -144,7 +144,7 @@ function timecontextselectbox($config,$values,$options,$sort) {
     if ($result!="-1") {
         foreach($result as $row) {
             $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-            if($row['timeframeId']==$values['timeframeId']) $tshtml .= ' SELECTED';
+            if($row['timeframeId']==$values['timeframeId']) $tshtml .= ' selected="selected"';
             $tshtml .= '>'.htmlspecialchars(stripslashes($row['timeframe']))."</option>\n";
             }
         }
@@ -159,7 +159,7 @@ function parentselectbox($config,$values,$options,$sort) {
             $pshtml .= '                    <option value="'.$row['itemId'].'" title="'.htmlspecialchars(stripslashes($row['description']));
             if ($row['isSomeday']=="y") $pshtml .= ' (Someday)';
             $pshtml .= '"';
-            if(in_array($row['itemId'],$values['parentId'])) $pshtml .= ' SELECTED';
+            if(in_array($row['itemId'],$values['parentId'])) $pshtml .= ' selected="selected"';
             $pshtml .= '>'.htmlspecialchars(stripslashes($row['title']));
             if ($row['isSomeday']=="y") $pshtml .= ' (s)';
             $pshtml .="</option>\n";
@@ -174,7 +174,7 @@ function checklistselectbox($config,$values,$options,$sort) {
     if ($result!="-1") {
         foreach($result as $row) {
             $cshtml .= '                    <option value="'.$row['checklistId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-            if($row['checklistId']==$values['checklistId']) $cshtml .= ' SELECTED';
+            if($row['checklistId']==$values['checklistId']) $cshtml .= ' selected="selected"';
             $cshtml .= '>'.htmlspecialchars(stripslashes($row['title']))."</option>\n";
             }
         }
@@ -187,7 +187,7 @@ function listselectbox($config,$values,$options,$sort) {
     if ($result!="-1") {
         foreach($result as $row) {
             $lshtml .= '                    <option value="'.$row['listId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
-            if($row['listId']==$values['listId']) $lshtml .= ' SELECTED';
+            if($row['listId']==$values['listId']) $lshtml .= ' selected="selected"';
             $lshtml .= '>'.htmlspecialchars(stripslashes($row['title']))."</option>\n";
             }
         }
@@ -245,4 +245,18 @@ switch ($parentType) {
     }
 return $childtype;
 }
-?>
+
+function getTypes() {
+$types=array("m" => "Value",
+            "v" => "Vision",
+            "o" => "Role",
+            "g" => "Goal",
+            "p" => "Project",
+            "a" => "Action",
+            "i" => "Inbox Item",
+            "s" => "Someday/Maybe",
+            "r" => "Reference",
+            "w" => "Waiting On"
+        );
+return $types;
+}
