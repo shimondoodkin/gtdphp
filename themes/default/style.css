@@ -76,7 +76,7 @@ table {
 	margin: 0 4px 10px 4px;
 }
 
-thead td {
+thead td, th{
 	padding: 2px 3px;
 }
 
@@ -228,7 +228,7 @@ table {
 	border-collapse: collapse;
 }
 
-thead td {
+thead td, th {
 	border: 1px solid #777;
 	border-bottom: 1px solid #777;
 	background: #bba;

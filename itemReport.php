@@ -56,16 +56,7 @@ if(isset($id)){
 
 //set item labels
 $typename=array();
-$typename=array("m" => "Value",
-                "v" => "Vision",
-                "o" => "Role",
-                "g" => "Goal",
-                "p" => "Project",
-                "s" => "Someday/Maybe",
-                "a" => "Action",
-                "w" => "Waiting On",
-                "r" => "Reference",
-                "i" => "Inbox Item");
+$typename=getTypes();
 
 $childtype=array();  //I don't like this... but it's the best solution at the moment...
 
@@ -131,7 +122,7 @@ if ($childtype!=NULL) {
 		$shownext=( ($comp==="n") && ($values['type']==="a" || $values['type']==="w") );
 		$counter=0;
 		$suppressed=0;
-		echo '<table class="datatable sortable" id="itemtable'.$completed.'" summary="table of children of this item">'."\n";
+		echo "<table class='datatable sortable' id='i$comp$thistype' summary='table of children of this item'>\n";
 		echo "	<thead><tr>\n";
         if ($shownext) echo "          <td>Next</td>\n";
 		echo "		<td>".$typename[$value]."s</td>\n";
@@ -165,7 +156,7 @@ if ($childtype!=NULL) {
 			if ($shownext) {
 				$isna = (($key = in_array($row['itemId'],$nextactions)) && ($comp!="y"));
 				echo ($isna)?' class = "nextactionrow"':''
-					,">\n<td align=center><input type="
+					,">\n<td><input type="
 					,($config['nextaction']=='multiple')?'"checkbox"':'"radio"'
 					,'name="isNAs[]"'
 					,($isna)?' checked':''
@@ -193,7 +184,7 @@ if ($childtype!=NULL) {
 					,"</td>\n";
 				echo prettyDueDate('td',$row['deadline'],$config['datemask']),"\n";
 				echo "		<td>".((($row['repeat'])=="0")?'&nbsp;':($row['repeat']))."</td>\n";
-				echo '		<td align=center><input type="checkbox" name="isMarked[]" title="Mark '
+				echo '		<td><input type="checkbox" name="isMarked[]" title="Mark '
 					,htmlspecialchars(stripslashes($row['title'])),'" value="'
 					,$row['itemId'],'" /></td>',"\n";
 			} else {
@@ -211,11 +202,12 @@ if ($childtype!=NULL) {
 				," not yet due for action</a></p>\n";
 		}
 		$thisurl=parse_url($_SERVER['PHP_SELF']);
-		echo '<input type="hidden" name="referrer" value="',basename($thisurl['path']),'?itemId=',$values['itemId'],"\"\n";
+		$thisfile=htmlentities(basename($thisurl['path']),ENT_QUOTES);
+		echo "<input type='hidden' name='referrer' value='{$thisfile}?itemId={$values['itemId']}' />\n";
 		echo '<input type="hidden" name="multi" value="y" />'."\n";
 		echo '<input type="hidden" name="action" value="complete" />'."\n";
 		echo '<input type="hidden" name="wasNAonEntry" value="'.implode(',',$wasNAonEntry).'" />'."\n"; 
-		if ($comp=="n") echo '<input type="submit" align="right" class="button" value="Update marked '.$typename[$thistype].'s" name="submit" />'."\n";
+		if ($comp=="n") echo '<input type="submit" class="button" value="Update marked '.$typename[$thistype].'s" name="submit" />'."\n";
 
 		if($counter==0)
 			echo 'No&nbsp;'.$typename[$thistype]."&nbsp;items\n";

@@ -6,18 +6,20 @@ $nextactioncheck="n";
 
 //RETRIEVE URL VARIABLES
 $values = array();
+
+$values['itemId']= (int) getVarFromGetPost('itemId');
+$values['type']=getVarFromGetPost('type');
+
 $values['parentId']=array();
+$tmp=getVarFromGetPost('parentId');
+if ($tmp!=='') $values['parentId'][0] = (int) $tmp;
 
-$values['itemId']= (int) $_GET["itemId"];
-if ($_GET['parentId']>0) $values['parentId'][0] = (int) $_GET["parentId"];
-$values['type']=$_GET["type"]{0};
-
-if ($values['type']=="n") {
+if ($values['type']==="n") {
         $values['type']='a';
         $nextactioncheck='true';
 }
 
-if ($values['type']=="s") {
+if ($values['type']==="s") {
         $values['type']='p';
         $values['isSomeday']="y";
 }
@@ -98,7 +100,7 @@ echo "<input type='hidden' name='action' value='",
                 <div class='formrow'>
                         <label for='parent' class='left first'>
                         <?php echo $parentname; ?>:</label>
-                        <select name="parentId[]" id='parent' multiple size=6>
+                        <select name="parentId[]" id='parent' multiple="multiple" size="6">
                         <?php echo $pshtml; ?>
                         </select>
                 </div>
@@ -153,29 +155,29 @@ echo "<input type='hidden' name='action' value='",
                 </div>
                 <div class='formrow'>
                         <label for='description' class='left first'>Description:</label>
-                        <textarea rows='12' name='description' id='description' wrap='virtual'><?php echo htmlspecialchars(stripslashes($currentrow['description'])); ?></textarea>
+                        <textarea rows='12' cols='50' name='description' id='description'><?php echo htmlspecialchars(stripslashes($currentrow['description'])); ?></textarea>
                 </div>
                 <div class='formrow'>
                         <label for='outcome' class='left first'>Desired Outcome:</label>
-                        <textarea rows='4' name='desiredOutcome' id='outcome' class='big' wrap='virtual'><?php echo htmlspecialchars(stripslashes($currentrow['desiredOutcome'])) ?></textarea>
+                        <textarea rows='4'  cols='50' name='desiredOutcome' id='outcome' class='big'><?php echo htmlspecialchars(stripslashes($currentrow['desiredOutcome'])) ?></textarea>
                 </div>
                 <div class='formrow'>
                         <label class='left first'>Type:</label>
-                        <input type='radio' name='type' id='value' value='m' class="first" <?php if ($values['type']=='m') echo "CHECKED "; ?>/><label for='value' class='right'>Value</label>
-                        <input type='radio' name='type' id='vision' value='v' class="notfirst" <?php if ($values['type']=='v') echo "CHECKED "; ?>/><label for='vision' class='right'>Vision</label>
-                        <input type='radio' name='type' id='role' value='o' class="notfirst" <?php if ($values['type']=='o') echo "CHECKED "; ?>/><label for='role' class='right'>Role</label>
-                        <input type='radio' name='type' id='goal' value='g' class="notfirst" <?php if ($values['type']=='g') echo "CHECKED "; ?>/><label for='goal' class='right'>Goal</label>
-                        <input type='radio' name='type' id='project' value='p' class="notfirst" <?php if ($values['type']=='p') echo "CHECKED "; ?>/><label for='project' class='right'>Project</label>
+                        <input type='radio' name='type' id='value' value='m' class="first" <?php if ($values['type']=='m') echo "checked='checked' "; ?>/><label for='value' class='right'>Value</label>
+                        <input type='radio' name='type' id='vision' value='v' class="notfirst" <?php if ($values['type']=='v') echo "checked='checked' "; ?>/><label for='vision' class='right'>Vision</label>
+                        <input type='radio' name='type' id='role' value='o' class="notfirst" <?php if ($values['type']=='o') echo "checked='checked' "; ?>/><label for='role' class='right'>Role</label>
+                        <input type='radio' name='type' id='goal' value='g' class="notfirst" <?php if ($values['type']=='g') echo "checked='checked' "; ?>/><label for='goal' class='right'>Goal</label>
+                        <input type='radio' name='type' id='project' value='p' class="notfirst" <?php if ($values['type']=='p') echo "checked='checked' "; ?>/><label for='project' class='right'>Project</label>
                 </div>
                 <div class='formrow'>
                         <label class='left first'></label>
-                        <input type='radio' name='type' id='action' value='a' class="first" <?php if ($values['type']=='a') echo "CHECKED "; ?>/><label for='action' class='right'>Action</label>
-                        <input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($values['type']=='r') echo "CHECKED "; ?>/><label for='reference' class='right'>Reference</label>
-                        <input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($values['type']=='w') echo "CHECKED "; ?>/><label for='waiting' class='right'>Waiting</label>
+                        <input type='radio' name='type' id='action' value='a' class="first" <?php if ($values['type']=='a') echo "checked='checked' "; ?>/><label for='action' class='right'>Action</label>
+                        <input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($values['type']=='r') echo "checked='checked' "; ?>/><label for='reference' class='right'>Reference</label>
+                        <input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($values['type']=='w') echo "checked='checked' "; ?>/><label for='waiting' class='right'>Waiting</label>
                 </div>
                 <div class='formrow'>
                         <label class='left first'></label>
-                        <input type='radio' name='type' id='inbox' value='i' class="first" <?php if ($values['type']=='i') echo "CHECKED "; ?>/><label for='inbox' class='right'>Inbox</label>
+                        <input type='radio' name='type' id='inbox' value='i' class="first" <?php if ($values['type']=='i') echo "checked='checked' "; ?>/><label for='inbox' class='right'>Inbox</label>
                 </div>
 
                 <div class='formrow'>
@@ -184,41 +186,41 @@ echo "<input type='hidden' name='action' value='",
 
                 <div class='formrow'>
                         <label for='suppress' class='left first'>Tickler:</label>
-                        <input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($currentrow['suppress']=="y") echo " checked "; ?>/>
+                        <input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($currentrow['suppress']=="y") echo " checked='checked' "; ?>/>
                         <label for='suppress'>Tickle&nbsp;</label>
                         <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $currentrow['suppressUntil'];?>' /><label for='suppressUntil'>&nbsp;days before deadline</label>
                 </div>
 
                 <div class='formrow'>
-                        <label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" value="y" <?php if ($nextactioncheck=='true') echo 'CHECKED '; ?>/>
+                        <label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" id="nextAction" value="y" <?php if ($nextactioncheck=='true') echo " checked='checked'"; ?> />
 
-                        <label for='isSomeday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']==='y' || $values['type']=='s') echo ' CHECKED';?> />
+                        <label for='isSomeday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']==='y' || $values['type']=='s') echo " checked='checked'";?> />
                 </div>
 
-<?php if ($values['itemId']>0) {
-        echo "</div> <!-- form div -->\n<div class='formbuttons'>\n";
-
-		// TOFIX - need to ensure that wherever this file is called from, if it's an item update, the $_SESSION['referrer'] variable has been set sanely
-		echo "                  <input type='hidden' name='referrer' value='".$_SESSION['referrer']."' />\n";
-        echo "			<input type='submit' value='Update ".$typename."' name='submit' />\n";
-        echo "                  <input type='reset' value='Reset' />\n";
-        echo "                  <input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/><label for='delete'>Delete&nbsp;".$typename."</label>\n";
-    }
-else {
+<?php
+if ($values['itemId']>0) {
+    echo "</div> <!-- form div -->\n"
+        ,"<div class='formbuttons'>\n"
+        ,"<input type='hidden' name='referrer' value='",getVarFromGetPost('referrer'),"' />\n"
+        ,"<input type='submit' value='Update $typename' name='submit' />\n"
+        ,"<input type='reset' value='Reset' />\n"
+        ,"<input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/>\n"
+        ,"<label for='delete'>Delete&nbsp;$typename</label>\n";
+} else {
 	if ($_SESSION['afterCreate' . $values['type']]=='' && isset($config['afterCreate'][$values['type']]))
 		$_SESSION['afterCreate' . $values['type']]=$config['afterCreate'][$values['type']];
 	echo "<div class='formrow'>\n<label class='left first'>After creating: </label>\n",
 		'<input type="radio" name="afterCreate' . $values['type'] . '" id="parentNext" value="parent" class="first"',
-		 	($_SESSION['afterCreate' . $values['type']]=='parent')?"CHECKED ":"",
+		 	($_SESSION['afterCreate' . $values['type']]=='parent')?" checked='checked' ":"",
 			" /><label for='parentNext' class='right'>View parent</label>\n",
 		'<input type="radio" name="afterCreate' . $values['type'] . '" id="itemNext" value="item" class="notfirst"',
-		 	($_SESSION['afterCreate' . $values['type']]=='item')?"CHECKED ":"",
+		 	($_SESSION['afterCreate' . $values['type']]=='item')?" checked='checked' ":"",
 			" /><label for='itemNext' class='right'>View item</label>\n",
 		'<input type="radio" name="afterCreate' . $values['type'] . '" id="listNext" value="list" class="notfirst"',
-		 	($_SESSION['afterCreate' . $values['type']]=='list')?"CHECKED ":"",
+		 	($_SESSION['afterCreate' . $values['type']]=='list')?" checked='checked' ":"",
 			" /><label for='listNext' class='right'>List items</label>\n",
 		'<input type="radio" name="afterCreate' . $values['type'] . '" id="anotherNext" value="another" class="notfirst"',
-		 	($_SESSION['afterCreate' . $values['type']]=='another')?"CHECKED ":"",
+		 	($_SESSION['afterCreate' . $values['type']]=='another')?" checked='checked' ":"",
 			" /><label for='anotherNext' class='right'>Create another $typename</label>\n",
         "</div>\n</div> <!-- form div -->\n<div class='formbuttons'>\n",
 		"<input type='submit' value='Create'  name='submit' />\n";

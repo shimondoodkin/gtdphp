@@ -80,34 +80,38 @@ if ($reminderresult!="-1") {
         $tablehtml="";
         foreach ($reminderresult as $row) {
                 $notehtml .= "<p>".date($config['datemask'],strtotime($row['date'])).": ";
-                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&referrer=s" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>";
+                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&amp;referrer=s" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>";
                 if ($row['note']!="") $notehtml .= " - ".nl2br(stripslashes($row['note']));
                 $notehtml .= "</p>\n";
         }
     echo $notehtml;
     }
-
+echo '<p>Reminder notes can be added <a href="note.php?referrer=s" title="Add new reminder">here</a>.</p>'."\n";
 echo "</div>";
-echo "<div class='reportsection'>\n";
-echo '<p>Reminder notes can be added <a href="note.php?referrer=s" Title="Add new reminder">here</a>.</p>'."\n";
 
 echo "<div class='reportsection'>\n";
-    echo "<h3>Next Actions</h3>\n";
+echo "<h3>Next Actions</h3>\n";
+
 if($numbernextactions[0]['nnextactions']==1) {
-            echo '<p>There is ' .$numbernextactions[0]['nnextactions']. ' <a href="listItems.php?type=a&nextonly=true">Next Action</a> pending';
-        } else {
-            echo '<p>There are ' .$numbernextactions[0]['nnextactions']. ' <a href="listItems.php?type=a&nextonly=true">Next Actions</a> pending';
-        }
-echo ' out of a total of ' .$numberitems[0]['nitems']. ' <a href="listItems.php?type=a">Actions</a>.';
-    echo "</p>\n";
-    echo "</div>\n";
+    $verb='is';
+    $plural='s';
+} else {
+    $verb='are';
+    $plural='';
+}
+
+echo "<p>There $verb ".$numbernextactions[0]['nnextactions']
+    ," <a href='listItems.php?type=a&amp;nextonly=true'>Next Action$plural</a> pending"
+    ,' out of a total of ' ,$numberitems[0]['nitems'],' <a href="listItems.php?type=a">Actions</a>.'
+    ,"</p>\n"
+    ,"</div>\n";
 
 echo "<div class='reportsection'>\n";
     echo "<h3>Contexts</h3>\n";
 if($numbercontexts[0]['ncontexts']==1) {
-    echo '<p>There is ' .$numbercontexts[0]['ncontexts']. ' <a href="reportContext.php?type=n">Spatial Context</a>.<p>'."\n";
+    echo '<p>There is ' .$numbercontexts[0]['ncontexts']. ' <a href="reportContext.php?type=n">Spatial Context</a>.</p>'."\n";
 } else {
-    echo '<p>There are ' .$numbercontexts[0]['ncontexts']. ' <a href="reportContext.php?type=n">Spatial Contexts</a>.<p>'."\n";
+    echo '<p>There are ' .$numbercontexts[0]['ncontexts']. ' <a href="reportContext.php?type=n">Spatial Contexts</a>.</p>'."\n";
     }
     echo "</div>\n";
 
@@ -116,19 +120,19 @@ if($numbercontexts[0]['ncontexts']==1) {
     if ($pres!=-1) {
     foreach($pres as $row) {
             if($i < $w1){
-                    $c1[]=stripslashes($row['title']);
+                    $c1[]=makeclean($row['title']);
                     $i1[]=$row['itemId'];
-                    $q1[]=stripslashes($row['description']);
+                    $q1[]=makeclean($row['description']);
             }
             elseif($i< 2*$w1){
-                    $c2[]=stripslashes($row['title']);
+                    $c2[]=makeclean($row['title']);
                     $i2[]=$row['itemId'];
-                    $q2[]=stripslashes($row['description']);
+                    $q2[]=makeclean($row['description']);
             }
             else{
-                    $c3[]=stripslashes($row['title']);
+                    $c3[]=makeclean($row['title']);
                     $i3[]=$row['itemId'];
-                    $q3[]=stripslashes($row['description']);
+                    $q3[]=makeclean($row['description']);
             }
             $i+=1;
             }
@@ -141,19 +145,19 @@ if($numbercontexts[0]['ncontexts']==1) {
         if ($sm!=-1) {
 	foreach($sm as $row) {
                 if($i < $w2){
-                        $d1[]=stripslashes($row['title']);
+                        $d1[]=makeclean($row['title']);
                         $j1[]=$row['itemId'];
-                        $k1[]=stripslashes($row['description']);
+                        $k1[]=makeclean($row['description']);
                 }
                 elseif($i< 2*$w2){
-                        $d2[]=stripslashes($row['title']);
+                        $d2[]=makeclean($row['title']);
                         $j2[]=$row['itemId'];
-                        $k2[]=stripslashes($row['description']);
+                        $k2[]=makeclean($row['description']);
                 }
                 else{
-                        $d3[]=stripslashes($row['title']);
+                        $d3[]=makeclean($row['title']);
                         $j3[]=$row['itemId'];
-                        $k3[]=stripslashes($row['description']);
+                        $k3[]=makeclean($row['description']);
                 }
                 $i+=1;
             }
@@ -164,9 +168,9 @@ if($numbercontexts[0]['ncontexts']==1) {
 	echo "<h3>Project</h3>\n";
 
     if($numberprojects[0]['nitems']==1){
-        echo '<p>There is ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Project</a>.<p>'."\n";
+        echo '<p>There is ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Project</a>.</p>'."\n";
     }else{
-        echo '<p>There are ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Projects</a>.<p>'."\n";
+        echo '<p>There are ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Projects</a>.</p>'."\n";
     }
 
 	$s='<table>'."\n";
@@ -190,9 +194,9 @@ if($numbercontexts[0]['ncontexts']==1) {
 
     if($numbersomeday!='-1')
     if($numbersomeday[0]['nitems']==1){
-        echo '<p>There is ' .$numbersomeday[0]['nitems']. ' <a href="listItems.php?type=p&someday=true">Someday/Maybe</a>.</p>'."\n";
+        echo '<p>There is ' .$numbersomeday[0]['nitems']. ' <a href="listItems.php?type=p&amp;someday=true">Someday/Maybe</a>.</p>'."\n";
     }else{
-        echo '<p>There are ' .$numbersomeday[0]['nitems']. ' <a href="listItems.php?type=p&someday=true">Someday/Maybes</a>.</p>'."\n";
+        echo '<p>There are ' .$numbersomeday[0]['nitems']. ' <a href="listItems.php?type=p&amp;someday=true">Someday/Maybes</a>.</p>'."\n";
     }
 
 
