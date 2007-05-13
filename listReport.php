@@ -51,7 +51,7 @@ if ($result!="-1") {
     echo "<h2>Completed List Items</h2>\n";
     if ($result!="-1"){
             echo '<table class="datatable sortable" id="donetable">'."\n";
-            echo "	<tr><thead>\n";
+            echo "	<thead><tr>\n";
             echo "		<td>Item</td>\n";
             echo "		<td>Notes</td>\n";
             // echo '<td>Completed</td>';

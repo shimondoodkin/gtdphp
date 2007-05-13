@@ -25,8 +25,7 @@ $sqlparts = array(
     "repeating"                 =>  " ia.`repeat` >0 ",
     "suppresseditems"           =>  " ia.`suppress`='y' AND (CURDATE()<=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) ",
     "timeframefilter"           =>  " ia.`timeframeId` ='{$values['timeframeId']}' ",
-    "timegoals"                 =>  " ti.`type` = 'g' ",
-    "timeitems"                 =>  " ti.`type` !='g' ",
+    "timetype"                  =>  " ti.`type` = '{$values['type']}' ",
     "typefilter"                =>  " ia.`type` = '{$values['type']}' ",
 /*
     "ptypefilter"         =>  " ia.`type` = '{$values['ptype']}' ", 

@@ -69,8 +69,7 @@ $parents = query("lookupparent",$config,$values);
         }
 
 //create filters for selectboxes
-if ($values['type']=="g") $values['timefilterquery'] = " WHERE ".sqlparts("timegoals",$config,$values);
-else $values['timefilterquery'] = " WHERE ".sqlparts("timeitems",$config,$values);
+$values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create item, timecontext, and spacecontext selectboxes
 $pshtml = parentselectbox($config,$values,$options,$sort);

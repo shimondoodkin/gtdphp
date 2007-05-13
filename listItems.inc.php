@@ -38,8 +38,7 @@ $values['timeframeId']    =$filter['timeframeId'];
 //SQL CODE
 
 //create filters for selectboxes
-if ($values['type']=="g") $values['timefilterquery'] = " WHERE ".sqlparts("timegoals",$config,$values);
-else $values['timefilterquery'] = " WHERE ".sqlparts("timeitems",$config,$values);
+$values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create filter selectboxes
 $cashtml=categoryselectbox($config,$values,$options,$sort);
@@ -237,10 +236,16 @@ if ($result!="-1") {
         if ($isNextAction) array_push($wasNAonEntry,$row['itemId']);
         
         $maintable[$thisrow]=array();
+        $maintable[$thisrow]['id']=$row['itemId'];
         $maintable[$thisrow]['class'] = ($nonext || $nochildren)?'noNextAction':'';
         $maintable[$thisrow]['NA'] =$isNextAction;
 
-        $maintable[$thisrow]['parent']=htmlentities(stripslashes($row['ptitle']),ENT_QUOTES);
+        $maintable[$thisrow]['dateCreated'] = $row['dateCreated'];
+        $maintable[$thisrow]['lastModified']= $row['lastModified'];
+        $maintable[$thisrow]['dateCompleted']= $row['dateCompleted'];
+        $maintable[$thisrow]['type'] =$row['type'];
+
+        $maintable[$thisrow]['parent']=makeclean($row['ptitle']);
         $maintable[$thisrow]['parentid']=$row['parentId'];
 
         // add markers to indicate if this is a next action, or a project with no next actions, or an item with no childern
@@ -252,10 +257,9 @@ if ($result!="-1") {
             $maintable[$thisrow]['flags'] = '';
 
         //item title
-        $maintable[$thisrow]['id']=$row['itemId'];
         $maintable[$thisrow]['doreport']=($row['type']==="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i");
         
-        $cleantitle=htmlentities(stripslashes($row['title']),ENT_QUOTES);
+        $cleantitle=makeclean($row['title']);
         $maintable[$thisrow]['title.class'] = 'maincolumn';
         $maintable[$thisrow]['title'] =$cleantitle;
 
@@ -266,13 +270,13 @@ if ($result!="-1") {
         $maintable[$thisrow]['description'] = nl2br(trimTaggedString($row['description'],$config['trimLength']));
         $maintable[$thisrow]['desiredOutcome'] = nl2br(trimTaggedString($row['desiredOutcome'],$config['trimLength']));
 
-        $maintable[$thisrow]['category'] =htmlentities(stripslashes($row['category']),ENT_QUOTES);
+        $maintable[$thisrow]['category'] =makeclean($row['category']);
         $maintable[$thisrow]['categoryid'] =$row['categoryId'];
 
-        $maintable[$thisrow]['context'] = htmlentities(stripslashes($row['cname']),ENT_QUOTES);
-        $maintable[$thisrow]['timeframe'] = htmlentities(stripslashes($row['timeframe']),ENT_QUOTES);
+        $maintable[$thisrow]['context'] = makeclean($row['cname']);
+        $maintable[$thisrow]['timeframe'] = makeclean($row['timeframe']);
+        $maintable[$thisrow]['timeframeid'] = $row['timeframeId'];
 
-        $maintable[$thisrow]['type'] =$row['type'];
 
         $childType=array();
         $childType=getChildType($row['type']);
@@ -299,9 +303,6 @@ if ($result!="-1") {
         } else
             $maintable[$thisrow]['suppressUntil']= '&nbsp;';
                     
-        $maintable[$thisrow]['dateCreated'] = nl2br(htmlspecialchars(stripslashes($row['dateCreated'])));
-        $maintable[$thisrow]['lastModified']= nl2br(htmlspecialchars(stripslashes($row['lastModified'])));
-        $maintable[$thisrow]['dateCompleted']= nl2br(htmlspecialchars(stripslashes($row['dateCompleted'])));
         
         $thisrow++;
     } // end of: foreach ($result as $row) if (($filter['nextonly']!="true")

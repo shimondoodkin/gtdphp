@@ -156,6 +156,7 @@ $sort = array(
 );
 
 $config["storeRecurrences"] = true; // false | true - when recurring items are completed, store each occurrence as a completed item
+$config['useTypesForTimeContexts'] = false; // false | true - Time Contexts will be bound to a particular type
 
 /*********  Developer Settings ************/
 

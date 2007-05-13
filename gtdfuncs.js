@@ -233,7 +233,7 @@ function ts_resortTable(lnk,clid) {
     var firstRow = new Array();
     var newRows = new Array();
     for (i=0;i<table.rows[0].length;i++) { firstRow[i] = table.rows[0][i]; }
-    for (j=1;j<table.rows.length;j++) { newRows[j-1] = table.rows[j]; }
+    for (j=0;j<table.tBodies[0].rows.length;j++) { newRows[j] = table.tBodies[0].rows[j]; }
 
     newRows.sort(sortfn);
 

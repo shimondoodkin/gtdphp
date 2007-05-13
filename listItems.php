@@ -86,7 +86,7 @@ require_once('listItems.inc.php')
 <table class="datatable sortable" summary="Table of actions" id="actiontable">
     <thead>
         <tr>
-        <?php foreach ($dispArray as $key=>$val) if ($show[$key]) echo "<th>$val</th>"; ?>
+        <?php foreach ($dispArray as $key=>$val) if ($show[$key]) echo "<th class='col-$key'>$val</th>"; ?>
         </tr>
     </thead>
     <tbody>
@@ -94,8 +94,9 @@ require_once('listItems.inc.php')
     foreach ($maintable as $row) {
         echo '<tr>';
         foreach ($dispArray as $key=>$val) if ($show[$key]) {
-            echo '<td'
-                ,(isset($row["$key.class"]))?(' class="'.$row["$key.class"].'"'):''
+            echo "<td class='col-$key"
+                ,(isset($row["$key.class"]))?" ".$row["$key.class"]:''
+                ,"'"
                 ,(isset($row["$key.title"]))?(' title="'.$row["$key.title"].'"'):''
                 ,'>';
             switch ($key) {
@@ -131,7 +132,7 @@ require_once('listItems.inc.php')
                     break;
                 case 'category':
                     if ($row[$key.'id'])
-                        echo "<a href='editCat.php?categoryId=",$row[$key.'id'],"' title='Edit the {$row[$key]} category'>{$row[$key]}</a>";
+                        echo "<a href='editCat.php?field=category&amp;id=",$row[$key.'id'],"' title='Edit the {$row[$key]} category'>{$row[$key]}</a>";
                     else
                         echo '&nbsp;';
                     break;
@@ -143,14 +144,15 @@ require_once('listItems.inc.php')
                     break;
                 case 'context':
                     if ($row[$key]!='')
-                        echo "<a href='reportContext.php#",$row[$key],"' title='Go to the ",$row[$key]," context report'>{$row[$key]}</a>";
+                        echo "<a href='reportContext.php#",$row[$key.'id'],"' title='Go to the ",$row[$key]," context report'>{$row[$key]}</a>";
                     else
                         echo '&nbsp;';
                     break;
                 case 'timeframe':
-                    echo "<a href='reportTimeContext.php#{$row['timeframe']}'"
-                        ,"title='Go to {$row['timeframe']} time context report'>"
-                        ,$row['timeframe'],"</a>";
+                    if ($row[$key.'id'])
+                        echo "<a href='editCat.php?field=time-context&amp;id=",$row[$key.'id'],"' title='Edit the {$row[$key]} time context'>{$row[$key]}</a>";
+                    else
+                        echo '&nbsp;';
                     break;
                 default:
                     echo $row[$key];
@@ -166,7 +168,7 @@ require_once('listItems.inc.php')
 <?php
 if ($row['type']==='a')
     echo "<input type='hidden' name='wasNAonEntry' value='",implode(',',$wasNAonEntry),"' />\n";
-if ($show['NA'] && count($maintable))
+if (($show['NA'] || $show['checkbox']) && count($maintable))
     echo "<input type='submit' class='button' value='Update marked {$typename}s' name='submit' />";
 ?>
 <input type="hidden" name="referrer" value="<?php echo $referrer; ?>" />

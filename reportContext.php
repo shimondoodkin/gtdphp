@@ -40,8 +40,9 @@ echo '<table class="datatable" summary="table of contexts" id="contexttable">'."
 echo "	<thead><tr>\n";
 echo "		<td>Context</td>\n";
 foreach ($timeframeNames as $tcId => $tname) {
-	echo '		<td><a href="editCat.php?timecontextId='.$tcId.'" title="Edit the '.htmlspecialchars(stripslashes($tname)).' time context">'.stripslashes($tname)."</a></td>\n";
-	}
+    $clean=makeclean($tname);
+	echo "<td><a href='editCat.php?field=time-context&amp;id=$tcId' title='Edit the $clean time context'>$clean</a></td>\n";
+}
 echo "		<td>Total</td>\n";
 echo "	</tr></thead>\n";
 $contextTotal=0;
@@ -49,16 +50,17 @@ $timeframeTotal=0;
 foreach ($contextNames as $contextId => $cname) {
 	$contextCount=0;
 	echo "	<tr>\n";
-	echo '		<td><a href="editCat.php?contextId='.$contextId.'" title="Edit the '.htmlspecialchars(stripslashes($cname)).' context">'.$cname."</a></td>\n";
+	$clean=makeclean($cname);
+	echo "<td><a href='editCat.php?field=context&amp;id={$contextId}' title='Edit the $clean context'>$clean</a></td>\n";
 	foreach ($timeframeNames as $timeframeId => $tname) {
 		if ($contextArray[$contextId][$timeframeId]!="") {
 			$count=$contextArray[$contextId][$timeframeId];
 			$contextCount=$contextCount+$count;
-			echo '		<td><a href="#'.$cname.'_'.$timeframeId.'">'.$count."</a></td>\n";
+			echo "<td><a href='#c{$contextId}t{$timeframeId}'>$count</a></td>\n";
 			}
 		else echo "		<td>0</td>\n";
 		}
-	echo '		<td><a href="#'.htmlspecialchars(stripslashes($cname)).'">'.$contextCount."</a></td>\n";
+	echo "<td><a href='#c{$contextId}'>$contextCount</a></td>\n";
 	$contextTotal=$contextTotal+$contextCount;
 	echo "	</tr>\n";
 	}
@@ -83,14 +85,12 @@ echo "<p>To move to a particular space-time context, select the number.<br />To 
 //Item listings by context and timeframe
 foreach ($contextArray as $values['contextId'] => $timeframe) {
 
-    echo '<a name="'.$contextNames[$values['contextId']].'"></a>'."\n";
-    echo '<h2><a href="editCat.php?contextId='.$values['contextId'].'" title="Edit the '.$contextNames[$values['contextId']].' context">Context:&nbsp;'.$contextNames[$values['contextId']]."</a></h2>\n";
+    echo "<a id='c{$values['contextId']}'></a>\n";
+    echo "<h2><a href='editCat.php?field=context&amp;id={$values['contextId']}' "
+        ,"title='Edit the ",$contextNames[$values['contextId']]," context'>"
+        ,"Context:&nbsp;",$contextNames[$values['contextId']],"</a></h2>\n";
 
     foreach ($timeframe as $values['timeframeId'] => $itemCount) {
-        echo '<a name="'.$contextNames[$values['contextId']].'_'.$values['timeframeId'].'"></a>'."\n";
-        echo '<h3>Time Context:&nbsp;<a href="editCat.php?timecontextId='
-            ,$values['timeframeId'],'">'
-            ,$timeframeNames[$values['timeframeId']]."</a></h3>\n";
 
         $values['type'] = "a";
         $values['isSomeday'] = "n";
@@ -111,19 +111,21 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
 				//if nextaction, add icon in front of action (* for now)
 				$tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars($row['title']).'">';
 				if ($key == array_search($row['itemId'],$nextactions)) $tablehtml .= '*&nbsp;';
-				$tablehtml .= htmlspecialchars(stripslashes($row['title']))."</a></td>\n";
+				$tablehtml .= makeclean($row['title'])."</a></td>\n";
 	
 				$tablehtml .= '		<td>'.nl2br(trimTaggedString($row['description'],$config['trimLength']))."</td>\n";
 				$tablehtml .= prettyDueDate('td',$row['deadline'],$config['datemask'])."\n";
 				$tablehtml .= "<td>".((($row['repeat'])=="0")?'&nbsp;':($row['repeat']))."</td>\n";
-				$tablehtml .= '		<td align="center"><input type="checkbox" name="isMarked[]" title="Complete '.htmlspecialchars(stripslashes($row['title'])).'" value="'; // where is the </td> tag?
+				$tablehtml .= '<td align="center"><input type="checkbox" name="isMarked[]" title="Complete '.makeclean($row['title']).'" value="';
 				$tablehtml .= $row['itemId'].'" /></td>'."\n	</tr>\n";
 			}
 		}
-    if ($tablehtml!="") {
+        if ($tablehtml!="") {
+        echo "<a id='c{$values['contextId']}t{$values['timeframeId']}'></a>\n"
+            ,"<h3><a href='editCat.php?field=time-context&amp;id={$values['timeframeId']}'>"
+            ,"Time Context:&nbsp;",$timeframeNames[$values['timeframeId']],"</a></h3>\n";
+
 		$thisurl=parse_url($_SERVER['PHP_SELF']);
-		$thisAnchor='c'.$values['contextId'].'t'.$values['timeframeId'];
-		echo "<a id=\"{$thisAnchor}\"></a>";
         echo '<form action="processItems.php" method="post">';
         echo '<table class="datatable sortable" summary="table of actions" id="actiontable'.$values['contextId'].'t'.$values['timeframeId'].'">'."\n";
         echo "	<thead><tr>\n";
@@ -136,10 +138,11 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
         echo "	</tr></thead>\n";
         echo $tablehtml;
         echo "</table>\n";
+        echo "<div>\n";
 		echo '<input type="hidden" name="referrer" value="',basename($thisurl['path']),"#{$thisAnchor}\" />";
 		echo '<input type="hidden" name="multi" value="y" />'."\n";
 		echo '<input type="hidden" name="action" value="complete" />'."\n";
-        echo '<input type="submit" class="button" value="Update Actions" name="submit" /></form>'."\n";
+        echo '<input type="submit" class="button" value="Update Actions" name="submit" /></div></form>'."\n";
         }
 
         else echo "<h4>Nothing was found</h4>\n";

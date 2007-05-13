@@ -71,8 +71,7 @@ else $values['categoryId']=$_SESSION['categoryId'];
 //SQL CODE
 
 //create filters for selectboxes
-if ($values['type']=="g") $values['timefilterquery'] = " WHERE ".sqlparts("timegoals",$config,$values);
-else $values['timefilterquery'] = " WHERE ".sqlparts("timeitems",$config,$values);
+$values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create filter selectboxes
 $cashtml=categoryselectbox($config,$values,$options,$sort);

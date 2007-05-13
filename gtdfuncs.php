@@ -222,9 +222,9 @@ function getNextActionsArray($config,$values,$options,$sort) {
 
 function nextScreen($url,$config) {
 if ($config['debug'])
-    $txt='Next screen is <a href="'.$url.'">'.htmlspecialchars($url).'</a> - would be auto-refresh in non-debug mode</p>';
+    $txt="<p>Next screen is <a href='$url'>".htmlspecialchars($url)."</a> - would be auto-refresh in non-debug mode</p>";
 else
-    $txt='<META HTTP-EQUIV="Refresh" CONTENT="0; url='.$url.'"/>';
+    $txt="<META HTTP-EQUIV='Refresh' CONTENT='0'; url='$url' />";
 return $txt;
 }
 
@@ -246,7 +246,7 @@ switch ($parentType) {
 return $childtype;
 }
 
-function getTypes() {
+function getTypes($type=false) {
 $types=array("m" => "Value",
             "v" => "Vision",
             "o" => "Role",
@@ -258,5 +258,8 @@ $types=array("m" => "Value",
             "r" => "Reference",
             "w" => "Waiting On"
         );
-return $types;
+if ($type===false)
+    return $types;
+else
+    return $types[$type];
 }

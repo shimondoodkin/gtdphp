@@ -127,8 +127,10 @@ function makemenu($list) {
 				$thismenu[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
 				$thismenu[] = array("link"=>"reportCategory.php", 'title'=>"Active items sorted by category", 'label' => "Categories");
 				$thismenu[] = array("link"=>"reportContext.php", 'title'=>"Active items sorted by space context", 'label' => "Space Contexts");
-				$thismenu[] = array("link"=>"reportTimeContext.php", 'title'=>"Active items sorted by time context", 'label' => "Time Contexts");
-				$thismenu[] = array("link"=>"listItems.php?type=p", 'title'=>"Projects", 'label' => "Projects");
+				if ($config['debug']) {
+                    $thismenu[] = array("link"=>"reportTimeContext.php", 'title'=>"Active items sorted by time context", 'label' => "Time Contexts");
+				}
+                $thismenu[] = array("link"=>"listItems.php?type=p", 'title'=>"Projects", 'label' => "Projects");
 				$thismenu[] = array("link"=>"listItems.php?type=a&amp;nextonly=true", 'title'=>"Next actions", 'label' => "Next Actions");
 				$thismenu[] = array("link"=>"listItems.php?type=a", 'title'=>"Actions", 'label' => "Actions");
 				$thismenu[] = array("link"=>"listItems.php?type=w", 'title'=>"Waiting On", 'label' => "Waiting On");
@@ -148,14 +150,16 @@ function makemenu($list) {
 				<?php
 				$thismenu[] = array("link"=>"weekly.php", 'title'=>"Steps in the Weekly Review", 'label' => "Weekly Review");
 				$thismenu[] = array("link"=>"orphans.php", 'title'=>"List items without a parent item", 'label' => "Orphaned Items");
-				$thismenu[] = array("link"=>"leadership.php", 'title'=>"Leadership view", 'label' => "Leadership");
-				$thismenu[] = array("link"=>"management.php", 'title'=>"Management view", 'label' => "Management");
 				$thismenu[] = array("link"=>"listItems.php?type=m", 'title'=>"Values / Mission", 'label' => "Values");
 				$thismenu[] = array("link"=>"listItems.php?type=v", 'title'=>"Visions", 'label' => "Visions");
 				$thismenu[] = array("link"=>"listItems.php?type=o", 'title'=>"Roles / Areas of Responsibility", 'label' => "Roles");
 				$thismenu[] = array("link"=>"listItems.php?type=g", 'title'=>"Goals", 'label' => "Goals");
-				$thismenu[] = array("link"=>"achievements.php", 'title'=>"Notable Achievements", 'label' => "Achievements");
 				$thismenu[] = array("link"=>"listItems.php?type=a&amp;tickler=true", 'title'=>"Hidden items and reminders", 'label' => "Tickler File");
+				if ($config['debug']) {
+                    $thismenu[] = array("link"=>"leadership.php", 'title'=>"Leadership view", 'label' => "Leadership");
+				    $thismenu[] = array("link"=>"management.php", 'title'=>"Management view", 'label' => "Management");
+				    $thismenu[] = array("link"=>"achievements.php", 'title'=>"Notable Achievements", 'label' => "Achievements");
+                }
 
 				makemenu($thismenu);
 				unset($thismenu);
@@ -175,11 +179,11 @@ function makemenu($list) {
 			</ul>
         </li>
         <li>Configure
-    		<ul><!-- need to change from capture to management view  //-->
+    		<ul>
 				<?php
-				$thismenu[] = array("link"=>"newCategory.php", 'title'=>"Meta-categories", 'label' => "Categories");
-				$thismenu[] = array("link"=>"newContext.php", 'title'=>"Spatial contexts", 'label' => "Space Contexts");
-				$thismenu[] = array("link"=>"newTimeContext.php", 'title'=>"Time contexts", 'label' => "Time Contexts");
+				$thismenu[] = array("link"=>"editCat.php?field=category", 'title'=>"Meta-categories", 'label' => "Categories");
+				$thismenu[] = array("link"=>"editCat.php?field=context", 'title'=>"Spatial contexts", 'label' => "Space Contexts");
+				$thismenu[] = array("link"=>"editCat.php?field=time-context", 'title'=>"Time contexts", 'label' => "Time Contexts");
 				$thismenu[] = array("link"=>"preferences.php", 'title'=>"User preferences", 'label' => "User Preferences");
 
 				makemenu($thismenu);

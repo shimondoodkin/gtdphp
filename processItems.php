@@ -299,23 +299,22 @@ function nextPage() { // set up the forwarding to the next page
 		1 for UI, 1 for backend. Then we'd only use the backend half here
 	*/
 	global $config,$values,$updateGlobals;
-	if (isset($_POST['afterCreate' . $_POST['type']]))
-		$_SESSION['afterCreate' . $_POST['type']]=$_POST['afterCreate' . $_POST['type']];
 	if (isset($updateGlobals['referrer']) && ($updateGlobals['referrer'] !== ''))
 		$nextURL=$updateGlobals['referrer'];
-	else switch ($_SESSION['afterCreate' . $_POST['type']]) {
+	else switch ($_SESSION['afterCreate' . $values['type']]) {
 		case "parent"  : $nextURL=($updateGlobals['parents'][0]>0)?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;
 		case "item"    : $nextURL='itemReport.php?itemId='.$values['newitemId']; break;
 		case "another" : $nextURL='item.php?type='        .$values['type']; break;
 		case "list"	   : $nextURL='listItems.php?type='   .$values['type']; break;
-        default        : $nextURL='listItems.php?type='   .$values['type']."&amp;dbg=".$_SESSION['afterCreate' . $_POST['type']];
+        default        : $nextURL='listItems.php?type='   .$values['type']."&amp;dbg=".$_SESSION['afterCreate'.$values['type']];
 	}
 	if ($config['debug'] & _GTD_DEBUG) {
-		echo '<p>Next page is <a href="',$nextURL,'">&lt;',htmlspecialchars($nextURL),'&gt;</a> (would be auto-refresh in non-debug mode)</p>';
-	} else {
-		echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=',$nextURL,'" />';
-	}
-	echo "\n";
+        echo '<pre>$referrer=',print_r($updateGlobals['referrer'],true),'<br />'
+            ,"type={$values['type']}<br />"
+            ,'session=',print_r($_SESSION,true),'<br />'
+            ,'</pre>';
+    }
+	echo nextScreen($nextURL,$config);
 }
 
 function literaldump($varname) { // dump a variable name, and its contents

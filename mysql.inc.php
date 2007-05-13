@@ -308,7 +308,7 @@ $sql = array(
 										WHERE `itemId`='{$values['itemId']}'",
 
         "newcategory"               => "INSERT INTO `". $config['prefix'] ."categories`
-										VALUES (NULL, '{$values['category']}', '{$values['description']}')",
+										VALUES (NULL, '{$values['name']}', '{$values['description']}')",
 										
         "newchecklist"              => "INSERT INTO `". $config['prefix'] ."checklist`
 										VALUES (NULL, '{$values['title']}', 
@@ -488,7 +488,7 @@ $sql = array(
 										FROM `". $config['prefix'] . "nextactions` 
 										WHERE `nextaction`='{$values['itemId']}'",
 
-        "timecontextselectbox"      => "SELECT `timeframeId`, `timeframe`, `description`
+        "timecontextselectbox"      => "SELECT `timeframeId`, `timeframe`, `description`, `type`
 										FROM `". $config['prefix'] . "timeitems` as ti".$values['timefilterquery']."
 										ORDER BY {$sort['timecontextselectbox']}",
 
@@ -568,6 +568,7 @@ $sql = array(
 
         "updatetimecontext"         => "UPDATE `". $config['prefix'] . "timeitems`
 										SET `timeframe` ='{$values['name']}', 
-												`description`='{$values['description']}' 
+												`description`='{$values['description']}',
+												`type`='{$values['type']}'
 										WHERE `timeframeId` ='{$values['id']}'",
     );
