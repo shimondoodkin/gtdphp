@@ -65,7 +65,7 @@ function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visib
 	// got the string - now close any open tags
 	if ($keepTags) while (count($tagsOpen))
 		$outStr.=array_pop($tagsOpen);
-	//
+	$outStr=nl2br(escapeQuotes($outStr));
 	return($outStr);
 }
 
@@ -194,18 +194,20 @@ function listselectbox($config,$values,$options,$sort) {
     return $lshtml;
     }
 
-function prettyDueDate($tag,$dateToShow,$thismask) {
-	$returnText='<'.$tag;
-	if($dateToShow) {
-		//highlight due and overdue actions
-		if($dateToShow < date("Y-m-d")) $returnText .= ' class="overdue" title="Overdue"'; 
-			elseif($dateToShow == date("Y-m-d")) $returnText .= ' class="due" title="Due today"';
-		$returnText .= '>'.date($thismask,strtotime($dateToShow));
-	} else {
-		$returnText.=">&nbsp;";
-	}
-	$returnText .= '</'.$tag.'>';
-	return $returnText;
+function prettyDueDate($dateToShow,$thismask) {
+	$retval=array();
+    if(trim($dateToShow)!='') {
+        $retval['date'] = date($thismask,strtotime($dateToShow) );
+        if ($dateToShow<date("Y-m-d")) {
+            $retval['class']='overdue';
+            $retval['title']='Overdue';
+        } elseif($dateToShow===date("Y-m-d")) {
+            $retval['class']='due';
+            $retval['title']='Due today';
+        }
+    } else
+        $retval['date'] ='&nbsp;';
+	return $retval;
 }
 
 function getVarFromGetPost($varName,$default='') {
@@ -216,7 +218,7 @@ function getVarFromGetPost($varName,$default='') {
 function getNextActionsArray($config,$values,$options,$sort) {
 	$result= query("getnextactions",$config,$values,$options,$sort);
 	$nextactions=array();
-	if(is_array($result))foreach ($result as $row) array_push ($nextactions,$row['nextaction']);
+	if(is_array($result))foreach ($result as $row) $nextactions[(int) $row['nextaction']]=true;
 	return $nextactions;
 }
 
@@ -224,7 +226,7 @@ function nextScreen($url,$config) {
 if ($config['debug'])
     $txt="<p>Next screen is <a href='$url'>".htmlspecialchars($url)."</a> - would be auto-refresh in non-debug mode</p>";
 else
-    $txt="<META HTTP-EQUIV='Refresh' CONTENT='0'; url='$url' />";
+    $txt="<META HTTP-EQUIV='Refresh' CONTENT='0;$url' />";
 return $txt;
 }
 
@@ -262,4 +264,9 @@ if ($type===false)
     return $types;
 else
     return $types[$type];
+}
+
+function escapeQuotes($str) {
+	$outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$str);
+	return $outStr;
 }

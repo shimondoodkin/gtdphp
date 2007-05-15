@@ -13,7 +13,7 @@ $updateGlobals['parents']  = $_POST['parentId']; // TOFIX - what happens if this
 $updateGlobals['referrer'] = $_POST['referrer'];
 
 if (isset($_POST['wasNAonEntry'])) {  // toggling next action status on several items
-	$updateGlobals['wasNAonEntry'] = explode(',',$_POST['wasNAonEntry']);
+	$updateGlobals['wasNAonEntry'] = explode(' ',$_POST['wasNAonEntry']);
 	$updateGlobals['isNA']=array();
 	if (isset($_POST['isNAs'])) $updateGlobals['isNA']=$_POST['isNAs'];
 }

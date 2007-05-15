@@ -82,6 +82,17 @@ echo "</table>\n";
 echo "\n";
 echo "<p>To move to a particular space-time context, select the number.<br />To edit a context select the context name.</p>\n";
 
+$thisurl=parse_url($_SERVER['PHP_SELF']);
+$dispArray=array('parent'=>'Project'
+    ,'NA'=>'NA'
+    ,'title'=>'Action'
+    ,'description'=>'Description'
+    ,'deadline'=>'Deadline'
+    ,'repeat'=>'Repeat'
+    ,'checkbox'=>'Complete');
+$show=array();
+foreach ($dispArray as $key=>$val) $show[$key]=true;
+
 //Item listings by context and timeframe
 foreach ($contextArray as $values['contextId'] => $timeframe) {
 
@@ -102,52 +113,60 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
 		$values['childfilterquery'] .= " AND ".sqlparts("isnotcompleteditem",$config,$values);
         $result = query("getitemsandparent",$config,$values,$options,$sort);
 
-        $tablehtml="";
-		if (is_array($result)) {
-			foreach ($result as $row) {
-				$tablehtml .= "	<tr>\n";
-				$tablehtml .= '		<td><a href = "item.php?itemId='.$row['parentId'].'" title="Go to '.htmlspecialchars(stripslashes($row['ptitle'])).' project report">'.stripslashes($row['ptitle'])."</a></td>\n";
-	
-				//if nextaction, add icon in front of action (* for now)
-				$tablehtml .= '		<td><a href = "item.php?itemId='.$row['itemId'].'" title="Edit '.htmlspecialchars($row['title']).'">';
-				if ($key == array_search($row['itemId'],$nextactions)) $tablehtml .= '*&nbsp;';
-				$tablehtml .= makeclean($row['title'])."</a></td>\n";
-	
-				$tablehtml .= '		<td>'.nl2br(trimTaggedString($row['description'],$config['trimLength']))."</td>\n";
-				$tablehtml .= prettyDueDate('td',$row['deadline'],$config['datemask'])."\n";
-				$tablehtml .= "<td>".((($row['repeat'])=="0")?'&nbsp;':($row['repeat']))."</td>\n";
-				$tablehtml .= '<td align="center"><input type="checkbox" name="isMarked[]" title="Complete '.makeclean($row['title']).'" value="';
-				$tablehtml .= $row['itemId'].'" /></td>'."\n	</tr>\n";
-			}
+        $maintable=array();
+        $i=0;
+        $wasNAonEntry=array();
+		if (is_array($result)) foreach ($result as $row) {
+            $maintable[$i]=array();
+            $maintable[$i]['id']=$row['itemId'];
+			$maintable[$i]['description']=trimTaggedString($row['description'],$config['trimLength']);
+			$maintable[$i]['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
+
+            if($row['deadline']) {
+                $deadline=prettyDueDate($row['deadline'],$config['datemask']);
+                $maintable[$i]['deadline'] =$deadline['date'];
+                $maintable[$i]['deadline.class']=$deadline['class'];
+                $maintable[$i]['deadline.title']=$deadline['title'];
+            } else $maintable[$i]['deadline']='';
+        
+            $maintable[$i]['title']=makeclean($row['title']);
+            $maintable[$i]['title.title']='Edit '.$maintable['title'];
+
+			$maintable[$i]['parent']=makeclean($row['ptitle']);
+			$maintable[$i]['parentid']=$row['parentId'];
+			$maintable[$i]['parent.title']='Go to '.$maintable['parent'].' project report';
+
+			$maintable[$i]['checkboxname']='isMarked[]';
+			$maintable[$i]['checkbox.title']='Complete '.$maintable['title'];
+			$maintable[$i]['checkboxvalue']=$row['itemId'];
+
+            $isNextAction = $nextactions[$row['itemId']]===true;
+            if ($isNextAction) array_push($wasNAonEntry,$row['itemId']);
+            $maintable[$i]['NA'] = $isNextAction;
+
+			$i++;
 		}
-        if ($tablehtml!="") {
-        echo "<a id='c{$values['contextId']}t{$values['timeframeId']}'></a>\n"
-            ,"<h3><a href='editCat.php?field=time-context&amp;id={$values['timeframeId']}'>"
-            ,"Time Context:&nbsp;",$timeframeNames[$values['timeframeId']],"</a></h3>\n";
-
-		$thisurl=parse_url($_SERVER['PHP_SELF']);
-        echo '<form action="processItems.php" method="post">';
-        echo '<table class="datatable sortable" summary="table of actions" id="actiontable'.$values['contextId'].'t'.$values['timeframeId'].'">'."\n";
-        echo "	<thead><tr>\n";
-        echo "		<td>Project</td>\n";
-        echo "		<td>Action</td>\n";
-        echo "		<td>Description</td>\n";
-        echo "		<td>Deadline</td>\n";
-        echo "		<td>Repeat</td>\n";
-        echo "		<td>Completed</td>\n";
-        echo "	</tr></thead>\n";
-        echo $tablehtml;
-        echo "</table>\n";
-        echo "<div>\n";
-		echo '<input type="hidden" name="referrer" value="',basename($thisurl['path']),"#{$thisAnchor}\" />";
-		echo '<input type="hidden" name="multi" value="y" />'."\n";
-		echo '<input type="hidden" name="action" value="complete" />'."\n";
-        echo '<input type="submit" class="button" value="Update Actions" name="submit" /></div></form>'."\n";
-        }
-
-        else echo "<h4>Nothing was found</h4>\n";
+        if (count($maintable)) {
+            echo "<a id='c{$values['contextId']}t{$values['timeframeId']}'></a>\n"
+                ,"<h3><a href='editCat.php?field=time-context&amp;id={$values['timeframeId']}'>"
+                ,"Time Context:&nbsp;",$timeframeNames[$values['timeframeId']],"</a></h3>\n";
+            ?>
+            <form action="processItems.php" method="post">
+                <table class="datatable sortable" summary="table of actions" id="actiontable<?php echo $values['contextId'],'t',$values['timeframeId']; ?>">
+                    <?php require('displayItems.inc.php'); ?>
+                </table>
+                <div>
+                	<input type="hidden" name="referrer" value="<?php echo basename($thisurl['path']),'#',$thisAnchor; ?>" />
+                    <input type="hidden" name="multi" value="y" />
+        		    <input type="hidden" name="wasNAonEntry" value="<?php echo implode(' ',$wasNAonEntry); ?> " />
+                    <input type="hidden" name="action" value="complete" />
+                    <input type="submit" class="button" value="Update Actions" name="submit" />
+                </div>
+            </form>
+            <?php
         }
     }
+}
 
 include_once('footer.php');
 ?>

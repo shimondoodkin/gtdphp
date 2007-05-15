@@ -88,7 +88,7 @@ $show['parent']=TRUE;
 $show['NA']=FALSE;
 $show['title']=TRUE;
 $show['description']=TRUE;
-$show['desiredOutcome']=FALSE;
+$show['outcome']=FALSE;
 $show['isSomeday']=FALSE;
 $show['suppress']=FALSE;
 $show['suppressUntil']=FALSE;
@@ -104,10 +104,10 @@ $show['checkbox']=TRUE;
 
 //determine item and parent labels, set a few defaults
     switch ($values['type']) {
-        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
+        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+        case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+        case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+        case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['outcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
         case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
         case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $show['category']=FALSE; $checkchildren=FALSE; break;
         case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
@@ -221,7 +221,7 @@ if ($result!="-1") {
     $nonext=FALSE;
     $nochildren=FALSE;
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
-    foreach ($result as $row) if (($filter['nextonly']!="true")  || ($key = array_search($row['itemId'],$nextactions))) {
+    foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']]) {
         //filter out all but nextactions if $filter['nextonly']==true
     
         $nochildren=false;
@@ -232,7 +232,7 @@ if ($result!="-1") {
             if ($values['type']=="p") $nonext=(query("selectnextaction",$config,$values)=="-1");
         }
         
-        $isNextAction = ($key=array_search($row['itemId'],$nextactions));
+        $isNextAction = $nextactions[$row['itemId']]===true;
         if ($isNextAction) array_push($wasNAonEntry,$row['itemId']);
         
         $maintable[$thisrow]=array();
@@ -267,8 +267,8 @@ if ($result!="-1") {
         $maintable[$thisrow]['checkboxname']= 'isMarked[]';
         $maintable[$thisrow]['checkboxvalue']=$row['itemId'];
 
-        $maintable[$thisrow]['description'] = nl2br(trimTaggedString($row['description'],$config['trimLength']));
-        $maintable[$thisrow]['desiredOutcome'] = nl2br(trimTaggedString($row['desiredOutcome'],$config['trimLength']));
+        $maintable[$thisrow]['description'] = $row['description'];
+        $maintable[$thisrow]['outcome'] = $row['outcome'];
 
         $maintable[$thisrow]['category'] =makeclean($row['category']);
         $maintable[$thisrow]['categoryid'] =$row['categoryId'];
@@ -283,16 +283,11 @@ if ($result!="-1") {
         if (count($childType)) $maintable[$thisrow]['childtype'] =$childType[0];
         
         if($row['deadline']) {
-            $maintable[$thisrow]['deadline'] = date($config['datemask'],strtotime($row['deadline']) );
-            if ($row['deadline']<date("Y-m-d")) {
-                $maintable[$thisrow]['deadline.class']='overdue';
-                $maintable[$thisrow]['deadline.title']='Overdue'; 
-            } elseif($row['deadline']===date("Y-m-d")) {
-                $maintable[$thisrow]['deadline.class']='due';
-                $maintable[$thisrow]['deadline.title']='Due today'; 
-            }
-        } else
-            $maintable[$thisrow]['deadline'] ='&nbsp;';
+            $deadline=prettyDueDate($row['deadline'],$config['datemask']);
+            $maintable[$thisrow]['deadline'] =$deadline['date'];
+            $maintable[$thisrow]['deadline.class']=$deadline['class'];
+            $maintable[$thisrow]['deadline.title']=$deadline['title'];
+        } else $maintable[$thisrow]['deadline']='';
              
         $maintable[$thisrow]['repeat'] =((($row['repeat'])=="0")?'&nbsp;':($row['repeat']));
 
@@ -313,7 +308,7 @@ if ($result!="-1") {
         ,'NA'=>'NA'
         ,'title'=>$typename.'s'
         ,'description'=>'Description'
-        ,'desiredOutcome'=>'Desired Outcome'
+        ,'outcome'=>'Desired Outcome'
         ,'category'=>'Category'
         ,'context'=>'Space Context'
         ,'timeframe'=>'Time Context'

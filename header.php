@@ -113,9 +113,9 @@ function makemenu($list) {
 				$thismenu[] = array("link"=>"item.php?type=m", 'title'=>"Define a new value", 'label' => "Value");
 				$thismenu[] = array("link"=>"newList.php", 'title'=>"Create a general purpose list", 'label' => "List");
 				$thismenu[] = array("link"=>"newChecklist.php", 'title'=>"Create a reusable list", 'label' => "Checklist");
-				$thismenu[] = array("link"=>"newContext.php", 'title'=>"Define a geographical context", 'label' => "Space Context");
-				$thismenu[] = array("link"=>"newTimeContext.php", 'title'=>"Define a time window for items", 'label' => "Time Context");
-				$thismenu[] = array("link"=>"newCategory.php", 'title'=>"Define an new meta-category", 'label' => "Category");
+				$thismenu[] = array("link"=>"editCat.php?field=context&amp;id=0", 'title'=>"Define a geographical context", 'label' => "Space Context");
+				$thismenu[] = array("link"=>"editCat.php?field=time-context&amp;id=0", 'title'=>"Define a time window for items", 'label' => "Time Context");
+				$thismenu[] = array("link"=>"editCat.php?field=category&amp;id=0", 'title'=>"Define a new meta-category", 'label' => "Category");
 				makemenu($thismenu);
 				unset($thismenu);
 				?>
@@ -125,10 +125,10 @@ function makemenu($list) {
 			<ul>
 				<?php 
 				$thismenu[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
-				$thismenu[] = array("link"=>"reportCategory.php", 'title'=>"Active items sorted by category", 'label' => "Categories");
 				$thismenu[] = array("link"=>"reportContext.php", 'title'=>"Active items sorted by space context", 'label' => "Space Contexts");
 				if ($config['debug']) {
                     $thismenu[] = array("link"=>"reportTimeContext.php", 'title'=>"Active items sorted by time context", 'label' => "Time Contexts");
+    				$thismenu[] = array("link"=>"reportCategory.php", 'title'=>"Active items sorted by category", 'label' => "Categories");
 				}
                 $thismenu[] = array("link"=>"listItems.php?type=p", 'title'=>"Projects", 'label' => "Projects");
 				$thismenu[] = array("link"=>"listItems.php?type=a&amp;nextonly=true", 'title'=>"Next actions", 'label' => "Next Actions");
