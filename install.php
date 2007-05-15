@@ -252,7 +252,7 @@ HTML2;
 				}
 			}
 		}
-			
+		createPreferences();
 	    fixAllDates();
 	    $endMsg='<p>GTD-PHP 0.8 upgraded from rc1 to rc3 - thanks for your beta-testing</p>';
 	    break;
