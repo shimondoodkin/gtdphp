@@ -23,16 +23,16 @@ $cshtml = checklistselectbox($config,$values,$options,$sort);
 
     <div class='formrow'>
         <label for='item' class='left first'>Item:</label>
-        <input type='text' name='item' id='item'>
+        <input type='text' name='item' id='item' />
         </div>
 
     <div class='formrow'>
     <label for='notes' class='left first'>Notes:</label>
-    <textarea rows="3" name="notes" id="notes" wrap="virtual"></textarea>
+    <textarea rows="3" cols="80" name="notes" id="notes"></textarea>
     </div>
 </div>
 <div class='formbuttons'>
-    <input type='submit' value='Add List Item' name='submit'>
+    <input type='submit' value='Add List Item' name='submit' />
     </div>
 
 <?php

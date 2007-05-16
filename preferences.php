@@ -19,21 +19,20 @@ $html="";
 foreach ($themes as $t) {
 	$html.= '<option value="'.$t;
 	$html.='"';
-	if($t == $_SESSION['theme']) $html.=" SELECTED ";
+	if($t == $_SESSION['theme']) $html.=" selected='selected' ";
 	$html.='>'.$t;
 	$html.="</option>";
 	$html.="\n";
 }
-
-// PAGE DISPLAY CODE
-echo "<h2>Theme</h2>\n";
-echo '<form action="updatePreferences.php" method="post">';
-echo '<select name="theme">';
-echo "\n";
-echo $html;
-echo "</select>\n"; echo '<input type="submit" class="button" value="Apply" name="submit">'."\n";
-echo "</form>\n";
-echo "</div>\n";
-
-include_once('footer.php');
 ?>
+
+<h2>Theme</h2>
+<form action="updatePreferences.php" method="post">
+    <p class='formrow'>
+        <select name="theme">
+            <?php echo $html; ?>
+        </select>
+        <input type="submit" class="button" value="Apply" name="submit" />
+    </p>
+</form>
+<?php include_once('footer.php'); ?>

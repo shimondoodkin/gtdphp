@@ -83,7 +83,7 @@ function nothingFound($message, $prompt=NULL, $yeslink=NULL, $nolink="index.php"
         echo "<h4>$message</h4>";
         if($prompt){
                 echo $prompt;
-                echo "<a href=$yeslink> Yes </a><a href=$nolink>No</a>\n";
+                echo "<a href='$yeslink'> Yes </a><a href='$nolink'>No</a>\n";
         }
 }
 

@@ -23,14 +23,14 @@ echo "<p>Category:&nbsp;\n";
 echo '<select name="categoryId" title="Filter checklists by category">'."\n";
 echo $cashtml;
 echo "</select>\n";
-echo '<input type="submit" align="right" class="button" value="Filter" name="submit" title="filter checklist by category" />'."\n";
+echo '<input type="submit" class="button" value="Filter" name="submit" title="filter checklist by category" />'."\n";
 echo "</p>\n";
 echo "</form>\n";
 echo "</div>\n";
 
 if ($result!="-1") {
     echo "<p>Select checklist for report.</p>\n";
-    echo '<table class="datatable sortable" id="checklisttable">'."\n";
+    echo '<table class="datatable sortable" id="checklisttable" summary="checklists">'."\n";
     echo "	<thead><tr>\n";
     echo "		<td>Category</td>\n";
     echo "		<td>Title</td>\n";

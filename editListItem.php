@@ -19,10 +19,8 @@ echo '<form action="updateListItem.php?listItemId='.$values['listItemId'].'" met
 
 <div class='form'>
         <div class='formrow'>
-
-                <label for='newitem' class='left first'>Title:</label>
-
-                <textarea rows="2" name="newitem" wrap="virtual"><?php echo htmlspecialchars(stripslashes($result[0]['item'])); ?></textarea>
+                <label class='left first'>Title:</label>
+                <textarea rows="2" name="newitem" cols="80"><?php echo htmlspecialchars(stripslashes($result[0]['item'])); ?></textarea>
         </div>
 
         <div class='formrow'>
@@ -30,8 +28,8 @@ echo '<form action="updateListItem.php?listItemId='.$values['listItemId'].'" met
                 <select name='listId' id='list'>
                 <?php echo $lshtml; ?>
                 </select>
-                <label for='newdateCompleted' class='left notfirst'>Date Completed:</label>
-                <input type='text' name='newdateCompleted' id='f_date_b' value='<?php echo $result[0]['dateCompleted']; ?>'>
+                <label class='left notfirst'>Date Completed:</label>
+                <input type='text' name='newdateCompleted' id='f_date_b' value='<?php echo $result[0]['dateCompleted']; ?>' />
                 <button type='reset' id='f_trigger_b'>...</button>
                 <script type="text/javascript">
                     Calendar.setup({
@@ -48,7 +46,7 @@ echo '<form action="updateListItem.php?listItemId='.$values['listItemId'].'" met
 
         <div class='formrow'>
                 <label for='newnotes' class='left first'>Description:</label>
-                <textarea rows='10' name='newnotes' id='newnotes' wrap='virtual'><?php echo htmlspecialchars(stripslashes($result[0]['notes']));?></textarea>
+                <textarea rows='10' name='newnotes' id='newnotes' cols='80'><?php echo htmlspecialchars(stripslashes($result[0]['notes']));?></textarea>
         </div>
 </div>
 <div class='formbuttons'>
@@ -57,5 +55,5 @@ echo '<form action="updateListItem.php?listItemId='.$values['listItemId'].'" met
         <input type='checkbox' name='delete' id='delete' class='notfirst' value='y' />
         <label for='delete'>Delete&nbsp;List&nbsp;Item</label>
 </div>
-
+</form>
 <?php include_once('footer.php'); ?>

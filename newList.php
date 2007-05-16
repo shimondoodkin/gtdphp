@@ -14,7 +14,7 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 	<div class='form'>
 		<div class='formrow'>
 			<label for='title' class='left first'>Title:</label>
-			<input type="text" name="title" id="title">
+			<input type="text" name="title" id="title" />
 		</div>
 
 		<div class='formrow'>
@@ -25,11 +25,12 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 		</div>
 
 		<div class='formrow'>
-			<label for='description' class='left first'>Description:</label><textarea rows="10" name="description" id="description" wrap="virtual"></textarea>
+			<label for='description' class='left first'>Description:</label>
+            <textarea rows="10" cols="80" name="description" id="description"></textarea>
 		</div>
 	</div>
 	<div class='formbuttons'>
-		<input type="submit" value="Add List" name="submit">
+		<input type="submit" value="Add List" name="submit" />
 	</div>
 </form>
 

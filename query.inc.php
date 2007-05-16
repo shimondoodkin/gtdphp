@@ -28,7 +28,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         break;
         case "mysql":
 			require_once("mysql.funcs.inc.php");
-			foreach ($values as $key=>$value) $values[$key] = safeIntoDB($value, $key);
+			if (count($values)) foreach ($values as $key=>$value) $values[$key] = safeIntoDB($value, $key);
 		    if ($config['debug'] & _GTD_DEBUG)
 		        echo '<pre>Sanitised values: ',print_r($values,true),'</pre>';
 			require("mysql.inc.php");

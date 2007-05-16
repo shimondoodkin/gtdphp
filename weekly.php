@@ -17,8 +17,8 @@ $values=array();
 
 //PAGE DISPLAY CODE
 	echo "<h2>The Weekly Review</h2>
-<table class='weeklytable'>
-	<thead><td>Step</td><td>Description</td></thead>
+<table class='weeklytable' summary='table of weekly actions'>
+	<thead><tr><td>Step</td><td>Description</td></tr></thead>
 	<tr><td>Gather all loose papers</td><td></td></tr>
 	<tr><td>Process all notes</td><td></td></tr>
 	<tr><td>Check all voice mail</td><td></td></tr>
@@ -31,7 +31,7 @@ $values=array();
 	<tr><td>Empty your head</td><td>Put in writing any new <a href=\"item.php?type=p\" title=\"Add project\">projects</a>, <a href=\"item.php?type=a\" title=\"Add action\">actions</a>, <a href=\"item.php?type=w\" title=\"Add waitingOn\">waitingOn</a>, <a href=\"item.php?type=r\" title=\"Add reference\">references</a>, and <a href=\"item.php?type=s\" title=\"Add Someday/Maybe\">someday/maybes</a> that are not yet in the system.</td></tr>
 	<tr><td>Review <a href=\"listItems.php?type=p\">Projects list</a></td><td>Evaluate status of each project, goals, outcomes, one by one, ensuring that at least one next action exists for each.\n";
 
-	echo "		<p><ul>Projects without Next Actions defined:\n";
+	echo "Projects without Next Actions defined:<br />\n<ul>";
 
         $counter=0;
         if ($result!="-1") {
@@ -45,7 +45,7 @@ $values=array();
                 }
            }
         else echo "<li>None!</li>";
-	echo "		</ul></p>\n";
+	echo "		</ul>\n";
 	echo "	</td></tr>\n";
 	echo '	<tr><td>Review <a href="listItems.php?type=a">Actions list</a></td><td>Mark off any completed actions, review for reminders of further actions to capture.</td></tr>'."\n";
 	echo '	<tr><td>Review <a href="listItems.php?type=w">WaitingOn list</a></td><td>Mark off any returned items, and determine any further actions.</td></tr>'."\n";

@@ -72,7 +72,7 @@ $sm = query("getitems",$config,$values,$options,$sort);
 
 //PAGE DISPLAY CODE
 echo "<h2>GTD Summary</h2>\n";
-echo '<h4>Today is '.date($config['datemask']).'. (Week '.date("W").'/52 & Day '.date("z").'/'.(365+date("L")).')</h4>'."\n";
+echo '<h4>Today is '.date($config['datemask']).'. (Week '.date("W").'/52 &amp; Day '.date("z").'/'.(365+date("L")).')</h4>'."\n";
 
 echo "<div class='reportsection'>\n";
 if ($reminderresult!="-1") {
@@ -173,7 +173,7 @@ if($numbercontexts[0]['ncontexts']==1) {
         echo '<p>There are ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Projects</a>.</p>'."\n";
     }
 
-	$s='<table>'."\n";
+	$s="<table summary='table of projects'>\n";
 	$nr = count($c1);
 
 	for($i=0;$i<$nr;$i+=1){
@@ -200,7 +200,7 @@ if($numbercontexts[0]['ncontexts']==1) {
     }
 
 
-	$t='<table>'."\n";
+	$t="<table summary='table of someday/maybe items'>\n";
 	$nr = count($d1);
 
 	for($i=0;$i<$nr;$i+=1){

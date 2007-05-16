@@ -29,7 +29,7 @@ echo "</div>\n";
 
 if ($result!="-1") {
         echo "<p>Select list for report.</p>\n";
-        echo '<table class="datatable sortable" id="categorytable">'."\n";
+        echo '<table class="datatable sortable" id="categorytable" summary="table of categories">'."\n";
         echo "	<thead><tr>\n";
         echo "		<td>Category</td>\n";
         echo "		<td>Title</td>\n";
