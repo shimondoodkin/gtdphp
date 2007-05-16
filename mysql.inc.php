@@ -454,6 +454,15 @@ $sql = array(
 											AND ia.`itemId`=i.`itemId`
 											AND i.`itemId` = '{$values['itemId']}'",
 
+        "selectitemshort"           => "SELECT i.`itemId`, i.`title`,
+												i.`description`, ia.`isSomeday`
+										FROM `". $config['prefix'] . "items` as i,
+												`". $config['prefix'] . "itemattributes` as ia,
+												`". $config['prefix'] . "itemstatus` as its
+										WHERE ia.`itemId`=i.`itemId`
+											AND its.`itemId`=i.`itemId`
+											AND i.`itemId` = '{$values['itemId']}'",
+
         "selectlist"                => "SELECT `listId`, `title`, `description`, `categoryId`
 										FROM `". $config['prefix'] . "list` 
 										WHERE `listId` = '{$values['listId']}'",

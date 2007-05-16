@@ -2,7 +2,7 @@
 
 function makeClean($textIn) {
 	$cleaned=htmlspecialchars(stripslashes($textIn),ENT_QUOTES);
-	if ($cleaned=='') return '&nbsp;'; else return $cleaned;
+	if ($cleaned==='') return '&nbsp;'; else return $cleaned;
 }
 
 function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified) 	// TOFIX -  we don't handle "%XX" strings yet.
@@ -151,22 +151,41 @@ function timecontextselectbox($config,$values,$options,$sort) {
     return $tshtml;
     }
 
+function makeOption($row,$selected) {
+    $cleandesc=makeclean($row['description']);
+    $cleantitle=makeclean($row['title']);
+    if ($row['isSomeday']==="y") {
+        $cleandesc.=' (Someday)';
+        $cleantitle.=' (S)';
+    }
+    $seltext = ($selected[$row['itemId']])?' selected="selected"':'';
+    $out = "<option value='{$row['itemId']}' title='$cleandesc' $seltext>$cleantitle</option>";
+    return $out;
+}
+
 function parentselectbox($config,$values,$options,$sort) {
     $result = query("parentselectbox",$config,$values,$options,$sort);
-    $pshtml='<option value="0">--</option>'."\n";
-    if ($result!="-1") {
+    $pshtml='';
+    $parents=array();
+    if (is_array($values['parentId']))
+        foreach ($values['parentId'] as $key) $parents[$key]=true;
+    else
+        $parents[$values['parentId']]=true;
+    if ($config['debug'] & _GTD_DEBUG) echo '<pre>parents:',print_r($parents,true),'</pre>';
+    if ($result!="-1")
         foreach($result as $row) {
-            $pshtml .= '                    <option value="'.$row['itemId'].'" title="'.htmlspecialchars(stripslashes($row['description']));
-            if ($row['isSomeday']=="y") $pshtml .= ' (Someday)';
-            $pshtml .= '"';
-            if(in_array($row['itemId'],$values['parentId'])) $pshtml .= ' selected="selected"';
-            $pshtml .= '>'.htmlspecialchars(stripslashes($row['title']));
-            if ($row['isSomeday']=="y") $pshtml .= ' (s)';
-            $pshtml .="</option>\n";
-            }
+            $pshtml .= makeOption($row,$parents)."\n";
+            if($parents[$row['itemId']])$parents[$row['itemId']]=false;
         }
-    return $pshtml;
+    foreach ($parents as $key=>$val) if ($val) {
+        // $key is a parentId which wasn't found for the drop-down box, so need to add it in
+        $values['itemId']=$key;
+        $row=query('selectitemshort',$config,$values,$options,$sort);
+        if ($row!='-1') $pshtml = makeOption($row[0],$parents)."\n".$pshtml;
     }
+    $pshtml="<option value='0'>--</option>\n".$pshtml;
+    return $pshtml;
+}
 
 function checklistselectbox($config,$values,$options,$sort) {
     $result = query("checklistselectbox",$config,$values,$options,$sort);
