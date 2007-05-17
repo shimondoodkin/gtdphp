@@ -223,12 +223,14 @@ function ts_resortTable(lnk,clid) {
     
     // Work out a type for the column
     if (table.rows.length <= 1) return;
-    var itm = ts_getInnerText(table.rows[1].cells[column]);
+    var itm = ts_getInnerText(table.tBodies[0].rows[0].cells[column]);
+    var itmh = table.tBodies[0].rows[0].cells[column].innerHTML;
     sortfn = ts_sort_caseinsensitive;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
-    if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
+    if (itmh.match(/^<input.*(radio|checkbox).*>$/)) sortfn = ts_sort_checkbox;
+    else if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
+    else if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
+    else if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
+    else if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
     SORT_COLUMN_INDEX = column;
     var firstRow = new Array();
     var newRows = new Array();
@@ -326,6 +328,13 @@ function ts_sort_default(a,b) {
     return 100;
 }
 
+function ts_sort_checkbox(a,b) { // TOFIX
+    aa = a.cells[SORT_COLUMN_INDEX].firstChild.checked;
+    bb = b.cells[SORT_COLUMN_INDEX].firstChild.checked;
+    if (aa==bb) return (a.rowIndex-b.rowIndex);
+    if (aa) return -100;
+    return 100;
+}
 
 function addEvent(elm, evType, fn, useCapture)
 // addEvent and removeEvent

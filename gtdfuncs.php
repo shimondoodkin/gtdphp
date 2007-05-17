@@ -174,8 +174,16 @@ function parentselectbox($config,$values,$options,$sort) {
     if ($config['debug'] & _GTD_DEBUG) echo '<pre>parents:',print_r($parents,true),'</pre>';
     if ($result!="-1")
         foreach($result as $row) {
-            $pshtml .= makeOption($row,$parents)."\n";
-            if($parents[$row['itemId']])$parents[$row['itemId']]=false;
+            $thisOpt= makeOption($row,$parents)."\n";
+/*
+ the 2 commented lines below marked with //PATCH, if uncommented,
+ will force the active current parents to always appear at the top of the select box
+*/
+            if($parents[$row['itemId']]) {
+//                $pshtml =$thisOpt.$pshtml; //PATCH
+                $parents[$row['itemId']]=false;
+            } //else //PATCH
+            $pshtml .=$thisOpt;
         }
     foreach ($parents as $key=>$val) if ($val) {
         // $key is a parentId which wasn't found for the drop-down box, so need to add it in
@@ -286,6 +294,7 @@ else
 }
 
 function escapeQuotes($str) {
-	$outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$str);
+    $outStr=str_replace(array("'",'"','&'),array('&#039;','&quot;','&amp;'),$str);
+    $outStr=str_replace('&amp;amp;','&amp;',$outStr);
 	return $outStr;
 }
