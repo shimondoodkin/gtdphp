@@ -28,9 +28,10 @@ foreach ($maintable as $row) {
                 echo "<input name='{$row['checkboxname']}' value='{$row['checkboxvalue']}' type='checkbox' />";
                 break;
             case 'NA':
-                echo "<input type='checkbox' name='isNAs[]' value='{$row['id']}'"
-                        ,($row[$key])?" checked='checked' ":''
-                        ,' />';
+                echo "<input name='isNAs[]' value='{$row['id']}'"
+                    ,"type='",($dispArray[$key.'.type']==='radio')?'radio':'checkbox',"'"
+                    ,($row[$key])?" checked='checked' ":''
+                    ,' />';
                 break;
             case 'flags':
                 if ($row[$key]==='')

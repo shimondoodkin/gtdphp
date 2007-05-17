@@ -139,7 +139,7 @@ if ($childtype!=NULL) {
 			$dispArray['completed']='Date Completed';
 		}
         foreach ($dispArray as $key=>$val) $show[$key]=true;
-        $dispArray['NA.type']=($config['nextaction']==='multiple')?'checkbox':'radio';
+        $dispArray['NA.type']=($config['nextaction']==='single')?'radio':'checkbox';
 		$i=0;
 		$maintable=array();
         foreach ($result as $row) {
