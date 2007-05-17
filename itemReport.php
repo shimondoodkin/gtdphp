@@ -161,6 +161,7 @@ if ($childtype!=NULL) {
 					$reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
 					if ($reminddate>time()) { // item is not yet tickled - count it, then skip displaying it
 						$suppressed++;
+						array_pop($maintable);
 						continue;
 					}
 				} else
@@ -173,7 +174,7 @@ if ($childtype!=NULL) {
                 $maintable[$i]['deadline.title']=$deadline['title'];
 
 				$maintable[$i]['repeat']=($row['repeat']==0)?'&nbsp;':$row['repeat'];
-				
+
 				$maintable[$i]['checkbox.title']="Mark $cleantitle complete";
     			$maintable[$i]['checkboxname']='isMarked[]';
     			$maintable[$i]['checkboxvalue']=$row['itemId'];
