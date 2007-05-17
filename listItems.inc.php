@@ -257,7 +257,7 @@ if ($result!="-1") {
             $maintable[$thisrow]['flags'] = '';
 
         //item title
-        $maintable[$thisrow]['doreport']=($row['type']==="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i");
+        $maintable[$thisrow]['doreport']=!($row['type']=="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i");
         
         $cleantitle=makeclean($row['title']);
         $maintable[$thisrow]['title.class'] = 'maincolumn';
