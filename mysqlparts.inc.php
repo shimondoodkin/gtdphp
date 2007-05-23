@@ -31,4 +31,4 @@ $sqlparts = array(
     "ptypefilter"         =>  " ia.`type` = '{$values['ptype']}' ", 
 */
     );
-?>
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

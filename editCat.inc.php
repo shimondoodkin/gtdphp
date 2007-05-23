@@ -63,3 +63,4 @@ foreach ($result as $checkcat) {
     $count++;
 }
 if ($config['debug'] & _GTD_DEBUG) echo "<pre>catlist:",print_r($catlist,true),'</pre>';
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

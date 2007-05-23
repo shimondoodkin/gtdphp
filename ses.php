@@ -8,6 +8,7 @@ else{
     $_SESSION['contextId'] = 0;
     $_SESSION['theme'] = 'default';
     $_SESSION['referrer'] = '';
+    $_SESSION['message'] = '';
  }
 
 //echo "views = ". $_SESSION['views']; 
@@ -15,5 +16,5 @@ else{
 //echo "contextId = ". $_SESSION['contextId']; 
 //echo "<br>";
 //echo "categoryId = ". $_SESSION['categoryId']; 
-?>
 
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

@@ -90,9 +90,9 @@ $sql = array(
 											AND (its.`dateCompleted` IS NULL)  
 										GROUP BY ia.`contextId`, ia.`timeframeId`",
 										
-        "countspacecontexts"        => "SELECT COUNT(`name`) AS ncontexts 
+        "countspacecontexts"        => "SELECT COUNT(*)
         								FROM `". $config['prefix'] ."context`",
-        
+
         "deletecategory"            => "DELETE FROM `". $config['prefix'] ."categories` 
         								WHERE `categoryId`='{$values['id']}'",
         "deletechecklist"           => "DELETE FROM `". $config['prefix'] ."checklist` 
@@ -249,7 +249,11 @@ $sql = array(
 											) as y 
 											ON (y.parentId = x.parentId) ".$values['filterquery']." 
 										ORDER BY {$sort['getitemsandparent']}",
-        
+
+        "getitembrief"              => 	"SELECT `title`, `description`
+        								FROM  `". $config['prefix'] . "items`
+										WHERE `itemId` = {$values['itemId']}",
+												
         "getlistitems"              => "SELECT li.`listItemId`, li.`item`, li.`notes`, li.`listId` 
         								FROM `". $config['prefix'] . "listItems` as li 
         									LEFT JOIN `". $config['prefix'] . "list` as l
@@ -581,3 +585,4 @@ $sql = array(
 												`type`='{$values['type']}'
 										WHERE `timeframeId` ='{$values['id']}'",
     );
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

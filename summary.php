@@ -11,7 +11,8 @@ $values['filterquery'] = " WHERE ".sqlparts("notefilter",$config,$values);
 $reminderresult = query("getnotes",$config,$values,$options,$sort);
 
 //get # space contexts
-$numbercontexts = query("countspacecontexts",$config,$values,$options,$sort);
+$res = query("countspacecontexts",$config,$values,$options,$sort);
+$numbercontexts=(int) $res[0]['COUNT(*)'];
 
 //count active items
 $values['type'] = "a";
@@ -22,53 +23,31 @@ $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
 
 //get # nextactions
-$numbernextactions = query("countnextactions",$config,$values,$options,$sort);
+$res = query("countnextactions",$config,$values,$options,$sort);
+$numbernextactions=(int) $res[0]['nnextactions'];
 
-$numberitems = query("countitems",$config,$values,$options,$sort);
+// get # actions
+$res =query("countitems",$config,$values,$options,$sort);
+$numberitems =(int) $res[0]['nitems'];
 
-//count active projects
+// get and count active projects
 $values['type']= "p";
 $values['isSomeday'] = "n";
-$values['filterquery']  = " AND ".sqlparts("typefilter",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
-$numberprojects = query("countitems",$config,$values,$options,$sort);
 
-//count someday projects
-$values['type']= "p";
-$values['isSomeday'] = "y";
-$values['filterquery']  = " AND ".sqlparts("typefilter",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
-$numbersomeday = query("countitems",$config,$values,$options,$sort);
+$stem  = " WHERE ".sqlparts("typefilter",$config,$values)
+        ." AND ".sqlparts("activeitems",$config,$values)
+        ." AND ".sqlparts("pendingitems",$config,$values);
 
-//get active projects
-$values['type']= "p";
-$values['isSomeday'] = "n";
-$values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
+$values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
 $pres = query("getitems",$config,$values,$options,$sort);
+$numberprojects=($pres==-1)?0:count($pres);
 
-//get someday projects
-$values['type']= "p";
+//get and count someday projects
 $values['isSomeday'] = "y";
-$values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
+$values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
 $sm = query("getitems",$config,$values,$options,$sort);
+$numbersomeday=($sm==-1)?0:count($sm);
 
-
-//set empty database counts to zero
-    if($numbercontexts[0]['ncontexts']=="") $numbercontexts[0]['ncontexts']="0";
-    if($numberprojects[0]['nitems']=="" || $pres=="-1") $numberprojects[0]['nitems']="0";
-    if($numbersomeday!='-1')
-    if($numbersomeday[0]['nitems']=="" || $sm=="-1") $numbersomeday[0]['nitems']="0";
-    if($numberitems[0]['nitems']=="") $numberitems[0]['nitems']="0";
-    if($numbernextactions[0]['nnextactions']=="") $numbernextactions[0]['nnextactions']="0";
 
 //PAGE DISPLAY CODE
 echo "<h2>GTD Summary</h2>\n";
@@ -92,31 +71,31 @@ echo "</div>";
 echo "<div class='reportsection'>\n";
 echo "<h3>Next Actions</h3>\n";
 
-if($numbernextactions[0]['nnextactions']==1) {
+if($numbernextactions==1) {
     $verb='is';
-    $plural='s';
+    $plural='';
 } else {
     $verb='are';
-    $plural='';
+    $plural='s';
 }
 
-echo "<p>There $verb ".$numbernextactions[0]['nnextactions']
+echo "<p>There $verb $numbernextactions"
     ," <a href='listItems.php?type=a&amp;nextonly=true'>Next Action$plural</a> pending"
-    ,' out of a total of ' ,$numberitems[0]['nitems'],' <a href="listItems.php?type=a">Actions</a>.'
-    ,"</p>\n"
-    ,"</div>\n";
+    ," out of a total of $numberitems <a href='listItems.php?type=a'>Action"
+    ,($numberitems==1)?'':'s'
+    ,"</a>.</p>\n</div>\n";
 
 echo "<div class='reportsection'>\n";
     echo "<h3>Contexts</h3>\n";
-if($numbercontexts[0]['ncontexts']==1) {
-    echo '<p>There is ' .$numbercontexts[0]['ncontexts']. ' <a href="reportContext.php?type=n">Spatial Context</a>.</p>'."\n";
+if($numbercontexts==1) {
+    echo "<p>There is $numbercontexts <a href='reportContext.php?type=n'>Spatial Context</a>.</p>\n";
 } else {
-    echo '<p>There are ' .$numbercontexts[0]['ncontexts']. ' <a href="reportContext.php?type=n">Spatial Contexts</a>.</p>'."\n";
-    }
+    echo "<p>There are $numbercontexts <a href='reportContext.php?type=n'>Spatial Contexts</a>.</p>\n";
+}
     echo "</div>\n";
 
     $i=0;
-    $w1=$numberprojects[0]['nitems']/3;
+    $w1=$numberprojects/3;
     if ($pres!=-1) {
     foreach($pres as $row) {
             if($i < $w1){
@@ -139,9 +118,9 @@ if($numbercontexts[0]['ncontexts']==1) {
     }
 
 //Somedays
-   if($numbersomeday!='-1'){
+   if($numbersomeday){
 	$i=0;
-        $w2=$numbersomeday[0]['nitems']/3;
+        $w2=$numbersomeday/3;
         if ($sm!=-1) {
 	foreach($sm as $row) {
                 if($i < $w2){
@@ -167,53 +146,56 @@ if($numbercontexts[0]['ncontexts']==1) {
     echo "<div class='reportsection'>\n";
 	echo "<h3>Project</h3>\n";
 
-    if($numberprojects[0]['nitems']==1){
-        echo '<p>There is ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Project</a>.</p>'."\n";
+    if($numberprojects==1){
+        echo '<p>There is 1 active <a href="listItems.php?type=p">Project</a>.</p>'."\n";
     }else{
-        echo '<p>There are ' .$numberprojects[0]['nitems']. ' active <a href="listItems.php?type=p">Projects</a>.</p>'."\n";
+        echo '<p>There are ' .$numberprojects. ' active <a href="listItems.php?type=p">Projects</a>.</p>'."\n";
     }
 
-	$s="<table summary='table of projects'>\n";
-	$nr = count($c1);
+	if($numberprojects) {
+        $s="<table summary='table of projects'>\n";
+    	$nr = count($c1);
 
-	for($i=0;$i<$nr;$i+=1){
-		$s.="	<tr>\n";
-		$s.='		<td><a href="itemReport.php?itemId='.$i1[$i].'" title="'.$q1[$i].'">'.$c1[$i]."</a></td>\n";
-		if ($i2[$i]!="" || $nr>1) $s.='		<td><a href="itemReport.php?itemId='.$i2[$i].'" title="'.$q2[$i].'">'.$c2[$i]."</a></td>\n";
-		if ($i3[$i]!="" || $nr>1) $s.='		<td><a href="itemReport.php?itemId='.$i3[$i].'" title="'.$q3[$i].'">'.$c3[$i]."</a></td>\n";
-		$s.="	</tr>\n";
-	}
+    	for($i=0;$i<$nr;$i+=1){
+    		$s.="	<tr>\n";
+    		$s.='		<td><a href="itemReport.php?itemId='.$i1[$i].'" title="'.$q1[$i].'">'.$c1[$i]."</a></td>\n";
+    		if ($i2[$i]!="" || $nr>1) $s.='		<td><a href="itemReport.php?itemId='.$i2[$i].'" title="'.$q2[$i].'">'.$c2[$i]."</a></td>\n";
+    		if ($i3[$i]!="" || $nr>1) $s.='		<td><a href="itemReport.php?itemId='.$i3[$i].'" title="'.$q3[$i].'">'.$c3[$i]."</a></td>\n";
+    		$s.="	</tr>\n";
+    	}
 
-	$s.="</table>\n";
+    	$s.="</table>\n";
 
-	echo $s;
+    	echo $s;
+    }
 	echo "</div>\n";
 
     echo "<div class='reportsection'>\n";
 	echo "<h3>Someday/Maybes</h3>\n";
 
-    if($numbersomeday!='-1')
-    if($numbersomeday[0]['nitems']==1){
-        echo '<p>There is ' .$numbersomeday[0]['nitems']. ' <a href="listItems.php?type=p&amp;someday=true">Someday/Maybe</a>.</p>'."\n";
+    if($numbersomeday==1){
+        echo '<p>There is 1 <a href="listItems.php?type=p&amp;someday=true">Someday/Maybe</a>.</p>'."\n";
     }else{
-        echo '<p>There are ' .$numbersomeday[0]['nitems']. ' <a href="listItems.php?type=p&amp;someday=true">Someday/Maybes</a>.</p>'."\n";
+        echo '<p>There are ' .$numbersomeday.' <a href="listItems.php?type=p&amp;someday=true">Someday/Maybes</a>.</p>'."\n";
     }
 
 
-	$t="<table summary='table of someday/maybe items'>\n";
-	$nr = count($d1);
+	if($numbersomeday) {
+        $t="<table summary='table of someday/maybe items'>\n";
+    	$nr = count($d1);
 
-	for($i=0;$i<$nr;$i+=1){
-		$t.="	<tr>\n";
-		$t.='		<td><a href="itemReport.php?itemId='.$j1[$i].'" title="'.$k1[$i].'">'.$d1[$i]."</a></td>\n";
-		if ($j2[$i]!="" || $nr>1) $t.='		<td><a href="itemReport.php?itemId='.$j2[$i].'" title="'.$k2[$i].'">'.$d2[$i]."</a></td>\n";
-		if ($j3[$i]!="" || $nr>1) $t.='		<td><a href="itemReport.php?itemId='.$j3[$i].'" title="'.$k3[$i].'">'.$d3[$i]."</a></td>\n";
-		$t.="	</tr>\n";
-	}
+    	for($i=0;$i<$nr;$i+=1){
+    		$t.="	<tr>\n";
+    		$t.='		<td><a href="itemReport.php?itemId='.$j1[$i].'" title="'.$k1[$i].'">'.$d1[$i]."</a></td>\n";
+    		if ($j2[$i]!="" || $nr>1) $t.='		<td><a href="itemReport.php?itemId='.$j2[$i].'" title="'.$k2[$i].'">'.$d2[$i]."</a></td>\n";
+    		if ($j3[$i]!="" || $nr>1) $t.='		<td><a href="itemReport.php?itemId='.$j3[$i].'" title="'.$k3[$i].'">'.$d3[$i]."</a></td>\n";
+    		$t.="	</tr>\n";
+    	}
 
-	$t.="</table>\n";
+    	$t.="</table>\n";
 
-	echo $t;
+    	echo $t;
+    }
 	echo "</div>\n";
 
 	include_once('footer.php');
