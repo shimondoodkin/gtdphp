@@ -191,8 +191,8 @@ function doInstall() {
        installation for use and familiarize yourself with the system.</p>
        <p>
 		   <ol>
-              <li>You need to set up <a href="newContext.php" target="_blank">spatial</a> and
-              <a href="newTimeContext.php" target="_blank">time contexts</a> that suit your situation.</li>
+              <li>You need to set up <a href="editCat.php?field=context&amp;id=0">spatial</a> and
+              <a href="editCat.php?field=timeContext&amp;id=0">time contexts</a> that suit your situation.</li>
 			   <li>You need to enter ....</li>
 			   <li></li>
 			   <li></li>
@@ -212,8 +212,8 @@ HTML1;
        <p>You have just successfully installed GTD-PHP. Sample data has been created as part of the installation.</p>
        <p>
 		   <ol>
-              <li>Check that the <a href="newContext.php" target="_blank">spatial</a> and
-              <a href="newTimeContext.php" target="_blank">time contexts</a> suit your situation.</li>
+              <li>Check that the <a href="editCat.php?field=context">spatial</a> and
+              <a href="editCat.php?field=timeContext">time contexts</a> suit your situation.</li>
 		   </ol>
        </p>
 HTML2;

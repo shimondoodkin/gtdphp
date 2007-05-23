@@ -5,12 +5,16 @@ include_once('header.php');
 // get core variables first
 $values=array();  // ensures that this is a global variable
 $values['itemId'] = (int) $_POST['itemId'];
+$values['type'] = $_POST['type'];
+
 $action = $_POST['action'];
 
 $updateGlobals=array();
 $updateGlobals['multi']    = (isset($_POST['multi']) && $_POST['multi']==='y');
-$updateGlobals['parents']  = $_POST['parentId']; // TOFIX - what happens if this is empty?
 $updateGlobals['referrer'] = $_POST['referrer'];
+$updateGlobals['actionMessage'] = array();
+$updateGlobals['parents'] = $_POST['parentId'];
+if (!is_array($updateGlobals['parents'])) $updateGlobals['parents']=array($updateGlobals['parents']);
 
 if (isset($_POST['wasNAonEntry'])) {  // toggling next action status on several items
 	$updateGlobals['wasNAonEntry'] = explode(' ',$_POST['wasNAonEntry']);
@@ -22,7 +26,6 @@ if (isset($_POST['isMarked'])) { // doing a specific action on several items (cu
 	$updateGlobals['isMarked']=array();
 	$updateGlobals['isMarked']=array_unique($_POST['isMarked']); // remove duplicates
 }
-
 
 // some debugging - if debug is set to halt, dump all the variables we've got
 
@@ -70,42 +73,66 @@ return;
 
 function doAction($localAction) { // do the current action on the current item; returns TRUE if succeeded, else returns FALSE
 	global $config,$values,$updateGlobals;
-	if ($config['debug'] & _GTD_DEBUG) echo "<p><b>Action here is: '$localAction' on item {$values['itemId']}</b></p>";
+	$title='';
+	if ($values['itemId']) {
+        $result=query('getitembrief',$config,$values);
+    	if ($result!=-1) {
+            $title=makeclean($result[0]['title']);
+            $desc=escapeQuotes($result[0]['description']);
+    	}
+    } else {
+        $title=$_POST['title'];
+        $desc=$_POST['description'];
+    }
+    if ($title=='') {
+        $title='item '.$values['itemId'];
+        $desc='';
+    }
+
+	if ($config['debug'] & _GTD_DEBUG) echo "<p><b>Action here is: $localAction item {$values['itemId']}</b></p>";
 	if ($config['debug'] & _GTD_FREEZEDB) return TRUE;
 	switch ($localAction) {
 		case 'makeNA':
 			makeNextAction();
+			$msg="'$title' is now a next action";
 			break;
 			
 		case 'removeNA':
 			removeNextAction();
+            $msg="'$title' is no longer a next action";
 			break;
 			
 		case 'create':
 			retrieveFormVars();
 			createItem();
+			$msg="Created item: '$title'";
 			break;
 			
 		case 'complete':
 			completeItem();
+			$msg="Completed '$title'";
 			break;
 		
 		case 'fullUpdate':
 			retrieveFormVars();
 			updateItem();
+			$msg="Updated '$title'";
 			break;
 			
 		case 'delete':
 			deleteItem();
+			$msg="Deleted '$title'";
 			break;
 		
 		case 'createbasic': // not in use yet. added for future use, when only title and type are set.
 			createItemQuickly();
+			$msg="Created item: '$title'";
 			break;
 			
 		default: // failed to identify which action we should be taking, so quit
 			return FALSE;
 	}
+	$updateGlobals['actionMessage'][] = $msg;
 	return TRUE; // we have successfully carried out some action
 }
 
@@ -133,10 +160,10 @@ function createItem() { // create an item and its parent-child relationships
 	$result = query("newitemstatus",$config,$values);
 	
 	if($config['debug'] & _GTD_DEBUG) echo '<pre>',print_r($updateGlobals['parents'],true),'</pre>';
-	foreach ($updateGlobals['parents'] as $values['parentId']) if (((int) $values['parentId'])>0) {
-		$result = query("newparent",$config,$values);
-		if($values['nextAction']==='y') $result = query("newnextaction",$config,$values);	
-	}
+    foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
+    	$result = query("newparent",$config,$values);
+    	if($values['nextAction']==='y') $result = query("newnextaction",$config,$values);
+   	}
 }
 
 function createItemQuickly() {// create an item when we only know its type and title - not yet in use - TOFIX still to check
@@ -144,7 +171,7 @@ function createItemQuickly() {// create an item when we only know its type and t
 	//Insert new records
 	$result = query("newitem",$config,$values);
 	$values['newitemId'] = $GLOBALS['lastinsertid'];
-	foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']>0) {
+	foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
 		$result = query("newparent",$config,$values);
 		if($values['nextAction']==='y') $result = query("updatenextaction",$config,$values);	
 	}
@@ -157,7 +184,7 @@ function updateItem() { // update all the values for the current item
 	removeNextAction();
     query("updateitemattributes",$config,$values);
     query("updateitem",$config,$values);
-	foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']>0) {
+	foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
 		$result = query("updateparent",$config,$values);
 		if (($values['nextAction']==='y') && $values['dateCompleted']==='NULL')
 			// we have a next action, so make sure we tag it for each parent
@@ -249,7 +276,7 @@ function getItemCopy() { // retrieve all the values for the current item, and st
 	$updateGlobals['parents']=array();
 	if (is_array($result))
 		foreach ($result as $parent)
-			array_push($updateGlobals['parents'],$parent['parentId']); 
+			$updateGlobals['parents'][]=$parent['parentId'];
 	if ($config['debug'] & _GTD_DEBUG) {
 		echo '<pre>Retrieved record for copying: </pre>';
 		literaldump('$values');
@@ -302,7 +329,7 @@ function nextPage() { // set up the forwarding to the next page
 	if (isset($updateGlobals['referrer']) && ($updateGlobals['referrer'] !== ''))
 		$nextURL=$updateGlobals['referrer'];
 	else switch ($_SESSION['afterCreate' . $values['type']]) {
-		case "parent"  : $nextURL=($updateGlobals['parents'][0]>0)?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;
+		case "parent"  : $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;
 		case "item"    : $nextURL='itemReport.php?itemId='.$values['newitemId']; break;
 		case "another" : $nextURL='item.php?type='        .$values['type']; break;
 		case "list"	   : $nextURL='listItems.php?type='   .$values['type']; break;
@@ -314,6 +341,7 @@ function nextPage() { // set up the forwarding to the next page
             ,'session=',print_r($_SESSION,true),'<br />'
             ,'</pre>';
     }
+    $_SESSION['message']=$updateGlobals['actionMessage'];
 	echo nextScreen($nextURL,$config);
 }
 

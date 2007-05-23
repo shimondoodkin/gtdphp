@@ -55,11 +55,10 @@ $sql = array(
 										    AND il.`parentId`=". $values['parentId'] . " 
 											AND its.`dateCompleted` IS NULL",
 
-        "countitems"                => "SELECT `type`, COUNT(*) AS nitems 
+        "countitems"                => "SELECT COUNT(*)
 										FROM `". $config['prefix'] ."itemattributes` as ia, 
 												`". $config['prefix'] ."itemstatus` as its 
-										WHERE ia.`itemId`=its.`itemId` ".$values['filterquery']." 
-										GROUP BY `type`",
+										WHERE ia.`itemId`=its.`itemId` ".$values['filterquery'],
         
         "countnextactions"          => "SELECT COUNT(DISTINCT `nextaction`) AS nnextactions 
 										FROM `". $config['prefix'] ."nextactions` as na

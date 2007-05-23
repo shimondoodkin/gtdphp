@@ -222,6 +222,12 @@ select, input[type='text'], input[type='submit'], input[type='reset'], button, t
 	border: 2px solid #ccb;
 }
 
+div.success {
+    border: solid green 2px;
+    font-weight:bold;
+    padding:2px;
+    background-color:#CFC;
+}
 
 table {
 	border-spacing: 0;

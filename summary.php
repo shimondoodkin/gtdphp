@@ -28,7 +28,7 @@ $numbernextactions=(int) $res[0]['nnextactions'];
 
 // get # actions
 $res =query("countitems",$config,$values,$options,$sort);
-$numberitems =(int) $res[0]['nitems'];
+$numberitems =(int) $res[0]['COUNT(*)'];
 
 // get and count active projects
 $values['type']= "p";

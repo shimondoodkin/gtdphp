@@ -210,3 +210,4 @@ function makemenu($list) {
 	</ul>
 </div>
 <div id="main">
+<?php include_once('showMessage.inc.php'); ?>
