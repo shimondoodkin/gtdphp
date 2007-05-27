@@ -557,7 +557,7 @@ $sql = array(
         "updatelistitem"            => "UPDATE `". $config['prefix'] . "listItems`
 										SET `notes` = '{$values['newnotes']}', `item` = '{$values['newitem']}', 
 												`listId` = '{$values['listId']}', 
-												`dateCompleted`='{$values['newdateCompleted']}' 
+												`dateCompleted`={$values['newdateCompleted']}
 										WHERE `listItemId` ='{$values['listItemId']}'",
 
         "updateparent"              => "INSERT INTO `". $config['prefix'] . "lookup` 
