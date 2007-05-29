@@ -101,20 +101,19 @@ if ($childtype!=NULL) {
 	    //Select items by type
 	    if ($thistype==='s') {
 	       $values['type']='p';
-	       $values['someday']='true';
+	       $values['isSomeday']='y';
         } else {
-            $values['someday']='false';
+            $values['isSomeday']='n';
             $values['type']=$thistype;
         }
 	    $values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
+	    $values['filterquery'] = " AND ".sqlparts("issomeday",$config,$values);
 
-	    if ($comp==='y') {
-			$values['filterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
-			$result = query("getchildren",$config,$values,$options,$sort);
-		} else {
-			$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);  //suppressed items will be shown on report page
-			$result = query("getchildren",$config,$values,$options,$sort);
-		}
+        $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
+		$result = query("getchildren",$config,$values,$options,$sort);
+
+		$values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
+		$result = query("getchildren",$config,$values,$options,$sort);
 		echo "<div class='reportsection'>\n"
             ,($result != "-1")?'<h2>':'<h3>No '
 			,($comp=="y")?('Completed&nbsp;'):('<a href="item.php?parentId='.$values['itemId'].'&amp;action=create&amp;type='.$thistype.'" title="Add new '.$typename[$value].'">')
