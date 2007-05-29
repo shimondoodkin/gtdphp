@@ -8,14 +8,14 @@ $values=array();
 //obtain all contexts
 $contextResults = query("getspacecontexts",$config,$values,$option,$sort);
 $contextNames=array();
-foreach ($contextResults as $row) {
-	$contextNames[$row[contextId]]=htmlspecialchars(stripslashes($row[name]));
-	}
+if ($contextResults!=-1)
+    foreach ($contextResults as $row)
+	   $contextNames[$row['contextId']]=htmlspecialchars(stripslashes($row[name]));
 
 //obtain all timeframes
 $timeframeResults = query("gettimecontexts",$config,$values,$options,$sort);
 $timeframeNames=array();
-foreach($timeframeResults as $row) {
+if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
 	$timeframeNames[$row[timeframeId]]=htmlspecialchars(stripslashes($row[timeframe]));
 	$timeframeDesc[$row[timeframeId]]=htmlspecialchars(stripslashes($row[timeframe]));
 	}
@@ -167,6 +167,6 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
         }
     }
 }
-
+$_SESSION['referrer']=basename($thisurl['path']);
 include_once('footer.php');
 ?>

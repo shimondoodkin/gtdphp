@@ -152,7 +152,10 @@ span.nextActionMarker {
 .weeklytable {
 	width: 95%;
 }
-
+.formrow .text {
+    position:relative;
+    top:0.5em;
+}
 
 /*===================================================================================================*/
 /* non-layout code - font family, font size, font-weight, color, border, background, text decoration */
@@ -183,7 +186,7 @@ h3 {
 	background: none;
 }
 
-h4 {
+h4,.reportItem {
 	font-size: 11px;
 	font-weight: bold;
 	background: none;

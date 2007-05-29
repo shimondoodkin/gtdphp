@@ -2,27 +2,27 @@
 //INCLUDES
 include_once('header.php');
 
-$nextactioncheck="n";
-
 //RETRIEVE URL VARIABLES
 $values = array();
 
 $values['itemId']= (int) getVarFromGetPost('itemId');
 $values['type']=getVarFromGetPost('type');
+if ($values['type']==='s') {
+    $values['isSomeday']='y';
+    $values['type']='p';
+}
+if ($_GET['someday']=='true') $values['isSomeday']='y';
+
+$nextaction=false;
+if ($values['type']==='n') {
+    $nextaction=true;
+    $values['type']='a';
+}
+if ($_GET['nextonly']=='true') $nextaction=true;
 
 $values['parentId']=array();
 $tmp=getVarFromGetPost('parentId');
 if ($tmp!=='') $values['parentId'][0] = (int) $tmp;
-
-if ($values['type']==="n") {
-        $values['type']='a';
-        $nextactioncheck='true';
-}
-
-if ($values['type']==="s") {
-        $values['type']='p';
-        $values['isSomeday']="y";
-}
 
 //SQL CODE
 if ($values['itemId']>0) {
@@ -39,34 +39,31 @@ if ($values['itemId']>0) {
     //Test to see if nextaction
     $result = query("testnextaction",$config,$values,$options,$sort);
     if ($result!="-1") {
-        if ($result[0]['nextaction']==$values['itemId']) $nextactioncheck='true';
+        if ($result[0]['nextaction']==$values['itemId']) $nextaction=true;
         }
     }
 }
 
 //determine item and parent labels
-    switch ($values['type']) {
-        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; break;
-        case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; break;
-        case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; break;
-        case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; break;
-        case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; break;
-        case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; break;
-        case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
-        case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; break;
-        case "i" : $typename="Inbox Item"; $parentname="Project"; $values['ptype']="p"; break; //default to project as parent
-        default  : $typename="Item"; $parentname="Project"; $values['ptype']="p"; //default to project as parent
-        }
+switch ($values['type']) {
+    case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; break;
+    case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; break;
+    case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; break;
+    case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; break;
+    case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; break;
+    case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; break;
+    case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
+    case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; break;
+    case "i" : $typename="Inbox Item"; $parentname="Project"; $values['ptype']="p"; break; //default to project as parent
+    default  : $typename="Item"; $parentname="Project"; $values['ptype']="p"; //default to project as parent
+}
+
+if ($values['isSomeday']==="y") $typename="Someday/Maybe";
+if ($nextaction) $typename="Next Action";
 
 $parents = query("lookupparent",$config,$values);
 
-    $i=1;
-    if ($parents!="-1") {
-        foreach ($parents as $row) {
-            $values['parentId'][$i]=$row['parentId'];
-            $i++;
-            }
-        }
+if ($parents!="-1") foreach ($parents as $row) $values['parentId'][]=$row['parentId'];
 
 //create filters for selectboxes
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
@@ -77,6 +74,7 @@ $cashtml = categoryselectbox($config,$values,$options,$sort);
 $cshtml = contextselectbox($config,$values,$options,$sort);
 $tshtml = timecontextselectbox($config,$values,$options,$sort);
 
+$oldtype=$values['type'];
 
 //PAGE DISPLAY CODE
 echo '<h2>',($values['itemId']>0)?'Edit ':'New ',$typename,"</h2>\n";
@@ -161,6 +159,12 @@ echo "<input type='hidden' name='action' value='",
                         <textarea rows='4'  cols='50' name='desiredOutcome' id='outcome' class='big'><?php echo htmlspecialchars(stripslashes($currentrow['desiredOutcome'])) ?></textarea>
                 </div>
                 <div class='formrow'>
+                    <?php if ($values['itemId']) { ?>
+                        <label for='suppress' class='left first'>Warning:</label>
+                        <span class='text'>changing the item type will sever all parent &amp; child relationships with this item</span>
+                        </div>
+                        <div class='formrow'>
+                    <?php } ?>
                         <label class='left first'>Type:</label>
                         <input type='radio' name='type' id='value' value='m' class="first" <?php if ($values['type']=='m') echo "checked='checked' "; ?>/><label for='value' class='right'>Value</label>
                         <input type='radio' name='type' id='vision' value='v' class="notfirst" <?php if ($values['type']=='v') echo "checked='checked' "; ?>/><label for='vision' class='right'>Vision</label>
@@ -173,10 +177,7 @@ echo "<input type='hidden' name='action' value='",
                         <input type='radio' name='type' id='action' value='a' class="first" <?php if ($values['type']=='a') echo "checked='checked' "; ?>/><label for='action' class='right'>Action</label>
                         <input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($values['type']=='r') echo "checked='checked' "; ?>/><label for='reference' class='right'>Reference</label>
                         <input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($values['type']=='w') echo "checked='checked' "; ?>/><label for='waiting' class='right'>Waiting</label>
-                </div>
-                <div class='formrow'>
-                        <label class='left first'></label>
-                        <input type='radio' name='type' id='inbox' value='i' class="first" <?php if ($values['type']=='i') echo "checked='checked' "; ?>/><label for='inbox' class='right'>Inbox</label>
+                        <input type='radio' name='type' id='inbox' value='i' class="notfirst" <?php if ($values['type']=='i') echo "checked='checked' "; ?>/><label for='inbox' class='right'>Inbox</label>
                 </div>
 
                 <div class='formrow'>
@@ -191,42 +192,52 @@ echo "<input type='hidden' name='action' value='",
                 </div>
 
                 <div class='formrow'>
-                        <label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" id="nextAction" value="y" <?php if ($nextactioncheck=='true') echo " checked='checked'"; ?> />
-
-                        <label for='isSomeday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']==='y' || $values['type']=='s') echo " checked='checked'";?> />
+                        <label for='nextAction' class='left first'>Next Action:</label><input type="checkbox" name="nextAction" id="nextAction" value="y" <?php if ($nextaction) echo " checked='checked'"; ?> />
+                        <label for='isSomeday' class='left first'>Someday:</label><input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']==='y') echo " checked='checked'";?> />
                 </div>
-
 <?php
-if ($values['itemId']>0) {
-    echo "</div> <!-- form div -->\n"
-        ,"<div class='formbuttons'>\n"
-        ,"<input type='hidden' name='referrer' value='",getVarFromGetPost('referrer'),"' />\n"
-        ,"<input type='submit' value='Update $typename' name='submit' />\n"
-        ,"<input type='reset' value='Reset' />\n"
-        ,"<input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/>\n"
-        ,"<label for='delete'>Delete&nbsp;$typename</label>\n";
-} else {
-	if ($_SESSION['afterCreate' . $values['type']]=='' && isset($config['afterCreate'][$values['type']]))
-		$_SESSION['afterCreate' . $values['type']]=$config['afterCreate'][$values['type']];
-	echo "<div class='formrow'>\n<label class='left first'>After creating: </label>\n",
-		'<input type="radio" name="afterCreate' . $values['type'] . '" id="parentNext" value="parent" class="first"',
-		 	($_SESSION['afterCreate' . $values['type']]=='parent')?" checked='checked' ":"",
-			" /><label for='parentNext' class='right'>View parent</label>\n",
-		'<input type="radio" name="afterCreate' . $values['type'] . '" id="itemNext" value="item" class="notfirst"',
-		 	($_SESSION['afterCreate' . $values['type']]=='item')?" checked='checked' ":"",
-			" /><label for='itemNext' class='right'>View item</label>\n",
-		'<input type="radio" name="afterCreate' . $values['type'] . '" id="listNext" value="list" class="notfirst"',
-		 	($_SESSION['afterCreate' . $values['type']]=='list')?" checked='checked' ":"",
-			" /><label for='listNext' class='right'>List items</label>\n",
-		'<input type="radio" name="afterCreate' . $values['type'] . '" id="anotherNext" value="another" class="notfirst"',
-		 	($_SESSION['afterCreate' . $values['type']]=='another')?" checked='checked' ":"",
-			" /><label for='anotherNext' class='right'>Create another $typename</label>\n",
-        "</div>\n</div> <!-- form div -->\n<div class='formbuttons'>\n",
-		"<input type='submit' value='Create'  name='submit' />\n";
-	}
+$referrer=getVarFromGetPost('referrer');
+echo "<input type='hidden' name='referrer' value='$referrer' />\n";
+$key='afterCreate'.$values['type'];
+if ($_SESSION[$key]=='' && isset($config['afterCreate'][$values['type']]))
+	$_SESSION[$key]=$config['afterCreate'][$values['type']];
+	
+$tst=($values['itemId'] && $referrer!='')?'referrer':$_SESSION['afterCreate' . $values['type']];
+echo "<div class='formrow'>\n<label class='left first'>After "
+    ,($values['itemId'])?'updating':'creating'
+    ,":</label>\n"
+	,"<input type='radio' name='afterCreate' id='parentNext' value='parent' class='first'"
+	 	,($tst=='parent')?" checked='checked' ":""
+		," /><label for='parentNext' class='right'>View parent</label>\n"
+	,"<input type='radio' name='afterCreate' id='itemNext' value='item' class='notfirst'"
+	 	,($tst=='item')?" checked='checked' ":""
+		," /><label for='itemNext' class='right'>View item</label>\n"
+	,"<input type='radio' name='afterCreate' id='listNext' value='list' class='notfirst'"
+	 	,($tst=='list')?" checked='checked' ":""
+		," /><label for='listNext' class='right'>List items</label>\n"
+	,"<input type='radio' name='afterCreate' id='anotherNext' value='another' class='notfirst'"
+	 	,($tst=='another')?" checked='checked' ":""
+		," /><label for='anotherNext' class='right'>Create another $typename</label>\n";
+		
+if ($values['itemId'] && ($referrer!='' || $_SESSION[$key]!='')) {
+    echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
+	 	," checked='checked' "
+		," /><label for='referrer' class='right'>Return to previous list</label>\n";
+}
+
+echo "</div>\n</div> <!-- form div -->\n<div class='formbuttons'>\n"
+    ,"<input type='submit' value='"
+    ,($values['itemId'])?"Update $typename":'Create'
+    ,"' name='submit' />\n"
+    ,"<input type='reset' value='Reset' />\n";
+if ($values['itemId']) {
+    echo "<input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/>\n"
+        ,"<label for='delete'>Delete&nbsp;$typename</label>\n"
+        ,"<input type='hidden' name='oldtype' value='$oldtype' />\n";
+}
 echo "</div>\n</form>\n";
 
-if ($values['itemId']>0) {
+if ($values['itemId']) {
         echo "	<div class='details'>\n";
         echo "		<span class='detail'>Date Added: ".$currentrow['dateCreated']."</span>\n";
         echo "		<span class='detail'>Last Modified: ".$currentrow['lastModified']."</span>\n";

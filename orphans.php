@@ -10,6 +10,7 @@ $maintable=array();
 $thisrow=0;
 foreach ($result as $row) {
     $maintable[$thisrow]=array();
+    $maintable[$thisrow]['id']=$row['itemId'];
     $maintable[$thisrow]['type']=getTypes($row['type']);
     $maintable[$thisrow]['title']=makeclean($row['title']);
     $maintable[$thisrow]['description']=trimTaggedString($row['description'],$config['trimLength']);

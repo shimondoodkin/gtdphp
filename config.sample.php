@@ -51,20 +51,20 @@ $acckey = array(
 	"credits.php"							=> "", // Credits
 	"donate.php"							=> "", // Donate
 	"item.php?type=a"						=> "", // add Action
-	"item.php?type=a&nextonly=true"			=> "", // add Next Action
+	"item.php?type=a&amp;nextonly=true"     => "", // add Next Action
 	"item.php?type=g"						=> "", // add Goal
 	"item.php?type=i"						=> "i", // add Inbox item
 	"item.php?type=m"						=> "", // add Value
 	"item.php?type=o"						=> "", // add Role
 	"item.php?type=p"						=> "p", // add Project
-	"item.php?type=p&someday=true"			=> "", // add Someday/Maybe
+	"item.php?type=p&amp;someday=true"	   	=> "", // add Someday/Maybe
 	"item.php?type=r"						=> "", // add Reference
 	"item.php?type=v"						=> "", // add Vision
 	"item.php?type=w"						=> "", // add Waiting On
 	"leadership.php"						=> "", // Leadership
 	"listChecklist.php"						=> "c", // Checklists
 	"listItems.php?type=a"					=> "a", // Actions
-	"listItems.php?type=a&nextonly=true"	=> "n", // Next Actions
+	"listIitem.php?type=a&amp;nextonly=true"=> "n", // Next Actions
 	"listItems.php?type=a&tickler=true"		=> "", // Tickler File
 	"listItems.php?type=g"					=> "", // Goals
 	"listItems.php?type=i"					=> "", // Inbox

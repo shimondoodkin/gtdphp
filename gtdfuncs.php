@@ -264,8 +264,8 @@ switch ($parentType) {
     case "v" : $childtype=array("o"); break;
     case "o" : $childtype=array("g"); break;
     case "g" : $childtype=array("p","s"); break;
-    case "p" : $childtype=array("a","w","r","p","s",); break;
-    case "s" : $childtype=array("a","w","r","s",); break;
+    case "p" : $childtype=array("a","w","r","p","s"); break;
+    case "s" : $childtype=array("a","w","r","s"); break;
     case "a" : $childtype=NULL; break;
     case "w" : $childtype=NULL; break;
     case "r" : $childtype=NULL; break;
@@ -294,7 +294,8 @@ else
 }
 
 function escapeQuotes($str) {
-    $outStr=str_replace(array("'",'"','&'),array('&#039;','&quot;','&amp;'),$str);
+    $outStr=str_replace('&','&amp;',$str);
+    $outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$str);
     $outStr=str_replace('&amp;amp;','&amp;',$outStr);
 	return $outStr;
 }

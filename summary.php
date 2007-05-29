@@ -88,9 +88,9 @@ echo "<p>There $verb $numbernextactions"
 echo "<div class='reportsection'>\n";
     echo "<h3>Contexts</h3>\n";
 if($numbercontexts==1) {
-    echo "<p>There is $numbercontexts <a href='reportContext.php?type=n'>Spatial Context</a>.</p>\n";
+    echo "<p>There is $numbercontexts <a href='reportContext.php'>Spatial Context</a>.</p>\n";
 } else {
-    echo "<p>There are $numbercontexts <a href='reportContext.php?type=n'>Spatial Contexts</a>.</p>\n";
+    echo "<p>There are $numbercontexts <a href='reportContext.php'>Spatial Contexts</a>.</p>\n";
 }
     echo "</div>\n";
 

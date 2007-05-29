@@ -11,7 +11,7 @@ $show=array();
 $values = array();
 $filter = array();
 
-$filter['type']           =substr(getVarFromGetPost('type','a'),0,1);
+$filter['type']           =getVarFromGetPost('type','a');
 $filter['contextId']      =getVarFromGetPost('contextId',NULL);
 if ($filter['contextId']==='0') $filter['contextId']=NULL;
 $filter['categoryId']     =getVarFromGetPost('categoryId',NULL);
@@ -29,11 +29,18 @@ $filter['dueonly']        =getVarFromGetPost('dueonly');           //has due dat
 $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeating:true/empty
 $filter['parentId']       =getVarFromGetPost('parentId');
 
-$values['parentId']       =$filter['parentId'];
+if ($filter['type']==='s') {
+    $filter['someday']=true;
+    $filter['type']='p';
+}
 $values['type']           =$filter['type'];
+$values['parentId']       =$filter['parentId'];
 $values['contextId']      =$filter['contextId'];
 $values['categoryId']     =$filter['categoryId'];
 $values['timeframeId']    =$filter['timeframeId'];
+
+
+if ($config['debug'] && _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
 
 //SQL CODE
 
@@ -198,8 +205,14 @@ if ($filter['dueonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts
 $filter['nextonly']
 */
 
-$sectiontitle = ($filter['completed']=="true")?'Completed&nbsp;'
-    :"<a href='item.php?type={$values['type']}' title='Add new $typename'>";
+if($filter['completed']=="true")
+    $sectiontitle = 'Completed&nbsp;';
+else{
+    $sectiontitle = "<a href='item.php?type={$values['type']}";
+    if ($filter['someday']) $sectiontitle .='&amp;someday=true';
+    if ($filter['nextonly']) $sectiontitle .='&amp;nextonly=true';
+    $sectiontitle .= "' title='Add new $typename'>";
+}
 if ($filter['repeatingonly']=="true") $sectiontitle .= 'Repeating&nbsp;';
 if ($filter['dueonly']=="true") $sectiontitle .=  'Due&nbsp;';
 if ($filter['someday']=="true") $sectiontitle .= 'Someday/Maybe&nbsp;';

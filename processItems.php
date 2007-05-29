@@ -32,7 +32,8 @@ if (isset($_POST['isMarked'])) { // doing a specific action on several items (cu
 if ($config['debug'] & _GTD_DEBUG) {
 	// debugging text - simply dump the variables, and quit, without processing anything
 	literaldump('$_GET');
-	literaldump('$_POST');
+    literaldump('$_POST');
+    literaldump('$_SESSION');
 	literaldump('$action');
 	literaldump('$config');
 	literaldump('$values');
@@ -158,12 +159,7 @@ function createItem() { // create an item and its parent-child relationships
 	$values['newitemId'] = $GLOBALS['lastinsertid'];
 	$result = query("newitemattributes",$config,$values);
 	$result = query("newitemstatus",$config,$values);
-	
-	if($config['debug'] & _GTD_DEBUG) echo '<pre>',print_r($updateGlobals['parents'],true),'</pre>';
-    foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
-    	$result = query("newparent",$config,$values);
-    	if($values['nextAction']==='y') $result = query("newnextaction",$config,$values);
-   	}
+	setParents('new');
 }
 
 function createItemQuickly() {// create an item when we only know its type and title - not yet in use - TOFIX still to check
@@ -171,25 +167,21 @@ function createItemQuickly() {// create an item when we only know its type and t
 	//Insert new records
 	$result = query("newitem",$config,$values);
 	$values['newitemId'] = $GLOBALS['lastinsertid'];
-	foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
-		$result = query("newparent",$config,$values);
-		if($values['nextAction']==='y') $result = query("updatenextaction",$config,$values);	
-	}
+	setParents('new');
 }
 
 function updateItem() { // update all the values for the current item
-// TOFIX - what do we do if we change item type? Probably sever all parent-child links.
 	global $config,$values,$updateGlobals;
 	query("deletelookup",$config,$values);
 	removeNextAction();
     query("updateitemattributes",$config,$values);
     query("updateitem",$config,$values);
-	foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
-		$result = query("updateparent",$config,$values);
-		if (($values['nextAction']==='y') && $values['dateCompleted']==='NULL')
-			// we have a next action, so make sure we tag it for each parent
-			makeNextAction();
-	}
+    if ($values['type'] === $values['oldtype'])
+    	setParents('update');
+    else
+        // changing item type - sever child links
+    	query("deletelookupparents",$config,$values);
+
 	if ($values['dateCompleted']!=='NULL')
 		completeItem();
 	else
@@ -212,11 +204,13 @@ function makeNextAction() { // mark the current item as a next action
 	global $config,$values;
 	$thisquery='updatenextaction';
     $parentresult = query("lookupparent",$config,$values);
-    if ($parentresult!="-1")
-		foreach ($parentresult as $parent) {
-			$values['parentId']=$parent['parentId'];
-			query($thisquery,$config,$values);
-		}
+    if ($parentresult=="-1") {
+        $values['parentId']=0;
+		query($thisquery,$config,$values);
+    } else foreach ($parentresult as $parent) {
+		$values['parentId']=$parent['parentId'];
+		query($thisquery,$config,$values);
+	}
 }
 
 function removeNextAction() { // remove the next action reference for the current item
@@ -233,6 +227,7 @@ function retrieveFormVars() { // extract the item values from the HTTP GET and P
 
 	// key variables
 	if (isset($_POST['type']))           $values['type']           = $_POST['type'];
+	if (isset($_POST['oldtype']) && $_POST['oldtype']!='') $values['oldtype']        = $_POST['oldtype'];
 	if (isset($_POST['title']))          $values['title']          = $_POST['title'];
 	if (isset($_POST['description']))    $values['description']    = $_POST['description'];
 	if (isset($_POST['desiredOutcome'])) $values['desiredOutcome'] = $_POST['desiredOutcome'];
@@ -258,7 +253,6 @@ function retrieveFormVars() { // extract the item values from the HTTP GET and P
 
 	// crude error checking
 	if (!isset($values['title'])) die ("No title. Item NOT added."); // TOFIX
-	if($values['isSomeday']==='y') $values['type']='s';
 
 	if ($config['debug'] & _GTD_DEBUG) {
 		echo '<hr /><pre><b>retrieved form vars</b><br />';
@@ -282,6 +276,23 @@ function getItemCopy() { // retrieve all the values for the current item, and st
 		literaldump('$values');
 		echo '<pre>Parents:',print_r($updateGlobals['parents'],true),'</pre>';
 	}
+}
+
+function setParents($new) {
+    global $config,$values,$updateGlobals;
+	if($config['debug'] & _GTD_DEBUG) echo '<pre>',print_r($updateGlobals['parents'],true),'</pre>';
+    $markedna=false;
+    foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
+    	$result = query($new."parent",$config,$values);
+    	if($values['nextAction']==='y') {
+            $result = query($new."nextaction",$config,$values);
+            $markedna=true;
+        }
+   	}
+    if ($values['nextAction']==='y' && !$markedna) {
+        $values['parentId']=0;
+        $result = query($new."nextaction",$config,$values);
+    }
 }
 
 function recurItem() { // mark a recurring item completed, and set up the recurrence
@@ -326,14 +337,24 @@ function nextPage() { // set up the forwarding to the next page
 		1 for UI, 1 for backend. Then we'd only use the backend half here
 	*/
 	global $config,$values,$updateGlobals;
-	if (isset($updateGlobals['referrer']) && ($updateGlobals['referrer'] !== ''))
-		$nextURL=$updateGlobals['referrer'];
-	else switch ($_SESSION['afterCreate' . $values['type']]) {
+	$t = (array_key_exists('oldtype',$values))? $values['oldtype']:$values['type'];
+	$key='afterCreate'.$t;
+    $id=($values['newitemId'])?$values['newitemId']:$values['itemId'];
+    $nextURL='';
+    if (isset($_POST['afterCreate'])) {
+        $tst=$_POST['afterCreate'];
+        $_SESSION[$key]=$tst;
+    }elseif (isset($updateGlobals['referrer']) && ($updateGlobals['referrer'] !== ''))
+		$tst=$updateGlobals['referrer'];
+    else
+        $tst=$_SESSION[$key];
+	switch ($tst) {
 		case "parent"  : $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;
-		case "item"    : $nextURL='itemReport.php?itemId='.$values['newitemId']; break;
-		case "another" : $nextURL='item.php?type='        .$values['type']; break;
-		case "list"	   : $nextURL='listItems.php?type='   .$values['type']; break;
-        default        : $nextURL='listItems.php?type='   .$values['type']."&amp;dbg=".$_SESSION['afterCreate'.$values['type']];
+		case "item"    : $nextURL="itemReport.php?itemId=$id"; break;
+		case "another" : $nextURL="item.php?type=$t"; break;
+		case "list"	   : $nextURL="listItems.php?type=$t"; break;
+		case "referrer": $nextURL=$_SESSION['referrer'];break;
+        default        : $nextURL=$tst;break;
 	}
 	if ($config['debug'] & _GTD_DEBUG) {
         echo '<pre>$referrer=',print_r($updateGlobals['referrer'],true),'<br />'
@@ -342,6 +363,7 @@ function nextPage() { // set up the forwarding to the next page
             ,'</pre>';
     }
     $_SESSION['message']=$updateGlobals['actionMessage'];
+    if ($nextURL=='') $nextURL="listItems.php?type=$t";
 	echo nextScreen($nextURL,$config);
 }
 

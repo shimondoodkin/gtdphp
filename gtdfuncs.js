@@ -328,7 +328,7 @@ function ts_sort_default(a,b) {
     return 100;
 }
 
-function ts_sort_checkbox(a,b) { // TOFIX
+function ts_sort_checkbox(a,b) {
     aa = a.cells[SORT_COLUMN_INDEX].firstChild.checked;
     bb = b.cells[SORT_COLUMN_INDEX].firstChild.checked;
     if (aa==bb) return (a.rowIndex-b.rowIndex);

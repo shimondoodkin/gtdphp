@@ -70,19 +70,19 @@ if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" t
 if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="'.$nexttitle.'">Next</a> ]'."\n";
 echo "</span>\n";
 //Item details
-echo '<p>Created: '.$item['dateCreated']."<br />\n";
-if ($item['description']) echo 'Description: '.escapeQuotes($item['description'])."<br />\n";
-if ($item['desiredOutcome']) echo 'Desired Outcome:&nbsp;'.escapeQuotes($item['desiredOutcome'])."<br />\n";
-if ($item['categoryId']) echo 'Category:&nbsp;'.makeclean($item['category'])."<br />\n";
-if ($item['contextId']) echo 'Space Context:&nbsp;'.makeclean($item['cname'])."<br />\n";
-if ($item['timeframeId']) echo 'Time Context:&nbsp;'.makeclean($item['timeframe'])."<br />\n";
-if ($item['deadline']) echo 'Deadline:&nbsp;'.$item['deadline']."<br />\n";
-if ($item['repeat']) echo 'Repeat every&nbsp;'.$item['repeat'].'&nbsp;days'."<br />\n";
+echo '<p><span class="reportItem">Created:&nbsp;</span>'.$item['dateCreated']."<br />\n";
+if ($item['description']) echo '<span class="reportItem">Description:&nbsp;</span>'.escapeQuotes($item['description'])."<br />\n";
+if ($item['desiredOutcome']) echo '<span class="reportItem">Desired Outcome:&nbsp;</span>'.escapeQuotes($item['desiredOutcome'])."<br />\n";
+if ($item['categoryId']) echo '<span class="reportItem">Category:&nbsp;</span>'.makeclean($item['category'])."<br />\n";
+if ($item['contextId']) echo '<span class="reportItem">Space Context:&nbsp;</span>'.makeclean($item['cname'])."<br />\n";
+if ($item['timeframeId']) echo '<span class="reportItem">Time Context:&nbsp;</span>'.makeclean($item['timeframe'])."<br />\n";
+if ($item['deadline']) echo '<span class="reportItem">Deadline:&nbsp;</span>'.$item['deadline']."<br />\n";
+if ($item['repeat']) echo '<span class="reportItem">Repeat every&nbsp;</span>'.$item['repeat'].'&nbsp;days'."<br />\n";
 if ($item['suppress']==='y') {
 	$reminddate=getTickleDate($item['deadline'],$item['suppressUntil']);
-	echo 'Suppressed Until:&nbsp;'.date($config['datemask'],$reminddate)."<br />\n";
+	echo '<span class="reportItem">Suppressed Until:&nbsp;</span>'.date($config['datemask'],$reminddate)."<br />\n";
 }
-if ($item['dateCompleted']>0) echo 'Completed On:&nbsp;'.$item['dateCompleted']."\n";
+if ($item['dateCompleted']>0) echo '<span class="reportItem">Completed On:&nbsp;</span>'.$item['dateCompleted']."\n";
 echo "</p>\n";
 
 
@@ -99,7 +99,13 @@ if ($childtype!=NULL) {
 	foreach ($completed as $comp) foreach ($childtype as $thistype) {
 
 	    //Select items by type
-	    $values['type']=$thistype;
+	    if ($thistype==='s') {
+	       $values['type']='p';
+	       $values['someday']='true';
+        } else {
+            $values['someday']='false';
+            $values['type']=$thistype;
+        }
 	    $values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
 
 	    if ($comp==='y') {
