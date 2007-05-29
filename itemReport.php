@@ -107,7 +107,7 @@ if ($childtype!=NULL) {
             $values['type']=$thistype;
         }
 	    $values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
-	    $values['filterquery'] = " AND ".sqlparts("issomeday",$config,$values);
+	    $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
 		$result = query("getchildren",$config,$values,$options,$sort);
