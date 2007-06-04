@@ -29,7 +29,6 @@ require_once('editCat.inc.php');
             <td><input type="text" name="name" value="<?php echo $thiscat['name']; ?>" /></td>
             <td><textarea rows="2" cols="50" name="description"><?php echo $thiscat['description']; ?></textarea></td>
             <?php if ($showTypes) { ?><td>
-                <!-- TOFIX - only show checkboxes on create: on edit, just show type as per $row, below -->
                 <input type='radio' name="type" id="goal"    value="g" <?php if ($thiscat['type']==='g') echo "checked='checked'"; ?> class="first" />
                 <label for="goal" class="right">Goal</label><br />
                 <input type='radio' name="type" id="project" value="p" <?php if ($thiscat['type']==='p') echo "checked='checked'"; ?>class="notfirst" />
@@ -57,7 +56,7 @@ require_once('editCat.inc.php');
             ?></td>
             <td><?php echo $row['description']; ?></td>
             <?php if ($showTypes) { ?><td><?php echo getTypes($row['type']); ?>&nbsp;</td><?php } ?>
-            <?php if ($canDelete) { ?> <!-- TOFIX - only allow reassign if types are consistent! -->
+            <?php if ($canDelete) { ?>
                 <td><?php if ($row['type']===$thiscat['type']) { ?>
                     <input type='radio' name='replacewith' value='<?php echo $row['id']; ?>'  />
                     <?php } else echo '&nbsp;' ?>

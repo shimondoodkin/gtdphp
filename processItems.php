@@ -222,7 +222,7 @@ function removeNextAction() { // remove the next action reference for the curren
 	utility functions for the primary actions
    =========================================== */
 
-function retrieveFormVars() { // extract the item values from the HTTP GET and POST variables - TOFIX still to check
+function retrieveFormVars() {
 	global $config,$values;
 
 	// key variables

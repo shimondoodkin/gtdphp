@@ -295,7 +295,7 @@ else
 
 function escapeQuotes($str) {
     $outStr=str_replace('&','&amp;',$str);
-    $outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$str);
+    $outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$outStr);
     $outStr=str_replace('&amp;amp;','&amp;',$outStr);
 	return $outStr;
 }
