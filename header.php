@@ -1,5 +1,5 @@
 <?php
-require_once("headerDb.inc.php");
+require_once("headerDB.inc.php");
 require_once("headerHtml.inc.php");
 echo "</head><body><div id='container'>\n";
 require_once("headerMenu.inc.php");

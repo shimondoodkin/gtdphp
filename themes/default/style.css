@@ -284,6 +284,18 @@ td.overdue, span.overdue {
 
 td.maincolumn { background-color:#eee}
 
+p.warning {
+    background-color:white;
+    color:#800;
+    font-size:larger;
+    border: solid 2px #800;
+}
+
+input.warning,th.warning {
+    background-color:#800;
+    color:white;
+}
+
 #container {
 	background: none;
 }

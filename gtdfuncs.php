@@ -296,6 +296,7 @@ else
 function escapeQuotes($str) {
     $outStr=str_replace('&','&amp;',$str);
     $outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$outStr);
-    $outStr=str_replace('&amp;amp;','&amp;',$outStr);
+    $outStr=str_replace(array('&amp;amp;','&amp;hellip;'),array('&amp;','&hellip;'),$outStr);
 	return $outStr;
 }
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser
