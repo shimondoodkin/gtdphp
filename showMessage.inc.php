@@ -8,3 +8,4 @@ if (count($_SESSION['message'])) {
     }
     $_SESSION['message']='';
 }
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

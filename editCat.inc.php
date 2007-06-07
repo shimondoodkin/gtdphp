@@ -51,8 +51,9 @@ switch ($field) {
 $result = query($query,$config,$values,$options,$sort);
 $catlist=array();
 $count=0;
+$thiscat=array();
 
-foreach ($result as $checkcat) {
+if (is_array($result)) foreach ($result as $checkcat) {
 	$i=0;
 	$newcat=array();
     foreach ($checkcat as $item)

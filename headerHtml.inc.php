@@ -1,10 +1,10 @@
+<?php require_once("ses.php"); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <?php
-require_once("ses.php");
-require_once("config.php");
+include_once("config.php");
 require_once("gtdfuncs.php");
 require_once("query.inc.php");
 $thisurl=parse_url($_SERVER['PHP_SELF']);
