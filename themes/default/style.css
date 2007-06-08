@@ -296,6 +296,9 @@ input.warning,th.warning {
     color:white;
 }
 
+input.warning {
+    font-size:-1;
+}
 #container {
 	background: none;
 }
