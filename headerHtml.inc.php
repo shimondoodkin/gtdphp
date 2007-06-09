@@ -15,7 +15,7 @@ $title .= "</title>\n";
 
 echo $title;
 
-if ($config['debug'])
+if ($config['debug'] || defined('_DEBUG'))
 	echo '<style type="text/css">pre,.debug {}</style>';
 
 $config['theme']=$_SESSION['theme'];
@@ -51,5 +51,5 @@ $config['theme']=$_SESSION['theme'];
 <!-- sort tables -->
 <script type="text/javascript" src="gtdfuncs.js"></script>
 
-<?php if ($config['debug'])
+<?php if ($config['debug'] || defined('_DEBUG'))
 	echo '<script type="text/javascript">aps_debugInit("',$config['debugKey'],'");</script>'; ?>
