@@ -118,7 +118,8 @@ function makemenu($list) {
 		<li>About
 			<ul>
 				<?php
-				$thismenu[] = array("link"=>"about.php", 'title'=>"About the GTD-PHP license", 'label' => "License");
+				$thismenu[] = array("link"=>"version.php", 'title'=>"Version information", 'label' => "Version");
+				$thismenu[] = array("link"=>"license.php", 'title'=>"The GTD-PHP license", 'label' => "License");
 				$thismenu[] = array("link"=>"credits.php", 'title'=>"The GTD-PHP development team", 'label' => "Credits");
 				$thismenu[] = array("link"=>"http://toae.org/boards", 'title'=>"Help and development discussions", 'label' => "Forum");
 				$thismenu[] = array("link"=>"http://www.gtd-php.com", 'title'=>"Documentation", 'label' => "Wiki");

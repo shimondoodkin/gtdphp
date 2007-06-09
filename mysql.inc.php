@@ -162,6 +162,8 @@ $sql = array(
 										WHERE lu.`itemId`= ia.`itemId` 
 											AND lu.`parentId`= '{$values['parentId']}' ".$values['filterquery']." 
 										ORDER BY {$sort['getchildren']}",
+
+        "getgtdphpversion"         =>  "SELECT `version` FROM `{$config['prefix']}version`",
         
         "getitems"                  => 	"SELECT i.`itemId`, i.`title`, i.`description` 
         								FROM `". $config['prefix'] . "itemattributes` as ia 
