@@ -82,6 +82,7 @@ if ($item['suppress']==='y') {
 	$reminddate=getTickleDate($item['deadline'],$item['suppressUntil']);
 	echo '<span class="reportItem">Suppressed Until:&nbsp;</span>'.date($config['datemask'],$reminddate)."<br />\n";
 }
+if ($item['lastModified']) echo '<span class="reportItem">Last modified:&nbsp;</span>'.$item['lastModified']."<br />\n";
 if ($item['dateCompleted']>0) echo '<span class="reportItem">Completed On:&nbsp;</span>'.$item['dateCompleted']."\n";
 echo "</p>\n";
 
