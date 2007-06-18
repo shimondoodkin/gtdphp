@@ -14,10 +14,10 @@ $config = array(
 
     //connection information
         "host"                      => 'localhost', //the hostname of your database server
-        "db"                        => '', //the name of your database
-        "prefix"					=> 'gtd_', // the GTD table prefix for your installation (optional)
-        "user"                      => '', //username for database access
-        "pass"                      => '', //database password
+        "db"                        => 'testgtdv08', //the name of your database
+        "prefix"					=> '', // the GTD table prefix for your installation (optional)
+        "user"                      => 'taskman', //username for database access
+        "pass"                      => '90qaXPQ1Z71', //database password
     //database information
         "dbtype"                    => 'mysql',  //database type: currently only mysql is valid.  DO NOT CHANGE!
 );
@@ -151,8 +151,8 @@ $sort = array(
     "getlists"              => "c.`category` ASC",
     "getchecklistitems"     => "cli.`checked` DESC, cli.`item` ASC",
     "getchildren"           => "ia.`type` ASC",
-    "getitems"              => "i.`title` ASC ",
-    "getnotes"              => "tk.`date` DESC ",
+    "getitems"              => "i.`title` ASC",
+    "getnotes"              => "tk.`date` DESC",
 );
 
 $config["storeRecurrences"] = true; // false | true - when recurring items are completed, store each occurrence as a completed item
@@ -167,7 +167,7 @@ _GTD_ERRORS   - display errors
 _GTD_DEBUG    - display debugging text (there will be lots of it - use debugKey to toggle its display)
 _GTD_FREEZEDB - do not execute commands which would otherwise update the items table: use in conjunction with _GTD_DEBUG to display sql commands without running them
 */
-$config["debug"] = 0;  // integer (actually a set of boolean flags)
+$config["debug"] = _GTD_ERRORS;  // integer (actually a set of boolean flags)
 $config["debugKey"] = 'H'; // the key that will toggle the display of debug text - a letter here must typed in upper case.
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

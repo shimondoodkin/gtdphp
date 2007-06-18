@@ -51,6 +51,7 @@ require_once('listItems.inc.php')
                 }
             ?>
             </select>
+           <input type="checkbox" name="everything" id="everything" class="notfirst" value="true" <?php if ($filter['everything']=="true") echo 'checked="checked"'?> title="Show all <?php echo $typename ?>s, regardless of status or labels" /><label for='everything'>Show all&nbsp;<?php echo $typename ?>s</label>
         </div>
         <div class="formbuttons">
             <input type="submit" class="button" value="Filter" name="submit" title="Filter <?php echo $typename ?>s by selected criteria" />

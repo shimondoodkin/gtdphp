@@ -24,10 +24,11 @@ $filter['nottimecontext'] =getVarFromGetPost('nottimecontext');
 $filter['tickler']        =getVarFromGetPost('tickler');           //suppressed (tickler file): true/false
 $filter['someday']        =getVarFromGetPost('someday');           //someday/maybe:true/empty
 $filter['nextonly']       =getVarFromGetPost('nextonly');          //next actions only: true/empty 
-$filter['completed']      =getVarFromGetPost('completed');         //status:pending/completed (empty)
+$filter['completed']      =getVarFromGetPost('completed');         //status:true/false (completed/pending)
 $filter['dueonly']        =getVarFromGetPost('dueonly');           //has due date:true/empty
 $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeating:true/empty
 $filter['parentId']       =getVarFromGetPost('parentId');
+$filter['everything']     =getVarFromGetPost('everything');        //overrides filter:true/empty
 
 if ($filter['type']==='s') {
     $filter['someday']=true;
@@ -39,8 +40,7 @@ $values['contextId']      =$filter['contextId'];
 $values['categoryId']     =$filter['categoryId'];
 $values['timeframeId']    =$filter['timeframeId'];
 
-
-if ($config['debug'] && _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
+if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
 
 //SQL CODE
 
@@ -77,6 +77,7 @@ if ($filter['tickler']=="true") {
         }
     }
 }
+
 /*
     ===================================================================
     finished building array of notes
@@ -87,6 +88,7 @@ $thisurl=parse_url($_SERVER['PHP_SELF']);
 $referrer = basename($thisurl['path']).'?';
 foreach($filter as $filterkey=>$filtervalue)
     if ($filtervalue!='') $referrer .= "{$filterkey}={$filtervalue}&amp;";
+
 
 //Select items
 
@@ -110,20 +112,21 @@ $show['dateCompleted']=FALSE;
 $show['checkbox']=TRUE;
 
 //determine item and parent labels, set a few defaults
-    switch ($values['type']) {
-        case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['outcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
-        case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-        case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $show['category']=FALSE; $checkchildren=FALSE; break;
-        case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
-        case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $checkchildren=FALSE; break;
-        case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $checkchildren=FALSE; break;
-        default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE; 
-    }
+switch ($values['type']) {
+    case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['outcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
+    case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $show['category']=FALSE; $checkchildren=FALSE; break;
+    case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
+    case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $checkchildren=FALSE; break;
+    case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $checkchildren=FALSE; break;
+    default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE; 
+}
 
 $show['flags']=$checkchildren; // temporary measure; to be made user-configurable later
+
 
 if ($filter['someday']=="true") {
     $show['dateCreated']=TRUE;
@@ -144,7 +147,7 @@ if ($filter['repeatingonly']=="true") {
     $show['repeat']=TRUE;
 }
 
-if ($filter['completed']==="completed") {
+if ($filter['completed']=="true") {
     $show['suppress']=FALSE;
     $show['NA']=FALSE;
     $show['flags']=FALSE;
@@ -157,6 +160,25 @@ if ($filter['completed']==="completed") {
     $checkchildren=FALSE; 
 }
 
+if ($filter['everything']=="true") {
+$show['parent']=TRUE;
+$show['NA']=FALSE;
+$show['title']=TRUE;
+$show['description']=TRUE;
+$show['outcome']=FALSE;
+$show['isSomeday']=FALSE;
+$show['suppress']=FALSE;
+$show['suppressUntil']=TRUE;
+$show['dateCreated']=TRUE;
+$show['lastModified']=FALSE;
+$show['category']=TRUE;
+$show['context']=TRUE;
+$show['timeframe']=TRUE;
+$show['deadline']=TRUE;
+$show['repeat']=TRUE;
+$show['dateCompleted']=TRUE;
+$show['checkbox']=FALSE;    }
+    
 //set query fragments based on filters
 $values['childfilterquery'] = "";
 $values['parentfilterquery'] = "";
@@ -165,61 +187,84 @@ $values['filterquery'] = "";
 //type filter
 $values['childfilterquery'] = " WHERE ".sqlparts("typefilter",$config,$values);
 
-//filter box filters
-if ($filter['categoryId'] != NULL && $filter['notcategory']!="true") $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
-if ($filter['categoryId'] != NULL && $filter['notcategory']=="true") $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
-
-if ($filter['contextId'] != NULL && $filter['notspacecontext']!="true") $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
-if ($filter['contextId'] != NULL && $filter['notspacecontext']=="true") $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
-
-if ($filter['timeframeId'] != NULL && $filter['nottimecontext']!="true") $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
-if ($filter['timeframeId'] != NULL && $filter['nottimecontext']=="true") $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
-
-if ($filter['completed']=="true") $values['childfilterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
-else $values['childfilterquery'] .= " AND " .sqlparts("pendingitems",$config,$values);
-
-//problem with project somedays vs actions...want an OR, but across subqueries;
-if ($filter['someday']=="true") {
-    $values['isSomeday']="y";
-    $values['childfilterquery'] .= " AND " .sqlparts("issomeday",$config,$values);
-} else {
-    $values['isSomeday']="n";
-    $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-//    $values['filterquery'] .= " WHERE " .sqlparts("issomeday-parent",$config,$values);
-}
-
-//problem: need to get all items with suppressed parents(even if child is not marked suppressed), as well as all suppressed items
-if ($filter['tickler']=="true") {
-    if ($values['parentId']!='') $values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
-    $values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
-} else {
-    $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-    $values['filterquery'] .= " AND ".sqlparts("activeparents",$config,$values);
-}
-
-if ($filter['repeatingonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("repeating",$config,$values);
-
-if ($filter['dueonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("due",$config,$values);
-
 /*
-$filter['nextonly']
+Override all filter selections if $filter['everything'] is true
 */
 
-if($filter['completed']=="true")
-    $sectiontitle = 'Completed&nbsp;';
-else{
+if ($filter['everything']!="true") {
+
+    //filter box filters
+    if ($filter['categoryId'] != NULL && $filter['notcategory']!="true") $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
+    if ($filter['categoryId'] != NULL && $filter['notcategory']=="true") $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
+    
+    if ($filter['contextId'] != NULL && $filter['notspacecontext']!="true") $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
+    if ($filter['contextId'] != NULL && $filter['notspacecontext']=="true") $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
+    
+    if ($filter['timeframeId'] != NULL && $filter['nottimecontext']!="true") $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
+    if ($filter['timeframeId'] != NULL && $filter['nottimecontext']=="true") $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
+    
+    if ($filter['completed']=="true") $values['childfilterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
+    else $values['childfilterquery'] .= " AND " .sqlparts("pendingitems",$config,$values);
+    
+    //problem with project somedays vs actions...want an OR, but across subqueries;
+    if ($filter['someday']=="true") {
+        $values['isSomeday']="y";
+        $values['childfilterquery'] .= " AND " .sqlparts("issomeday",$config,$values);
+    } else {
+        $values['isSomeday']="n";
+        $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
+    //    $values['filterquery'] .= " WHERE " .sqlparts("issomeday-parent",$config,$values);
+    }
+    
+    //problem: need to get all items with suppressed parents(even if child is not marked suppressed), as well as all suppressed items
+    if ($filter['tickler']=="true") {
+        if ($values['parentId']!='') $values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
+        $values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
+    } else {
+        $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
+        $values['filterquery'] .= " AND ".sqlparts("activeparents",$config,$values);
+    }
+    
+    if ($filter['repeatingonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("repeating",$config,$values);
+    
+    if ($filter['dueonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("due",$config,$values);
+    
+    /*
+    $filter['nextonly']
+    */   
+}
+
+/*
+Section Heading
+*/
+
+if($filter['everything']=="true")
+   $sectiontitle = 'All&nbsp;';
+
+else if ($filter['completed']=="true")
+   $sectiontitle = 'Completed&nbsp;';
+
+else {
     $sectiontitle = "<a href='item.php?type={$values['type']}";
     if ($filter['someday']) $sectiontitle .='&amp;someday=true';
     if ($filter['nextonly']) $sectiontitle .='&amp;nextonly=true';
     $sectiontitle .= "' title='Add new $typename'>";
 }
-if ($filter['repeatingonly']=="true") $sectiontitle .= 'Repeating&nbsp;';
-if ($filter['dueonly']=="true") $sectiontitle .=  'Due&nbsp;';
-if ($filter['someday']=="true") $sectiontitle .= 'Someday/Maybe&nbsp;';
-if ($filter['nextonly']=="true")$sectiontitle .= 'Next&nbsp;';
+
+if ($filter['everything']!="true") {
+   if ($filter['repeatingonly']=="true") $sectiontitle .= 'Repeating&nbsp;';
+   if ($filter['dueonly']=="true") $sectiontitle .=  'Due&nbsp;';
+   if ($filter['someday']=="true") $sectiontitle .= 'Someday/Maybe&nbsp;';
+   if ($filter['nextonly']=="true") $sectiontitle .= 'Next&nbsp;';
+}
+
 $sectiontitle .= $typename.'s';
-if ($filter['tickler']=="true") $sectiontitle .= ' in Tickler File';
-if ($filter['completed']!="true") $sectiontitle .= '</a>';
+
+if ($filter['everything']!="true") {
+   if ($filter['tickler']=="true") $sectiontitle .= ' in Tickler File';
+   if ($filter['completed']!="true") $sectiontitle .= '</a>';
+}
+
 
 /*
     ===================================================================
@@ -234,7 +279,8 @@ if ($result!="-1") {
     $nonext=FALSE;
     $nochildren=FALSE;
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
-    foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']]) {
+    if ($filter['everything']=="true") $filter['nextonly']="false";
+    foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']]) {        
         //filter out all but nextactions if $filter['nextonly']==true
     
         $nochildren=false;
@@ -348,3 +394,4 @@ if(!count($maintable)) {
         $endmsg['link']="item.php?type={$values['type']}";
     }
 } else $endmsg='';
+
