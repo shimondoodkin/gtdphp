@@ -8,7 +8,7 @@ function makeClean($textIn) {
 function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified) 	// TOFIX -  we don't handle "%XX" strings yet.
 	// constants - might move permittedTags to config file
 	$permittedTags=array(
-		 array('/^<a (href)|(file)=[^>]+>/i','</a>')
+		 array('/^<a ((href)|(file))=[^>]+>/i','</a>')
 		,array('/^<b>/i','</b>')
 		,array('/^<i>/i','</i>')
 		,array('/^<ul>/i','</ul>')
@@ -65,7 +65,7 @@ function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visib
 	// got the string - now close any open tags
 	if ($keepTags) while (count($tagsOpen))
 		$outStr.=array_pop($tagsOpen);
-	$outStr=nl2br(escapeQuotes($outStr));
+	$outStr=nl2br($outStr);
 	return($outStr);
 }
 

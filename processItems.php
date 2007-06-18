@@ -343,7 +343,6 @@ function nextPage() { // set up the forwarding to the next page
     $nextURL='';
     if (isset($_POST['afterCreate'])) {
         $tst=$_POST['afterCreate'];
-        $_SESSION[$key]=$tst;
     }elseif (isset($updateGlobals['referrer']) && ($updateGlobals['referrer'] !== ''))
 		$tst=$updateGlobals['referrer'];
     else
@@ -353,9 +352,10 @@ function nextPage() { // set up the forwarding to the next page
 		case "item"    : $nextURL="itemReport.php?itemId=$id"; break;
 		case "another" : $nextURL="item.php?type=$t"; break;
 		case "list"	   : $nextURL="listItems.php?type=$t"; break;
-		case "referrer": $nextURL=$_SESSION['referrer'];break;
+		case "referrer": $nextURL=(isset($_REQUEST['referrer']))?$_REQUEST['referrer']:$_SESSION[$key];break;
         default        : $nextURL=$tst;break;
 	}
+    if (isset($_POST['afterCreate']) && $_POST['afterCreate']!='referrer') $_SESSION[$key]=$_POST['afterCreate'];
 	if ($config['debug'] & _GTD_DEBUG) {
         echo '<pre>$referrer=',print_r($updateGlobals['referrer'],true),'<br />'
             ,"type={$values['type']}<br />"

@@ -7,7 +7,6 @@ else{
     $_SESSION['categoryId'] = 0;
     $_SESSION['contextId'] = 0;
     $_SESSION['theme'] = 'default';
-    $_SESSION['referrer'] = '';
     $_SESSION['message'] = '';
  }
 

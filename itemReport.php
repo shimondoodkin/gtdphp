@@ -71,8 +71,8 @@ if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="'
 echo "</span>\n";
 //Item details
 echo '<p><span class="reportItem">Created:&nbsp;</span>'.$item['dateCreated']."<br />\n";
-if ($item['description']) echo '<span class="reportItem">Description:&nbsp;</span>'.escapeQuotes($item['description'])."<br />\n";
-if ($item['desiredOutcome']) echo '<span class="reportItem">Desired Outcome:&nbsp;</span>'.escapeQuotes($item['desiredOutcome'])."<br />\n";
+if ($item['description']) echo "<span class='reportItem'>Description:&nbsp;</span>{$item['description']}<br />\n";
+if ($item['desiredOutcome']) echo "<span class='reportItem'>Desired Outcome:&nbsp;</span>{$item['desiredOutcome']}<br />\n";
 if ($item['categoryId']) echo '<span class="reportItem">Category:&nbsp;</span>'.makeclean($item['category'])."<br />\n";
 if ($item['contextId']) echo '<span class="reportItem">Space Context:&nbsp;</span>'.makeclean($item['cname'])."<br />\n";
 if ($item['timeframeId']) echo '<span class="reportItem">Time Context:&nbsp;</span>'.makeclean($item['timeframe'])."<br />\n";

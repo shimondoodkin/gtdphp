@@ -14,10 +14,10 @@ $config = array(
 
     //connection information
         "host"                      => 'localhost', //the hostname of your database server
-        "db"                        => 'testgtdv08', //the name of your database
-        "prefix"					=> '', // the GTD table prefix for your installation (optional)
-        "user"                      => 'taskman', //username for database access
-        "pass"                      => '90qaXPQ1Z71', //database password
+        "db"                        => '', //the name of your database
+        "prefix"					=> 'gtdphp_', // the GTD table prefix for your installation (optional)
+        "user"                      => '', //username for database access
+        "pass"                      => '', //database password
     //database information
         "dbtype"                    => 'mysql',  //database type: currently only mysql is valid.  DO NOT CHANGE!
 );

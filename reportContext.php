@@ -119,7 +119,7 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
 		if (is_array($result)) foreach ($result as $row) {
             $maintable[$i]=array();
             $maintable[$i]['id']=$row['itemId'];
-			$maintable[$i]['description']=trimTaggedString($row['description'],$config['trimLength']);
+			$maintable[$i]['description']=$row['description'];
 			$maintable[$i]['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
 
             if($row['deadline']) {
@@ -167,6 +167,6 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
         }
     }
 }
-$_SESSION['referrer']=basename($thisurl['path']);
+$_SESSION['afterCreatep']=$_SESSION['afterCreatea']=basename($thisurl['path']);
 include_once('footer.php');
 ?>
