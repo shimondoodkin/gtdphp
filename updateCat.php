@@ -1,7 +1,11 @@
 <?php
-include_once('header.php');
-if ($config['debug'] & _GTD_DEBUG)
-    echo '<pre>',print_r($_POST,true),'</pre>';
+include_once('headerDB.inc.php');
+$html=false;
+if ($config['debug'] & _GTD_DEBUG) {
+    $html=true;
+    include_once('headerHtml.inc.php');
+    echo "</head><body><div id='container'><pre>\n",print_r($_POST,true),"</pre>\n";
+}
 
 $values=array();
 $field=$_POST['field'];
@@ -43,22 +47,21 @@ if (isset($_POST['id'])) {
         // create an item - first need to check for non-blank names
         if ($values['name']!='') {
             $result = query("new$query",$config,$values);
-            if ($GLOBALS['ecode']=="0") {
-                // just created an item, without selecting another item for editing, so offer to create another one
-                if ($next==='Update') $next=0;
-            } else {
-                // problem during creation
-                echo "<p class='error'$field NOT inserted.</p>";
-                if ($config['debug'] & _GTD_ERRORS)
-                    echo "<p class='error'>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
-            }
+            // just created an item, without selecting another item for editing, so offer to create another one
+            if ($next==='Update') $next=0;
+            $msg='Created';
         }
     } elseif ($_POST['delete']==="y") {
         query("reassign$query",$config,$values);
         query("delete$query",$config,$values);
-    } else
+        $msg='Deleted';
+    } else {
         query("update$query",$config,$values);
+        $msg='Updated';
+    }
 } // end of: if (isset($_POST['id']))
+if ($GLOBALS['ecode']=="0") $_SESSION['message'][]="$msg $field '{$values['name']}'";
+
 if ($next==='Update') {
     $nexturl="reportContext.php";
     if($field==='context') $nexturl .="#c{$values['id']}";
@@ -66,4 +69,9 @@ if ($next==='Update') {
     $nexturl="editCat.php?field={$field}&amp;id=$next";
     
 echo nextScreen($nexturl,$config);
-include_once('footer.php');
+if ($html)
+    include_once('footer.php');
+else
+    echo '</head></html>';
+
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

@@ -1,4 +1,4 @@
-
+<?php include('showMessage.inc.php'); ?>
 </div><!-- main -->
 
 

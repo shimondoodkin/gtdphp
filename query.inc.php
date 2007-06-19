@@ -51,9 +51,9 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
     //perform query
 	//parse result into multitdimensional array $result[row#][field name] = field value
     if($config['dbtype']=="mysql") {
-        $reply = mysql_query($query) or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".mysql_error():"Error in query");
+        $reply = mysql_query($query);
 
-        if (@mysql_num_rows($reply)>0) {
+        if ($reply && @mysql_num_rows($reply)>0) {
             $i = 0;
            while ($field = mysql_fetch_field($reply)) {
                 /* Create an array $fields which contains all of the column names */
@@ -77,6 +77,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         //always included; text/codes shown in errors on individual pages as warranted...
         $GLOBALS['ecode'] = mysql_errno();
         $GLOBALS['etext'] = mysql_error();
+        if ($GLOBALS['ecode']!=0) $_SESSION['message'][]="Error {$GLOBALS['ecode']}: '{$GLOBALS['etext']}' in query: $query";
         }
 
     elseif($config['dbtype']=="postgres") {

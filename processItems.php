@@ -1,6 +1,8 @@
 <?php
 //INCLUDES
-include_once('header.php');
+include_once('headerDB.inc.php');
+
+$html=false; // indicates if we are outputting html
 
 // get core variables first
 $values=array();  // ensures that this is a global variable
@@ -30,6 +32,9 @@ if (isset($_POST['isMarked'])) { // doing a specific action on several items (cu
 // some debugging - if debug is set to halt, dump all the variables we've got
 
 if ($config['debug'] & _GTD_DEBUG) {
+    include 'headerHtml.inc.php';
+    echo "</head><body><div id='container'>\n";
+    $html=true;
 	// debugging text - simply dump the variables, and quit, without processing anything
 	literaldump('$_GET');
     literaldump('$_POST');
@@ -46,6 +51,8 @@ if ($config['debug'] & _GTD_DEBUG) {
 		echo '</pre>';
 	}
 } // END OF debugging text
+
+$title='';
 
 if ($updateGlobals['multi']) {
 	// recursively do actions, looping over items
@@ -65,7 +72,10 @@ if ($updateGlobals['multi']) {
 }
 
 nextpage();
-include_once('footer.php');
+if ($html)
+    include_once('footer.php');
+else
+    echo '</head></html>';
 return;
 
 /*========================================================================================
@@ -73,22 +83,14 @@ return;
 ========================================================================================*/
 
 function doAction($localAction) { // do the current action on the current item; returns TRUE if succeeded, else returns FALSE
-	global $config,$values,$updateGlobals;
-	$title='';
+	global $config,$values,$updateGlobals,$title;
 	if ($values['itemId']) {
         $result=query('getitembrief',$config,$values);
-    	if ($result!=-1) {
-            $title=makeclean($result[0]['title']);
-            $desc=escapeQuotes($result[0]['description']);
-    	}
-    } else {
+    	if ($result!=-1) $title=makeclean($result[0]['title']);
+    } else
         $title=$_POST['title'];
-        $desc=$_POST['description'];
-    }
-    if ($title=='') {
-        $title='item '.$values['itemId'];
-        $desc='';
-    }
+
+    if ($title=='') $title='item '.$values['itemId'];
 
 	if ($config['debug'] & _GTD_DEBUG) echo "<p><b>Action here is: $localAction item {$values['itemId']}</b></p>";
 	if ($config['debug'] & _GTD_FREEZEDB) return TRUE;
@@ -153,25 +155,27 @@ function deleteItem() { // delete all references to a specific item
 }
 
 function createItem() { // create an item and its parent-child relationships
-	global $config,$values,$updateGlobals;
+	global $config,$values,$updateGlobals,$title;
 	//Insert new records
 	$result = query("newitem",$config,$values);
 	$values['newitemId'] = $GLOBALS['lastinsertid'];
 	$result = query("newitemattributes",$config,$values);
 	$result = query("newitemstatus",$config,$values);
 	setParents('new');
+	$title=$values['title'];
 }
 
 function createItemQuickly() {// create an item when we only know its type and title - not yet in use - TOFIX still to check
-	global $config,$values,$updateGlobals;
+	global $config,$values,$updateGlobals,$title;
 	//Insert new records
 	$result = query("newitem",$config,$values);
 	$values['newitemId'] = $GLOBALS['lastinsertid'];
 	setParents('new');
+	$title=$values['title'];
 }
 
 function updateItem() { // update all the values for the current item
-	global $config,$values,$updateGlobals;
+	global $config,$values,$updateGlobals,$title;
 	query("deletelookup",$config,$values);
 	removeNextAction();
     query("updateitemattributes",$config,$values);
@@ -186,6 +190,7 @@ function updateItem() { // update all the values for the current item
 		completeItem();
 	else
 		query("updateitemstatus",$config,$values);
+	$title=$values['title'];
 }
 
 function completeItem() { // mark an item as completed, and recur if required
@@ -376,4 +381,4 @@ function literaldump($varname) { // dump a variable name, and its contents
 		echo "<br />Failed to display variable value: $tst <br />";
 }
 
-?>
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

@@ -65,7 +65,7 @@ function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visib
 	// got the string - now close any open tags
 	if ($keepTags) while (count($tagsOpen))
 		$outStr.=array_pop($tagsOpen);
-	$outStr=nl2br($outStr);
+	$outStr=nl2br(escapeChars($outStr));
 	return($outStr);
 }
 
@@ -293,9 +293,8 @@ else
     return $types[$type];
 }
 
-function escapeQuotes($str) {
-    $outStr=str_replace('&','&amp;',$str);
-    $outStr=str_replace(array("'",'"'),array('&#039;','&quot;'),$outStr);
+function escapeChars($str) {
+    $outStr=str_replace(array('&','…'),array('&amp;','&hellip'),$str);
     $outStr=str_replace(array('&amp;amp;','&amp;hellip;'),array('&amp;','&hellip;'),$outStr);
 	return $outStr;
 }
