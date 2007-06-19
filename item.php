@@ -4,6 +4,7 @@ include_once('header.php');
 
 //RETRIEVE URL VARIABLES
 $values = array();
+$currentrow = array();
 
 $values['itemId']= (int) getVarFromGetPost('itemId');
 $values['type']=getVarFromGetPost('type');
@@ -12,6 +13,7 @@ if ($values['type']==='s') {
     $values['type']='p';
 }
 if ($_GET['someday']=='true') $values['isSomeday']='y';
+if ($_GET['suppress']=='true') $currentrow['suppress']='y';
 
 $nextaction=false;
 if ($values['type']==='n') {
@@ -160,12 +162,12 @@ echo "<input type='hidden' name='action' value='",
                 </div>
                 <div class='formrow'>
                     <?php if ($values['itemId']) { ?>
-                        <label for='suppress' class='left first'>Warning:</label>
+                        <label class='left first'>Warning:</label>
                         <span class='text'>changing the item type will sever all parent &amp; child relationships with this item</span>
                         </div>
                         <div class='formrow'>
                     <?php } ?>
-                        <label class='left first'>Type:</label>
+                        <label for='value' class='left first'>Type:</label>
                         <input type='radio' name='type' id='value' value='m' class="first" <?php if ($values['type']=='m') echo "checked='checked' "; ?>/><label for='value' class='right'>Value</label>
                         <input type='radio' name='type' id='vision' value='v' class="notfirst" <?php if ($values['type']=='v') echo "checked='checked' "; ?>/><label for='vision' class='right'>Vision</label>
                         <input type='radio' name='type' id='role' value='o' class="notfirst" <?php if ($values['type']=='o') echo "checked='checked' "; ?>/><label for='role' class='right'>Role</label>
@@ -173,7 +175,7 @@ echo "<input type='hidden' name='action' value='",
                         <input type='radio' name='type' id='project' value='p' class="notfirst" <?php if ($values['type']=='p') echo "checked='checked' "; ?>/><label for='project' class='right'>Project</label>
                 </div>
                 <div class='formrow'>
-                        <label class='left first'></label>
+                        <label class='left first'>&nbsp;</label>
                         <input type='radio' name='type' id='action' value='a' class="first" <?php if ($values['type']=='a') echo "checked='checked' "; ?>/><label for='action' class='right'>Action</label>
                         <input type='radio' name='type' id='reference' value='r' class="notfirst" <?php if ($values['type']=='r') echo "checked='checked' "; ?>/><label for='reference' class='right'>Reference</label>
                         <input type='radio' name='type' id='waiting' value='w' class="notfirst" <?php if ($values['type']=='w') echo "checked='checked' "; ?>/><label for='waiting' class='right'>Waiting</label>
@@ -187,7 +189,7 @@ echo "<input type='hidden' name='action' value='",
                 <div class='formrow'>
                         <label for='suppress' class='left first'>Tickler:</label>
                         <input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($currentrow['suppress']=="y") echo " checked='checked' "; ?>/>
-                        <label for='suppress'>Tickle&nbsp;</label>
+                        <label for='suppressUntil'>Tickle&nbsp;</label>
                         <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $currentrow['suppressUntil'];?>' /><label for='suppressUntil'>&nbsp;days before deadline</label>
                 </div>
 

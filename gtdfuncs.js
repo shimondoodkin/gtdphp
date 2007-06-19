@@ -1,5 +1,15 @@
-var formValid;
-var formErrorMessage;
+function focusOnForm() {
+    if (document.forms.length) {
+        var tst;
+        for (i = 0; i < document.forms[0].length; i++) {
+            tst=document.forms[0].elements[i].type;
+            if ( (tst == "button") || (tst == "checkbox") || (tst == "radio") || (tst == "select") || (tst == "select-one") || (tst == "text") || (tst == "textarea") ) {
+                document.forms[0].elements[i].focus();
+                break;
+            }
+        }
+    }
+}
 
 function validate(form) {
 
@@ -14,11 +24,9 @@ function validate(form) {
         return false;
     }
     
-    // Init variables
-    formValid = true;
-    formErrorMessage = "Please correct the following:<br /><br />";
-    
     // Parse required list and check each required field
+    var formValid=true;
+    var formErrorMessage="Please correct the following:<br /><br />";
     var requiredList = form.required.value.split(",");
     var requiredItem;
     
@@ -29,13 +37,18 @@ function validate(form) {
         if (requiredItem[1]=='depends') form.elements[requiredItem[3]].className='';
     }
     
+    var thisfield;
+    var checkType;
+    var itemErrorMessage;
+    var itemValue;
+    var passed;
+    var error;
     for(var i = 0;i<requiredList.length;i++){
         requiredItem = requiredList[i].split(":");
-        var thisfield = form.elements[requiredItem[0]];
-        var checkType = requiredItem[1];
-        var itemErrorMessage = requiredItem[2];
-        var itemValue = thisfield.value;
-        var passed;
+        thisfield = form.elements[requiredItem[0]];
+        checkType = requiredItem[1];
+        itemErrorMessage = requiredItem[2];
+        itemValue = thisfield.value;
             
         switch (checkType) {
             case "date":
@@ -54,21 +67,17 @@ function validate(form) {
                 document.getElementById("errorMessage").innerHTML="Error: Required type not valid.";
                 return false;                
         }
-        markField(thisfield,passed,itemErrorMessage);
+        if (!passed) {
+            formValid=false;
+            formErrorMessage += itemErrorMessage + "<br />";
+            thisfield.className='formerror';
+        }
     }
         
     if(!formValid) {
         document.getElementById("errorMessage").innerHTML=formErrorMessage;
     }
     return formValid;
-}
-
-function markField(thisfield,passed,error) {        
-    if (!passed) {
-		formErrorMessage += error + "<br />";
-    	formValid = false;
-    	thisfield.className='formerror';
-    }
 }
 
 function checkForNull(field) {
@@ -156,7 +165,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-addEvent(window, "load", sortables_init);
 
 var SORT_COLUMN_INDEX;
 
@@ -351,3 +359,6 @@ function addEvent(elm, evType, fn, useCapture)
     alert("Handler could not be removed");
   }
 } 
+
+addEvent(window,'load', focusOnForm);
+addEvent(window,'load', sortables_init);

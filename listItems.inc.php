@@ -238,34 +238,36 @@ if ($filter['everything']!="true") {
 Section Heading
 */
 
+$link="item.php?type=".$values['type'];
 if($filter['everything']=="true")
-   $sectiontitle = 'All&nbsp;';
-
-else if ($filter['completed']=="true")
-   $sectiontitle = 'Completed&nbsp;';
-
+   $sectiontitle = "All {$typename}s";
 else {
-    $sectiontitle = "<a href='item.php?type={$values['type']}";
-    if ($filter['someday']) $sectiontitle .='&amp;someday=true';
-    if ($filter['nextonly']) $sectiontitle .='&amp;nextonly=true';
-    $sectiontitle .= "' title='Add new $typename'>";
+    if ($filter['completed']=="true")
+        $sectiontitle = 'Completed ';
+    elseif ($filter['dueonly']=="true")
+        $sectiontitle =  'Due ';
+    else $sectiontitle ='';
+
+    if ($filter['repeatingonly']=="true") {
+        $sectiontitle .= 'Repeating ';
+        $link.='&amp;repeat=true';
+    }
+    if ($filter['someday']=="true") {
+        $sectiontitle .= 'Someday/Maybe ';
+        $link.='&amp;someday=true';
+    }
+    if ($filter['nextonly']=="true") {
+        $sectiontitle .= 'Next ';
+        $link .='&amp;nextonly=true';
+    }
+    $sectiontitle .= $typename.'s';
+    if ($filter['tickler']=="true") {
+        $sectiontitle .= ' in Tickler File';
+        $link .='&amp;suppress=true';
+    }
 }
-
-if ($filter['everything']!="true") {
-   if ($filter['repeatingonly']=="true") $sectiontitle .= 'Repeating&nbsp;';
-   if ($filter['dueonly']=="true") $sectiontitle .=  'Due&nbsp;';
-   if ($filter['someday']=="true") $sectiontitle .= 'Someday/Maybe&nbsp;';
-   if ($filter['nextonly']=="true") $sectiontitle .= 'Next&nbsp;';
-}
-
-$sectiontitle .= $typename.'s';
-
-if ($filter['everything']!="true") {
-   if ($filter['tickler']=="true") $sectiontitle .= ' in Tickler File';
-   if ($filter['completed']!="true") $sectiontitle .= '</a>';
-}
-
-
+if ($filter['completed']!="true")
+    $sectiontitle = "<a title='Add new $sectiontitle' href='$link'>$sectiontitle</a>";
 /*
     ===================================================================
     main query: build array of items
@@ -391,7 +393,6 @@ if(!count($maintable)) {
     $endmsg=array('header'=>"You have no {$typename}s remaining.");
     if ($filter['completed']!="true" && $values['type']!="t") {
         $endmsg['prompt']="Create a new {$typename}";
-        $endmsg['link']="item.php?type={$values['type']}";
+        $endmsg['link']=$link;
     }
 } else $endmsg='';
-
