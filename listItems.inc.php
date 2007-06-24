@@ -240,7 +240,7 @@ Section Heading
 
 $link="item.php?type=".$values['type'];
 if($filter['everything']=="true")
-   $sectiontitle = "All {$typename}s";
+    $sectiontitle = '';
 else {
     if ($filter['completed']=="true")
         $sectiontitle = 'Completed ';
@@ -260,14 +260,8 @@ else {
         $sectiontitle .= 'Next ';
         $link .='&amp;nextonly=true';
     }
-    $sectiontitle .= $typename.'s';
-    if ($filter['tickler']=="true") {
-        $sectiontitle .= ' in Tickler File';
-        $link .='&amp;suppress=true';
-    }
 }
-if ($filter['completed']!="true")
-    $sectiontitle = "<a title='Add new $sectiontitle' href='$link'>$sectiontitle</a>";
+$sectiontitle .= $typename;
 /*
     ===================================================================
     main query: build array of items
@@ -389,10 +383,24 @@ if ($result!="-1") {
     ===================================================================
 */
 
-if(!count($maintable)) {
+$numrows=count($maintable);
+if($numrows) {
+    $endmsg='';
+    $sectiontitle = $numrows.' '.$sectiontitle;
+    if ($numrows!==1) $sectiontitle.='s';
+    if($filter['everything']=="true") {
+        if ($numrows!==1) $sectiontitle = 'All '.$sectiontitle;
+    } elseif ($filter['tickler']=="true") {
+        $sectiontitle .= ' in Tickler File';
+        $link .='&amp;suppress=true';
+    }
+}else {
     $endmsg=array('header'=>"You have no {$typename}s remaining.");
     if ($filter['completed']!="true" && $values['type']!="t") {
         $endmsg['prompt']="Create a new {$typename}";
         $endmsg['link']=$link;
     }
-} else $endmsg='';
+}
+if ($filter['completed']!="true" || $filter['everything']=="true")
+    $sectiontitle = "<a title='Add new $sectiontitle' href='$link'>$sectiontitle</a>";
+
