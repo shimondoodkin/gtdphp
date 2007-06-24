@@ -110,7 +110,7 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
         $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
         $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
         $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-		$values['childfilterquery'] .= " AND ".sqlparts("isnotcompleteditem",$config,$values);
+		$values['childfilterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
         $result = query("getitemsandparent",$config,$values,$options,$sort);
 
         $maintable=array();

@@ -70,8 +70,8 @@ echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".makeclean($item['titl
 
 //Edit, next, and previous buttons
 echo '<span class="editbar">[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($item['title'])).'">Edit</a> ]'."\n";
-if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" title="'.$previoustitle.'">Previous</a> ]'."\n";
-if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="'.$nexttitle.'">Next</a> ]'."\n";
+if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" title="',makeclean($previoustitle),'">Previous</a> ]'."\n";
+if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="',makeclean($nexttitle),'">Next</a> ]'."\n";
 echo "</span>\n";
 //Item details
 echo '<p><span class="reportItem">Created:&nbsp;</span>'.$item['dateCreated']."<br />\n";

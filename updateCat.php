@@ -55,6 +55,7 @@ if (isset($_POST['id'])) {
         query("reassign$query",$config,$values);
         query("delete$query",$config,$values);
         $msg='Deleted';
+        if ($next==='Update') $next=0;
     } else {
         query("update$query",$config,$values);
         $msg='Updated';
@@ -65,8 +66,10 @@ if ($GLOBALS['ecode']=="0") $_SESSION['message'][]="$msg $field '{$values['name'
 if ($next==='Update') {
     $nexturl="reportContext.php";
     if($field==='context') $nexturl .="#c{$values['id']}";
-} else
-    $nexturl="editCat.php?field={$field}&amp;id=$next";
+} else {
+    $nexturl="editCat.php?field=$field";
+    if ($next!=='') $nexturl.="&amp;id=$next";
+}
     
 echo nextScreen($nexturl,$config);
 if ($html)

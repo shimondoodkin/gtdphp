@@ -12,7 +12,6 @@ $sqlparts = array(
     "contextfilter"             =>  " ia.`contextId` = '{$values['contextId']}' ",
     "due"                       =>  " (CURDATE()>=ia.`deadline` AND ia.`deadline` IS NOT NULL) ",
     "hasparent"                 =>  " y.`parentId` = '{$values['parentId']}' ",
-    "isnotcompleteditem"        =>  " its.`dateCompleted` is  NULL",
     "issomeday"                 =>  " ia.`isSomeday` = '{$values['isSomeday']}' ",
     "issomeday-parent"          =>  " y.`pisSomeday` = '{$values['isSomeday']}' OR y.`pisSomeday` IS NULL",
     "listcategoryfilter"        =>  " l.`categoryId`='{$values['categoryId']}' ",
