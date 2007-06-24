@@ -15,10 +15,14 @@ $nextactions=(getNextActionsArray($config,$values,$options,$sort));
 $wasNAonEntry = array(); // stash this in case we introduce marking actions as next actions onto this screen
 
 //Find previous and next projects
-$values['isSomeday']="n";
+
+if ($item['isSomeday']=="y") $values['isSomeday']="y";
+else $values['isSomeday']="n";
+
 $values['type']=$item['type'];
 $values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
+$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 $result = query("getitems",$config,$values,$options,$sort);
 
