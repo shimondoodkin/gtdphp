@@ -232,6 +232,10 @@ if ($filter['everything']!="true") {
     /*
     $filter['nextonly']
     */   
+
+
+    //Filter out items with completed parents
+    $values['filterquery'] = " WHERE " .sqlparts("pendingparents",$config,$values);
 }
 
 /*

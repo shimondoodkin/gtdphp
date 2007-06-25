@@ -16,6 +16,7 @@ $sqlparts = array(
     "issomeday-parent"          =>  " y.`pisSomeday` = '{$values['isSomeday']}' OR y.`pisSomeday` IS NULL",
     "listcategoryfilter"        =>  " l.`categoryId`='{$values['categoryId']}' ",
     "pendingitems"              =>  " its.`dateCompleted` IS NULL ",
+    "pendingparents"            =>  " y.`pdatecompleted` IS NULL ",
     "notcategoryfilter"         =>  " ia.`categoryId` != '{$values['categoryId']}' ",
     "notcategoryfilter-parent"  =>  " y.`pcategoryId` != '{$values['categoryId']}' ",
     "notcontextfilter"          =>  " ia.`contextId` != '{$values['contextId']}' ",
