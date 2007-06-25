@@ -66,7 +66,7 @@ $childtype=array();  //I don't like this... but it's the best solution at the mo
 
 $childtype=getChildType($item['type']);
 
-echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".makeclean($item['title'])."</h1>\n";
+echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday']=="y")?" (Someday) ":"")."</h1>\n";
 
 //Edit, next, and previous buttons
 echo '<span class="editbar">[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($item['title'])).'">Edit</a> ]'."\n";
