@@ -1,6 +1,7 @@
 <?php
 //INCLUDES
 include_once('header.php');
+echo "<script type='text/javascript'>addEvent(window,'load', filtertoggle)</script>\n";
 require_once('listItems.inc.php')
 ?>
 <div id="filter">
@@ -26,20 +27,15 @@ require_once('listItems.inc.php')
             <label for='nottimecontext' class='notfirst'>NOT</label>
         </div>
         <div class="formrow">
-            <label class='left'>Status:</label>
-            <input type='radio' name='completed' id='pending' value='false' class="first" <?php if ($filter['completed']=="false") echo 'checked="checked"'?> title="Show incomplete <?php echo $typename ?>s" /><label for='pending' class='right' >Pending</label>
-            <input type='radio' name='completed' id='completed' value='true' class="notfirst" <?php if ($filter['completed']=="true") echo 'checked="checked"'?> title="Show achievements" /><label for='completed' class='right'>Completed</label>
-            <label class='left'>Tickler:</label>
-            <input type='radio' name='tickler' id='notsuppressed' value='false' class="notfirst" <?php if ($filter['tickler']=="false") echo 'checked="checked"'?> title="Show active <?php echo $typename ?>s" /><label for='notsuppressed' class='right'>Active</label>
-            <input type='radio' name='tickler' id='suppressed' value='true' class="notfirst" <?php if ($filter['tickler']=="true") echo 'checked="checked"'?> title="Show tickler <?php echo $typename ?>s" /><label for='suppressed' class='right'>Tickler</label>
-            <label class='left'>Someday/Maybe:</label>
-            <input type='radio' name='someday' id='notsomeday' value='false' class="notfirst" <?php if ($filter['someday']=="false") echo 'checked="checked"'?> title="Show active <?php echo $typename ?>s" /><label for='notsuppressed' class='right'>Active</label>
-            <input type='radio' name='someday' id='someday' value='true' class="notfirst" <?php if ($filter['someday']=="true") echo 'checked="checked"'?> title="Show someday/maybe <?php echo $typename ?>s" /><label for='suppressed' class='right'>Someday</label>
-        </div>
-        <div class="formrow">
-            <input type="checkbox" name="nextonly" id="nextonly" class="first" value="true" <?php if ($filter['nextonly']=="true") echo 'checked="checked"'?> title="Show only Next Actions" /><label for='nextonly' class='right'>Next Actions</label>
+            <input type='checkbox' name='completed' id='completed' value='true' class="left first" <?php if ($filter['completed']=="true") echo 'checked="checked"'?> title="Show achievements" /><label for='completed' class='right'>Completed</label>
+            <input type='checkbox' name='tickler' id='suppressed' value='true' class="notfirst" <?php if ($filter['tickler']=="true") echo 'checked="checked"'?> title="Show tickler <?php echo $typename ?>s" /><label for='suppressed' class='right'>Tickler</label>
+            <input type='checkbox' name='someday' id='someday' value='true' class="notfirst" <?php if ($filter['someday']=="true") echo 'checked="checked"'?> title="Show someday/maybe <?php echo $typename ?>s" /><label for='suppressed' class='right'>Someday</label>
+            <input type="checkbox" name="nextonly" id="nextonly" class="notfirst" value="true" <?php if ($filter['nextonly']=="true") echo 'checked="checked"'?> title="Show only Next Actions" /><label for='nextonly' class='right'>Next Actions</label>
             <input type="checkbox" name="dueonly" id="dueonly" class="notfirst" value="true" <?php if ($filter['dueonly']=="true") echo 'checked="checked"'?> title="Show only <?php echo $typename ?>s with a due date" /><label for='dueonly' class='right'>Due</label>
             <input type="checkbox" name="repeatingonly" id="repeatingonly" class="notfirst" value="true" <?php if ($filter['repeatingonly']=="true") echo 'checked="checked"'?> title="Show only repeating <?php echo $typename ?>s" /><label for='repeatingonly' class='right'>Repeating</label>
+            <input type="checkbox" name="everything" id="everything" class="notfirst" value="true" <?php if ($filter['everything']=="true") echo 'checked="checked"'?> title="Show all <?php echo $typename ?>s, regardless of status or labels" onclick='javascript:filtertoggle("toggle");' /><label for='everything'>Show all</label>
+        </div>
+        <div class="formbuttons">
             <select name="type" id="type" title="Filter items by type">
             <?php
                 $types=array();
@@ -51,10 +47,18 @@ require_once('listItems.inc.php')
                 }
             ?>
             </select>
-           <input type="checkbox" name="everything" id="everything" class="notfirst" value="true" <?php if ($filter['everything']=="true") echo 'checked="checked"'?> title="Show all <?php echo $typename ?>s, regardless of status or labels" /><label for='everything'>Show all&nbsp;<?php echo $typename ?>s</label>
-        </div>
-        <div class="formbuttons">
-            <input type="submit" class="button" value="Filter" name="submit" title="Filter <?php echo $typename ?>s by selected criteria" />
+           <label for="parentcompleted" class='notfirst'>Parent completion status:</label>
+           <select name="parentcompleted" id="parentcompleted" title="Completion status of parents">
+           <?php
+                foreach (array('Incomplete'=>'false','Any'=>'*','Complete'=>'true') as $key=>$val)
+                    echo "<option value='$val'"
+                        ,(($filter['parentcompleted']==$val)?" selected='selected'":'')
+                        ,">$key</option>\n";
+           ?>
+           </select>
+            <input type="submit" id="filtersubmit" class="button" value="Filter"
+                name="submit" onclick="javascript:filtertoggle('all');"
+                title="Filter <?php echo $typename ?>s by selected criteria" />
         </div>
     </form>
 </div>

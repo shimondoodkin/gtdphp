@@ -344,11 +344,22 @@ function ts_sort_checkbox(a,b) {
     return 100;
 }
 
-function addEvent(elm, evType, fn, useCapture)
-// addEvent and removeEvent
-// cross-browser event handling for IE5+,  NS6 and Mozilla
-// By Scott Andrew
-{
+function filtertoggle(which) {
+    var box=document.getElementById('everything')
+    var isOn;
+    if (which=='all')
+        isOn=false;
+    else isOn=box.checked;
+    for (var child in box.form.elements)
+        /*if (box.form.elements[child].type !='hidden) */box.form.elements[child].disabled=isOn;
+    box.disabled=false;
+    document.getElementById('filtersubmit').disabled=false;
+    document.getElementById('type').disabled=false;
+    return true;
+}
+
+function addEvent(elm, evType, fn, useCapture) {
+  // cross-browser event handling by Scott Andrew
   if (elm.addEventListener){
     elm.addEventListener(evType, fn, useCapture);
     return true;
@@ -356,9 +367,10 @@ function addEvent(elm, evType, fn, useCapture)
     var r = elm.attachEvent("on"+evType, fn);
     return r;
   } else {
-    alert("Handler could not be removed");
+    // don't know how to attach event
+    ;
   }
-} 
+}
 
 addEvent(window,'load', focusOnForm);
 addEvent(window,'load', sortables_init);

@@ -29,6 +29,7 @@ $filter['dueonly']        =getVarFromGetPost('dueonly');           //has due dat
 $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeating:true/empty
 $filter['parentId']       =getVarFromGetPost('parentId');
 $filter['everything']     =getVarFromGetPost('everything');        //overrides filter:true/empty
+$filter['parentcompleted']=getVarFromGetPost('parentcompleted');
 
 if ($filter['type']==='s') {
     $filter['someday']=true;
@@ -233,9 +234,20 @@ if ($filter['everything']!="true") {
     $filter['nextonly']
     */   
 
-
-    //Filter out items with completed parents
-    $values['filterquery'] = " WHERE " .sqlparts("pendingparents",$config,$values);
+    switch ($filter['parentcompleted']) {
+        case '*': // don't filter on completion status of parents
+            $values['filterquery'] = '';
+            break;
+            
+        case 'true': // only select items with completed parents
+            $values['filterquery'] = " WHERE " .sqlparts("completedparents",$config,$values);
+            break;
+            
+        case 'false': // deliberately flows through to default case
+        default:     //Filter out items with completed parents
+            $values['filterquery'] = " WHERE " .sqlparts("pendingparents",$config,$values);
+            break;
+    }
 }
 
 /*
@@ -279,8 +291,7 @@ if ($result!="-1") {
     $nonext=FALSE;
     $nochildren=FALSE;
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
-    if ($filter['everything']=="true") $filter['nextonly']="false";
-    foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']]) {        
+    foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']] || $filter['everything']=="true") {
         //filter out all but nextactions if $filter['nextonly']==true
     
         $nochildren=false;
@@ -406,5 +417,6 @@ if($numrows) {
     }
 }
 if ($filter['completed']!="true" || $filter['everything']=="true")
-    $sectiontitle = "<a title='Add new $sectiontitle' href='$link'>$sectiontitle</a>";
+    $sectiontitle = "<a title='Add new' href='$link'>$sectiontitle</a>";
+
 
