@@ -351,7 +351,7 @@ function filtertoggle(which) {
         isOn=false;
     else isOn=box.checked;
     for (var child in box.form.elements)
-        /*if (box.form.elements[child].type !='hidden) */box.form.elements[child].disabled=isOn;
+        box.form.elements[child].disabled=isOn;
     box.disabled=false;
     document.getElementById('filtersubmit').disabled=false;
     document.getElementById('type').disabled=false;

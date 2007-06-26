@@ -174,9 +174,9 @@ if ($childtype!=NULL) {
 						array_pop($maintable);
 						continue;
 					}
+					$maintable[$i]['suppress']=date($config['datemask'],$reminddate);
 				} else
-					$reminddate='&nbsp;';
-                $maintable[$i]['suppress']=$reminddate;
+					$maintable[$i]['suppress']='&nbsp;';
 
                 $deadline=prettyDueDate($row['deadline'],$config['datemask']);
                 $maintable[$i]['deadline']      =$deadline['date'];
