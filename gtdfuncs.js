@@ -345,7 +345,7 @@ function ts_sort_checkbox(a,b) {
 }
 
 function filtertoggle(which) {
-    var box=document.getElementById('everything')
+    var box=document.getElementById('everything');
     var isOn;
     if (which=='all')
         isOn=false;

@@ -3,7 +3,7 @@
 
 
 <div id='footer'>
-	gtd-php version 0.8-rc4-rev386
+	gtd-php version 0.8-rc4-rev387
 </div>
 
 </div> <!-- Container-->

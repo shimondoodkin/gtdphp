@@ -35,6 +35,8 @@ if ($filter['type']==='s') {
     $filter['someday']=true;
     $filter['type']='p';
 }
+/* end of setting $filter
+ --------------------------------------*/
 $values['type']           =$filter['type'];
 $values['parentId']       =$filter['parentId'];
 $values['contextId']      =$filter['contextId'];

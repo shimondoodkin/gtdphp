@@ -167,6 +167,6 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
         }
     }
 }
-$_SESSION['afterCreatep']=$_SESSION['afterCreatea']=basename($thisurl['path']);
+$_SESSION['lastfilterp']=$_SESSION['lastfiltera']=basename($thisurl['path']);
 include_once('footer.php');
 ?>

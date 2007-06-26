@@ -108,6 +108,6 @@ require_once('listItems.inc.php')
 }
 if (isset($endmsg['header'])) echo "<h4>{$endmsg['header']}</h4>\n";
 if (isset($endmsg['link'])) echo "<a href='{$endmsg['link']}'>{$endmsg['prompt']}</a>\n";
-$_SESSION['afterCreate'.$values['type']]=$referrer;
+$_SESSION['lastfilter'.$values['type']]=$referrer;
 include_once('footer.php');
 ?>

@@ -201,10 +201,15 @@ echo "<input type='hidden' name='action' value='",
 $referrer=getVarFromGetPost('referrer');
 echo "<input type='hidden' name='referrer' value='$referrer' />\n";
 $key='afterCreate'.$values['type'];
-if ($_SESSION[$key]=='' && isset($config['afterCreate'][$values['type']]))
+// always use config value when creating
+if (isset($config['afterCreate'][$values['type']]) && !isset($_SESSION[$key]))
 	$_SESSION[$key]=$config['afterCreate'][$values['type']];
 	
-$tst=($values['itemId'] && $referrer!='')?'referrer':$_SESSION['afterCreate' . $values['type']];
+if ($values['itemId'])
+    $tst=$_SESSION[$key];
+else
+    $tst=$config['afterCreate'][$values['type']];
+
 echo "<div class='formrow'>\n<label class='left first'>After "
     ,($values['itemId'])?'updating':'creating'
     ,":</label>\n"
@@ -223,7 +228,7 @@ echo "<div class='formrow'>\n<label class='left first'>After "
 		
 if ($values['itemId'] && ($referrer!='' || $_SESSION[$key]!='')) {
     echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
-	 	," checked='checked' "
+	 	,($tst=='referrer')?" checked='checked' ":''
 		," /><label for='referrer' class='right'>Return to previous list</label>\n";
 }
 
