@@ -357,7 +357,13 @@ function nextPage() { // set up the forwarding to the next page
 	switch ($tst) {
 		case "parent"  : $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;
 		case "item"    : $nextURL="itemReport.php?itemId=$id"; break;
-		case "another" : $nextURL="item.php?type=$t"; break;
+		case "another" :
+            $nextURL="item.php?";
+            if (isset($_SESSION['lastcreate']) && $_SESSION['lastcreate']!='')
+                $nextURL.=$_SESSION['lastcreate'];
+            else
+                $nextURL.="type=$t";
+            break;
 		case "list"	   : $nextURL="listItems.php?type=$t"; break;
 		case "referrer": $nextURL=$_SESSION["lastfilter$t"];break;
         default        : $nextURL=$tst;break;

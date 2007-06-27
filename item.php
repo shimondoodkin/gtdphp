@@ -2,32 +2,13 @@
 //INCLUDES
 include_once('header.php');
 
-//RETRIEVE URL VARIABLES
 $values = array();
+$values['itemId']= (int) getVarFromGetPost('itemId');
+$values['parentId']=array();
 $currentrow = array();
 
-$values['itemId']= (int) getVarFromGetPost('itemId');
-$values['type']=getVarFromGetPost('type');
-if ($values['type']==='s') {
-    $values['isSomeday']='y';
-    $values['type']='p';
-}
-if ($_GET['someday']=='true') $values['isSomeday']='y';
-if ($_GET['suppress']=='true') $currentrow['suppress']='y';
-
-$nextaction=false;
-if ($values['type']==='n') {
-    $nextaction=true;
-    $values['type']='a';
-}
-if ($_GET['nextonly']=='true') $nextaction=true;
-
-$values['parentId']=array();
-$tmp=getVarFromGetPost('parentId');
-if ($tmp!=='') $values['parentId'][0] = (int) $tmp;
-
 //SQL CODE
-if ($values['itemId']>0) {
+if ($values['itemId']) { // editing an item
     $result = query("selectitem",$config,$values,$options,$sort);
     if ($GLOBALS['ecode']==0) {
     $currentrow = $result[0];
@@ -44,6 +25,31 @@ if ($values['itemId']>0) {
         if ($result[0]['nextaction']==$values['itemId']) $nextaction=true;
         }
     }
+    //$_SESSION['lastcreate']=''; // I don't think we need to do this, so have commented it out for now. [Andrew]
+} else { // creating an item
+    //RETRIEVE URL VARIABLES
+    $values['type']=getVarFromGetPost('type');
+    if ($values['type']==='s') {
+        $values['isSomeday']='y';
+        $values['type']='p';
+    }
+    if ($_GET['someday']=='true') $values['isSomeday']='y';
+    if ($_GET['suppress']=='true') $currentrow['suppress']='y';
+
+    $nextaction=false;
+    if ($values['type']==='n') {
+        $nextaction=true;
+        $values['type']='a';
+    }
+    if ($_GET['nextonly']=='true') $nextaction=true;
+
+    $tmp=getVarFromGetPost('parentId');
+    if ($tmp!=='') $values['parentId'][0] = (int) $tmp;
+
+    foreach ( array('categoryId','contextId','timeframeId') as $cat)
+        $values[$cat]= (int) getVarFromGetPost($cat);
+
+    $_SESSION['lastcreate']=$_SERVER['QUERY_STRING'];
 }
 
 //determine item and parent labels
@@ -226,7 +232,7 @@ echo "<div class='formrow'>\n<label class='left first'>After "
 	 	,($tst=='another')?" checked='checked' ":""
 		," /><label for='anotherNext' class='right'>Create another $typename</label>\n";
 		
-if ($values['itemId'] && ($referrer!='' || $_SESSION[$key]!='')) {
+if ($referrer!='' || $_SESSION[$key]!='') {
     echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
 	 	,($tst=='referrer')?" checked='checked' ":''
 		," /><label for='referrer' class='right'>Return to previous list</label>\n";

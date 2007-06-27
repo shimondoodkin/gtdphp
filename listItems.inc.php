@@ -194,17 +194,32 @@ $values['childfilterquery'] = " WHERE ".sqlparts("typefilter",$config,$values);
 Override all filter selections if $filter['everything'] is true
 */
 
+$linkfilter='';
+
 if ($filter['everything']!="true") {
 
     //filter box filters
-    if ($filter['categoryId'] != NULL && $filter['notcategory']!="true") $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
-    if ($filter['categoryId'] != NULL && $filter['notcategory']=="true") $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
-    
-    if ($filter['contextId'] != NULL && $filter['notspacecontext']!="true") $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
-    if ($filter['contextId'] != NULL && $filter['notspacecontext']=="true") $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
-    
-    if ($filter['timeframeId'] != NULL && $filter['nottimecontext']!="true") $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
-    if ($filter['timeframeId'] != NULL && $filter['nottimecontext']=="true") $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
+    if ($filter['categoryId'] != NULL)
+        if ($filter['notcategory']=="true")
+            $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
+        else {
+            $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
+            $linkfilter .= '&amp;categoryId='.$values['categoryId'];
+        }
+    if ($filter['contextId'] != NULL)
+        if ($filter['notspacecontext']=="true")
+            $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
+        else {
+            $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
+            $linkfilter .= '&amp;contextId='.$values['contextId'];
+        }
+    if ($filter['timeframeId'] != NULL)
+        if ($filter['nottimecontext']=="true")
+            $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
+        else {
+            $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
+            $linkfilter .= '&amp;timeframeId='.$values['timeframeId'];
+        }
     
     if ($filter['completed']=="true") $values['childfilterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
     else $values['childfilterquery'] .= " AND " .sqlparts("pendingitems",$config,$values);
@@ -221,6 +236,7 @@ if ($filter['everything']!="true") {
     
     //problem: need to get all items with suppressed parents(even if child is not marked suppressed), as well as all suppressed items
     if ($filter['tickler']=="true") {
+        $linkfilter .='&amp;tickler=true';
         if ($values['parentId']!='') $values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
         $values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
     } else {
@@ -255,21 +271,21 @@ if ($filter['everything']!="true") {
 /*
 Section Heading
 */
-
 $link="item.php?type=".$values['type'];
+
 if($filter['everything']=="true")
     $sectiontitle = '';
 else {
+    $link .= $linkfilter;
     if ($filter['completed']=="true")
         $sectiontitle = 'Completed ';
     elseif ($filter['dueonly']=="true")
         $sectiontitle =  'Due ';
     else $sectiontitle ='';
 
-    if ($filter['repeatingonly']=="true") {
+    if ($filter['repeatingonly']=="true")
         $sectiontitle .= 'Repeating ';
-        $link.='&amp;repeat=true';
-    }
+
     if ($filter['someday']=="true") {
         $sectiontitle .= 'Someday/Maybe ';
         $link.='&amp;someday=true';
@@ -401,17 +417,30 @@ if ($result!="-1") {
 */
 
 $numrows=count($maintable);
-if($numrows) {
-    $endmsg='';
-    $sectiontitle = $numrows.' '.$sectiontitle;
-    if ($numrows!==1) $sectiontitle.='s';
-    if($filter['everything']=="true") {
-        if ($numrows!==1) $sectiontitle = 'All '.$sectiontitle;
-    } elseif ($filter['tickler']=="true") {
-        $sectiontitle .= ' in Tickler File';
-        $link .='&amp;suppress=true';
+if ($numrows!==1) $sectiontitle.='s';
+if ($filter['tickler']=="true" && $filter['everything']!="true") {
+    $sectiontitle .= ' in Tickler File';
+    $link .= '&amp;suppress=true';
+}
+
+if($filter['everything']=="true")
+    switch ($numrows) {
+        case 0:
+            $sectiontitle = 'There are no '.$sectiontitle;
+            break;
+        case 1:
+            $sectiontitle = 'There is one '.$sectiontitle;
+            break;
+        default:
+            $sectiontitle = "All $numrows $sectiontitle";
+            break;
     }
-}else {
+else
+    $sectiontitle = $numrows.' '.$sectiontitle;
+
+if($numrows)
+    $endmsg='';
+else {
     $endmsg=array('header'=>"You have no {$typename}s remaining.");
     if ($filter['completed']!="true" && $values['type']!="t") {
         $endmsg['prompt']="Create a new {$typename}";
@@ -421,4 +450,4 @@ if($numrows) {
 if ($filter['completed']!="true" || $filter['everything']=="true")
     $sectiontitle = "<a title='Add new' href='$link'>$sectiontitle</a>";
 
-
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser
