@@ -8,18 +8,15 @@ if (isset($_GET['id'])) {
     if ($id===0) {
         $thiscat['id']=0;
         $title="Create $field";
-        $prefix='Create this item and then ';
         $canDelete=false;
     } else {
         $title="Edit $field";
-        $prefix='Save changes and then ';
         $canDelete=true;
     }
 } else {
     $id=0;
     $thiscat['id']=false;
     $title="$field List";
-    $prefix='';
     $canDelete=false;
 }
 
@@ -53,15 +50,26 @@ $catlist=array();
 $count=0;
 $thiscat=array();
 
-if (is_array($result)) foreach ($result as $checkcat) {
-	$i=0;
-	$newcat=array();
-    foreach ($checkcat as $item)
-    	$newcat[$keys[$i++]]=$item;
-    if ($newcat['id']==$id)
-        $thiscat=$newcat;
-    else $catlist[]=$newcat;
-    $count++;
+if (is_array($result)) {
+ 	$firstcat=0;
+ 	$nextcat=-1;
+    foreach ($result as $checkcat) {
+    	$newcat=array();
+    	$i=0;
+        foreach ($checkcat as $item)
+        	$newcat[$keys[$i++]]=$item;
+        if (!$firstcat) $firstcat=$newcat['id'];
+        if (!$nextcat) $nextcat=$newcat['id'];
+        if ($newcat['id']==$id) {
+            $thiscat=$newcat;
+            $nextcat=0;
+        } else $catlist[]=$newcat;
+        $count++;
+    }
+    if (!$nextcat)
+        $nextcat=$firstcat;
+    else if ($nextcat==-1)
+        $nextcat=0;
 }
 if ($config['debug'] & _GTD_DEBUG) echo "<pre>catlist:",print_r($catlist,true),'</pre>';
 

@@ -10,14 +10,6 @@ if ($config['debug'] & _GTD_DEBUG) {
 $values=array();
 $field=$_POST['field'];
 
-$allPosts=array_keys($_POST);
-if (isset($_POST['submit']))
-    $next=$_POST['submit'];
-else foreach ($allPosts as $thiskey)
-    if ($thiskey!==($next=preg_replace('/^submit([0-9]+)(_x)?$/','$1',$thiskey)))
-        break;
-
-if ($config['debug'] & _GTD_DEBUG) echo "<p class='debug'>found next item: $next</p>";
 if (isset($_POST['id'])) {
     $values['id']=(int) $_POST['id'];
     $values['name']=$_POST['name'];
@@ -35,7 +27,7 @@ if (isset($_POST['id'])) {
         case 'time-context':
             $query='timecontext';
             $getId='timecontext';
-            if ($config['useTypesForTimeContexts'] && (strpos('vogpa',$_POST['type'])!==false))
+            if ($config['useTypesForTimeContexts'] && isset($_POST['type']) && $_POST['type']!='')
                 $values['type']=$_POST['type'];
             else
                 $values['type']='a';
@@ -48,14 +40,12 @@ if (isset($_POST['id'])) {
         if ($values['name']!='') {
             $result = query("new$query",$config,$values);
             // just created an item, without selecting another item for editing, so offer to create another one
-            if ($next==='Update') $next=0;
             $msg='Created';
         }
     } elseif ($_POST['delete']==="y") {
         query("reassign$query",$config,$values);
         query("delete$query",$config,$values);
         $msg='Deleted';
-        if ($next==='Update') $next=0;
     } else {
         query("update$query",$config,$values);
         $msg='Updated';
@@ -63,15 +53,11 @@ if (isset($_POST['id'])) {
 } // end of: if (isset($_POST['id']))
 if ($GLOBALS['ecode']=="0") $_SESSION['message'][]="$msg $field '{$values['name']}'";
 
-if ($next==='Update') {
-    $nexturl="reportContext.php";
-    if($field==='context') $nexturl .="#c{$values['id']}";
-} else {
-    $nexturl="editCat.php?field=$field";
-    if ($next!=='') $nexturl.="&amp;id=$next";
-}
-    
+$nexturl="editCat.php?field=$field";
+if (isset($_POST['next']))
+    $nexturl.='&amp;id='.$_POST['next'];
 echo nextScreen($nexturl,$config);
+
 if ($html)
     include_once('footer.php');
 else

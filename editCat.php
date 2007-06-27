@@ -26,17 +26,23 @@ require_once('editCat.inc.php');
     <?php
     if ($thiscat['id']!==false) { ?>
         <tr>
-            <td><input type="text" name="name" value="<?php echo $thiscat['name']; ?>" /></td>
+            <td><input type="text" name="name" value="<?php echo $thiscat['name']; ?>" />
+                <input type='hidden' name='next' value="<?php echo $nextcat; ?>" /></td>
             <td><textarea rows="2" cols="50" name="description"><?php echo $thiscat['description']; ?></textarea></td>
-            <?php if ($showTypes) { ?><td>
-                <input type='radio' name="type" id="goal"    value="g" <?php if ($thiscat['type']==='g') echo "checked='checked'"; ?> class="first" />
-                <label for="goal" class="right">Goal</label><br />
-                <input type='radio' name="type" id="project" value="p" <?php if ($thiscat['type']==='p') echo "checked='checked'"; ?>class="notfirst" />
-                <label for="project" class="right">Project</label><br />
-                <input type='radio' name="type" id="action"  value="a" <?php if (!$thiscat['id'] || $thiscat['type']==='a') echo "checked='checked'"; ?>class="notfirst" />
-                <label for="action" class="right">Action</label>
-            </td><?php } ?>
-            <?php if ($canDelete) echo "<td><input type='checkbox' name='delete' value='y' /></td>\n"; ?>
+            <?php
+            if ($showTypes) {
+                echo "<td>\n";
+                $cls='first';
+                foreach (array("v"=>"Vision","o"=>"Role","g"=>"Goal","p"=>"Project","a"=>"Action") as $key=>$val) {
+                    echo "<input type='radio' name='type' id='$val' value='$key'";
+                    if ($thiscat['type']===$key) echo " checked='checked'";
+                    echo " class='$cls' /><label for='$val' class='$cls'>$val</label> ";
+                    $cls='notfirst';
+                }
+                echo "</td>\n";
+            }
+            if ($canDelete) echo "<td><input type='checkbox' name='delete' value='y' /></td>\n";
+            ?>
         </tr>
         <tr>
             <td><input type="submit" class="button" value="Update" name="submit" /></td>
@@ -49,13 +55,11 @@ require_once('editCat.inc.php');
     <tbody>
     <?php foreach ($catlist as $row) { ?>
         <tr>
-            <td><?php
-                echo "<input type='image' alt='Edit' name='submit{$row['id']}' value='{$row['id']}'"
-                    ," src='themes/{$config['theme']}/edit.gif' title='{$prefix}edit {$row['name']} {$field}' />"
-                    ,$row['name'];
-            ?></td>
+            <td><a href=<?php
+                echo "'{$_SERVER['PHP_SELF']}?field=$field&amp;id={$row['id']}' title='Edit {$row['name']} {$field}'>{$row['name']}";
+            ?></a></td>
             <td><?php echo $row['description']; ?></td>
-            <?php if ($showTypes) { ?><td><?php echo getTypes($row['type']); ?>&nbsp;</td><?php } ?>
+            <?php if ($showTypes) { ?><td><?php echo getTypes($row['type']); ?></td><?php } ?>
             <?php if ($canDelete) { ?>
                 <td><?php if ($row['type']===$thiscat['type']) { ?>
                     <input type='radio' name='replacewith' value='<?php echo $row['id']; ?>'  />
@@ -75,8 +79,7 @@ require_once('editCat.inc.php');
             </tr>
         <?php } ?>
         <tr>
-            <td><input type='image' name='submit0' value='0' alt='Create' src='themes/<?php echo $config['theme']; ?>/edit.gif' title='<?php echo $prefix; ?> create a new item' />
-                Create new <?php echo $field; ?></td>
+            <td><a href='editCat.php?field=<?php echo $field; ?>&amp;id=0'>Create new <?php echo $field; ?></a></td>
             <td>&nbsp;</td>
             <?php if ($showTypes) { ?><td>&nbsp;</td><?php } ?>
             <?php if ($canDelete) echo '<td>&nbsp;</td>'; ?>
