@@ -77,6 +77,7 @@ $sql = array(
 											AND  na.`nextaction` = its.`itemId`
 											AND ia.`isSomeday`='n' 
 											AND (its.`dateCompleted` IS NULL) 
+											AND {$values['filterquery']}
 										GROUP BY ia.`contextId`, ia.`timeframeId`",
         
         "countcontextreport_all"    => "SELECT ia.`contextId`, ia.`timeframeId`, 
@@ -86,7 +87,8 @@ $sql = array(
 										WHERE its.`itemId`=ia.`itemId` 
 											AND ia.`type`='a' 
 											AND ia.`isSomeday`='n' 
-											AND (its.`dateCompleted` IS NULL)  
+											AND (its.`dateCompleted` IS NULL)
+                                            AND {$values['filterquery']}
 										GROUP BY ia.`contextId`, ia.`timeframeId`",
 										
         "countspacecontexts"        => "SELECT COUNT(*)
@@ -298,7 +300,8 @@ $sql = array(
 										FROM `". $config['prefix'] . "context`",
 
         "gettimecontexts"           => "SELECT `timeframeId`, `timeframe`, `description`
-										FROM `". $config['prefix'] . "timeitems`",
+										FROM `". $config['prefix'] . "timeitems` AS ti
+                                        {$values['timefilterquery']}",
         
         
         "listselectbox"             => "SELECT l.`listId`, l.`title`, l.`description`, 

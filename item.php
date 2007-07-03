@@ -74,7 +74,7 @@ $parents = query("lookupparent",$config,$values);
 if ($parents!="-1") foreach ($parents as $row) $values['parentId'][]=$row['parentId'];
 
 //create filters for selectboxes
-$values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
+$values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='i')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create item, timecontext, and spacecontext selectboxes
 $pshtml = parentselectbox($config,$values,$options,$sort);

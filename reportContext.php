@@ -7,14 +7,16 @@ $values=array();
 //SQL CODE AREA
 //obtain all contexts
 $contextResults = query("getspacecontexts",$config,$values,$option,$sort);
-$contextNames=array();
+$contextNames=array(0=>'none');
 if ($contextResults!=-1)
     foreach ($contextResults as $row)
 	   $contextNames[$row['contextId']]=htmlspecialchars(stripslashes($row[name]));
 
 //obtain all timeframes
+$values['type']='a';
+$values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
 $timeframeResults = query("gettimecontexts",$config,$values,$options,$sort);
-$timeframeNames=array();
+$timeframeNames=array(0=>'none');
 if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
 	$timeframeNames[$row[timeframeId]]=htmlspecialchars(stripslashes($row[timeframe]));
 	$timeframeDesc[$row[timeframeId]]=htmlspecialchars(stripslashes($row[timeframe]));
@@ -24,8 +26,10 @@ if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
 $nextactions=(getNextActionsArray($config,$values,$options,$sort));
 
 //obtain all active item timeframes and count instances of each
+$values['filterquery']=sqlparts("activeitems",$config,$values);
 if ($config['contextsummary'] == "all") $itemresults = query("countcontextreport_all",$config,$values,$options,$sort);
 else $itemresults = query("countcontextreport_naonly",$config,$values,$options,$sort);
+$values['filterquery']='';
 
 foreach ($itemresults as $contextRow) {
 	$contextArray[$contextRow['contextId']][$contextRow['timeframeId']] = $contextRow['count'];
