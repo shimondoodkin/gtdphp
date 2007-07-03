@@ -547,7 +547,8 @@ $sql = array(
 										WHERE `itemId` = '{$values['itemId']}'",
 
         "updateitemstatus"          => "UPDATE `". $config['prefix'] . "itemstatus`
-										SET `dateCompleted` = {$values['dateCompleted']} 
+										SET `dateCompleted` = {$values['dateCompleted']},
+                                            `lastModified` = NULL
 										WHERE `itemId` = '{$values['itemId']}'",
 
         "updatelist"                => "UPDATE `". $config['prefix'] . "list`

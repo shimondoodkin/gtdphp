@@ -353,6 +353,8 @@ function nextPage() { // set up the forwarding to the next page
 		$tst=$updateGlobals['referrer'];
     else
         $tst=$_SESSION[$key];
+        
+    if ($action=='delete' && $tst=='item') $tst='list';
 
 	switch ($tst) {
 		case "parent"  : $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;

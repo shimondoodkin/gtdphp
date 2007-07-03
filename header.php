@@ -1,4 +1,6 @@
 <?php
+list($usec, $sec) = explode(" ", microtime());
+$starttime=(float)$usec + (float)$sec;
 require_once("headerDB.inc.php");
 require_once("headerHtml.inc.php");
 echo "</head><body><div id='container'>\n";
