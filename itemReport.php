@@ -115,10 +115,9 @@ if ($childtype!=NULL) {
 	    $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
-		$result = query("getchildren",$config,$values,$options,$sort);
-
 		$values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
 		$result = query("getchildren",$config,$values,$options,$sort);
+
 		echo "<div class='reportsection'>\n"
             ,($result != "-1")?'<h2>':'<h3>No '
 			,($comp=="y")?('Completed&nbsp;'):('<a href="item.php?parentId='.$values['itemId'].'&amp;action=create&amp;type='.$thistype.'" title="Add new '.$typename[$value].'">')

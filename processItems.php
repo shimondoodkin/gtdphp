@@ -310,7 +310,7 @@ function recurItem() { // mark a recurring item completed, and set up the recurr
 	if ($config['storeRecurrences']) {
 		makeComplete();
 		getItemCopy();
-		if (in_array($values['itemId'],$updateGlobals['isNA']))
+		if (isset($updateGlobals['isNA']) && in_array($values['itemId'],$updateGlobals['isNA']))
 			$values['nextAction']='y';
 	}
 

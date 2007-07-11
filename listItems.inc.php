@@ -197,6 +197,20 @@ Override all filter selections if $filter['everything'] is true
 $linkfilter='';
 
 if ($filter['everything']!="true") {
+    switch ($filter['parentcompleted']) {
+        case '*': // don't filter on completion status of parents
+            $values['filterquery'] = ' WHERE TRUE '; // yes, I know this looks odd, but we may be concatenating an "AND {extra condition}" later
+            break;
+
+        case 'true': // only select items with completed parents
+            $values['filterquery'] = " WHERE " .sqlparts("completedparents",$config,$values);
+            break;
+
+        case 'false': // deliberately flows through to default case
+        default:     //Filter out items with completed parents
+            $values['filterquery'] = " WHERE " .sqlparts("pendingparents",$config,$values);
+            break;
+    }
 
     //filter box filters
     if ($filter['categoryId'] != NULL)
@@ -231,41 +245,32 @@ if ($filter['everything']!="true") {
     } else {
         $values['isSomeday']="n";
         $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-    //    $values['filterquery'] .= " WHERE " .sqlparts("issomeday-parent",$config,$values);
+    //    $values['filterquery'] .= " AND " .sqlparts("issomeday-parent",$config,$values);
     }
     
     //problem: need to get all items with suppressed parents(even if child is not marked suppressed), as well as all suppressed items
     if ($filter['tickler']=="true") {
         $linkfilter .='&amp;tickler=true';
-        if ($values['parentId']!='') $values['filterquery'] .= " WHERE ".sqlparts("hasparent",$config,$values);
         $values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
     } else {
         $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-        $values['filterquery'] .= " AND ".sqlparts("activeparents",$config,$values);
+        /* TOFIX - suppress untickled parents as well as untickled children
+            - commented out for now, else we don't have an easy way to view tickled
+                children of untickled parents
+        */
+        // $values['filterquery'] .= " AND ".sqlparts("activeparents",$config,$values); 
     }
     
     if ($filter['repeatingonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("repeating",$config,$values);
     
     if ($filter['dueonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("due",$config,$values);
-    
+
+    if ($values['parentId']!='') $values['filterquery'] .= " AND ".sqlparts("hasparent",$config,$values);
+
     /*
     $filter['nextonly']
     */   
 
-    switch ($filter['parentcompleted']) {
-        case '*': // don't filter on completion status of parents
-            $values['filterquery'] = '';
-            break;
-            
-        case 'true': // only select items with completed parents
-            $values['filterquery'] = " WHERE " .sqlparts("completedparents",$config,$values);
-            break;
-            
-        case 'false': // deliberately flows through to default case
-        default:     //Filter out items with completed parents
-            $values['filterquery'] = " WHERE " .sqlparts("pendingparents",$config,$values);
-            break;
-    }
 }
 
 /*

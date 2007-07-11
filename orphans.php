@@ -25,9 +25,8 @@ $show=array();
 foreach ($dispArray as $key=>$val)
     $show[$key]=true;
 if ($config['debug'] & _GTD_DEBUG) echo '<pre>Orphans:',print_r($maintable,true),'</pre>';
-?>
-<h2>Orphaned Items</h2>
-<?php if (count($maintable)) { ?>
+echo "<h2>",count($maintable)," Orphaned Item",(count($maintable)===1)?'':'s',"</h2>";
+if (count($maintable)) { ?>
     <table class="datatable sortable" id="typetable" summary='table of orphans'>
         <?php require('displayItems.inc.php'); ?>
     </table>
