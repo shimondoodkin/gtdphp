@@ -109,10 +109,6 @@ require_once('listItems.inc.php')
 if (isset($endmsg['header'])) echo "<h4>{$endmsg['header']}</h4>\n";
 if (isset($endmsg['link'])) echo "<a href='{$endmsg['link']}'>{$endmsg['prompt']}</a>\n";
 $_SESSION['lastfilter'.$values['type']]=$referrer;
-$url="http"
-    .(($_SERVER['HTTPS']!='')?'s':'')
-    ."://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}{$_SERVER['PHP_SELF']}"
-    .substr($referrer,strpos($referrer,'?'));
-echo "<p>You can bookmark this filtered list using <a href='$url'>this link</a></p>\n";
+echo "<p>To bookmark this filtered list, bookmark <a href='$referrer'>this link</a></p>\n";
 include_once('footer.php');
 ?>

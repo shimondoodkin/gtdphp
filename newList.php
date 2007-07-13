@@ -1,16 +1,12 @@
 <?php
-//INCLUDES
-include_once('header.php');
-
 if (!isset($_POST['submit'])) {
     //form not submitted
+    include_once('header.php');
+    $cashtml=categoryselectbox($config,$values,$options,$sort);
 ?>
 <h1>New List</h1>
 
 <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
-<?php
-$cashtml=categoryselectbox($config,$values,$options,$sort);
-?>
 	<div class='form'>
 		<div class='formrow'>
 			<label for='title' class='left first'>Title:</label>
@@ -20,7 +16,7 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 		<div class='formrow'>
 			<label for='category' class='left first'>Category:</label>
 			<select name='categoryId' id='category'>
-                        <?php echo $cashtml ?>
+                        <?php echo $cashtml; ?>
 			</select>
 		</div>
 
@@ -38,6 +34,7 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
     }
 
 else {
+    include_once('headerDB.inc.php');
     $values = array();
     $values['title'] = empty($_POST['title']) ? die("Error: Enter a list title") : $_POST['title'];
     $values['description'] = $_POST['description'];
@@ -45,11 +42,13 @@ else {
     // $values['dateCreated'] = date('Y-m-d');
     $result= query("newlist",$config,$values,$options,$sort);
     
-    if ($GLOBALS['ecode']=="0") echo "List: ".$values['title']." inserted.";
-    else echo "List NOT inserted.";
-    if (($config['debug'] & _GTD_ERRORS) && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
+    $_SESSION['message'][]=($GLOBALS['ecode']=="0")?("List: ".$values['title']." inserted."):"List NOT inserted.";
+    if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0")
+        $_SESSION['message'][]="Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext'];
 
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=listReport.php?listId='.mysql_insert_id().'&listTitle='.urlencode($values['title']).'">';
+
+    $url='listReport.php?listId='.mysql_insert_id().'&listTitle='.urlencode($values['title']);
+    nextScreen($url);
     }
 
 include_once('footer.php');

@@ -1,16 +1,12 @@
 <?php
-//INCLUDES
-include_once('header.php');
-
 if (!isset($_POST['submit'])) {
 	//form not submitted
+    include_once('header.php');
+    $cashtml=categoryselectbox($config,$values,$options,$sort);
 ?>
 <h1>New Checklist</h1>
 
 <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
-<?php
-$cashtml=categoryselectbox($config,$values,$options,$sort);
-?>
 	<div class='form'>
 		<div class='formrow'>
 			<label for='title' class='left first'>Title:</label>
@@ -20,7 +16,7 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 		<div class='formrow'>
 			<label for='category' class='left first'>Category:</label>
 			<select name='categoryId' id='category'>
-                        <?php echo $cashtml ?>
+                <?php echo $cashtml; ?>
 			</select>
 		</div>
 
@@ -36,6 +32,7 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 
 <?php
 }else {
+    include_once('headerDB.inc.php');
     $values = array();
     $values['title'] = empty($_POST['title']) ? die("Error: Enter a checklist title") : $_POST['title'];
     $values['description'] = empty($_POST['description']) ? die("Error: Enter a checklist description") : $_POST['description'];
@@ -43,19 +40,12 @@ $cashtml=categoryselectbox($config,$values,$options,$sort);
 
     $result= query("newchecklist",$config,$values,$options,$sort);
 
-    if ($GLOBALS['ecode']=="0") echo "Checklist: ".$values['title']." inserted.";
-    else echo "Checklist NOT inserted.";
-    if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0") echo "<p>Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext']."</p>";
+    $_SESSION['message'][]=($GLOBALS['ecode']=="0")?("Checklist: ".$values['title']." inserted."):"Checklist NOT inserted.";
+    if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0")
+        $_SESSION['message'][]="Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext'];
 
 	$nextURL='checklistReport.php?checklistId='.mysql_insert_id();
-	if ($config['debug'] & _GTD_DEBUG) {
-		echo '<p>Next page is <a href="',$nextURL,'">&lt;',htmlspecialchars($nextURL),'&gt;</a> (would be auto-refresh in non-debug mode)</p>';
-} else {
-		echo '<META HTTP-EQUIV="Refresh" CONTENT="2; url=',$nextURL,'">';
-	}
+    nextScreen($url);
 }
-
 include_once('footer.php');
 ?>
-
-

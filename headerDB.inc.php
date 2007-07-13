@@ -8,8 +8,8 @@ else/*if (version_compare(PHP_VERSION, "5.0.0", ">="))
 else*/
 		error_reporting(E_ALL ^ E_NOTICE);
 //CONNECT TO DATABASE: this will need modification to connect to other dtabases (use SWITCH)
-$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect!");
-mysql_select_db($config['db']) or die ("Unable to select database!");
+$connection = mysql_connect($config['host'], $config['user'], $config['pass']) or die ("Unable to connect to MySQL server: check your host, user and pass settings in config.php!");
+mysql_select_db($config['db']) or die ("Unable to select database '{$config['db']}' - check your db setting in config.php!");
 
 require_once("gtdfuncs.php");
 require_once("query.inc.php");

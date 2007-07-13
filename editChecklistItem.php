@@ -10,13 +10,11 @@ $values['checklistItemId'] = (int) $_GET["checklistItemId"];
 $result = query("selectchecklistitem",$config,$values,$options,$sort);
 $currentrow = $result[0];
 $cshtml = checklistselectbox($config,$values,$options,$sort);
-
-//PAGE DISPLAY CODE
-	echo "<h2>Edit Checklist Item</h2>\n";
-
-	echo '<form action="updateChecklistItem.php?checklistItemId='.$currentrow['checklistItemId'].'" method="post">'."\n";
 ?>
-	<div class='form'>
+
+<h2>Edit Checklist Item</h2>
+<div class='form'>
+    <form action="updateChecklistItem.php?checklistItemId=<?php echo $currentrow['checklistItemId']; ?>" method="post">
 		<div class='formrow'>
 			<label for='checklist' class='left first'>Checklist:</label>
 			<select name='checklistId' id='checklist'>
@@ -25,23 +23,21 @@ $cshtml = checklistselectbox($config,$values,$options,$sort);
 			<input type='checkbox' name='completed' id='completed' class='notfirst' value='y'<?php if ($currentrow['checked']=='y') echo ' CHECKED'; ?> />
 			<label for='completed'>Item Completed</label>
 		</div>
-
 		<div class='formrow'>
 			<label for='newitem' class='left first'>Item:</label>
-			<textarea rows='2' name='newitem' wrap='virtual'><?php echo htmlspecialchars(stripslashes($currentrow['item'])); ?></textarea>
+			<textarea rows='2' name='newitem' id='newitem' cols='60'><?php echo htmlspecialchars(stripslashes($currentrow['item'])); ?></textarea>
 		</div>
-
 		<div class='formrow'>
 			<label for='notes' class='left first'>Notes:</label>
-			<textarea rows="3" name="newnotes" id="notes" wrap="virtual"><?php echo htmlspecialchars(stripslashes($currentrow['notes'])); ?></textarea>
+			<textarea rows="3" name="newnotes" id="notes" cols="60"><?php echo htmlspecialchars(stripslashes($currentrow['notes'])); ?></textarea>
 		</div>
-	</div>
-	<div class='formbuttons'>
-		<input type='submit' value='Update Checklist Item' name='submit' />
-		<input type="reset" value="Reset" />
-		<input type='checkbox' name='delete' id='delete' value='delete' /><label for='delete'>Delete&nbsp;Checklist&nbsp;Item</label>
-	</div>
-
+    	<div class='formbuttons'>
+    		<input type='submit' value='Update Checklist Item' name='submit' />
+    		<input type="reset" value="Reset" />
+    		<input type='checkbox' name='delete' id='delete' value='delete' /><label for='delete'>Delete&nbsp;Checklist&nbsp;Item</label>
+    	</div>
+    </form>
+</div>
 
 <?php
 	include_once('footer.php');

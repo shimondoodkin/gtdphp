@@ -1,5 +1,5 @@
 <?php
-include_once('header.php');
+include_once('headerDB.inc.php');
 
 //RETRIEVE URL AND FORM VARIABLES
 $values=array();
@@ -9,13 +9,10 @@ $completedLis = $_POST['completedLis'];
 
 if(isset($completedLis)){
 	$values['date']=date('Y-m-d');
-        echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$values['listId'].'">';
-        foreach ($completedLis as $values['completedLi']) {
-            $result = query("completelistitem",$config,$values);
-            }
+    foreach ($completedLis as $values['completedLi'])
+        query("completelistitem",$config,$values);
 }
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$values['listId'].'">';
+nextScreen("listReport.php?listId={$values['listId']}");
 include_once('footer.php');
 ?>
-

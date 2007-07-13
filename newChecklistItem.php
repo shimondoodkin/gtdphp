@@ -34,7 +34,7 @@ $cshtml = checklistselectbox($config,$values,$options,$sort);
 <div class='formbuttons'>
     <input type='submit' value='Add List Item' name='submit' />
     </div>
-
+</form>
 <?php
 
 include_once('footer.php');

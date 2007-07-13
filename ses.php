@@ -8,6 +8,7 @@ else{
     $_SESSION['contextId'] = 0;
     $_SESSION['theme'] = 'default';
     $_SESSION['message'] = '';
+    $_SESSION['version'] = '';
  }
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

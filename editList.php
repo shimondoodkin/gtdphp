@@ -20,7 +20,7 @@ $cashtml = categoryselectbox($config,$values,$options,$sort);
 	<div class='form'>
 		<div class='formrow'>
 			<label for='title' class='left first'>List Title:</label>
-			<input type='text' name='newlistTitle' id='title' value='<?php echo htmlspecialchars(stripslashes($row[0]['title'])); ?>'>
+			<input type='text' name='newlistTitle' id='title' value='<?php echo htmlspecialchars(stripslashes($row[0]['title'])); ?>' />
 		</div>
 
 		<div class='formrow'>
@@ -32,12 +32,12 @@ $cashtml = categoryselectbox($config,$values,$options,$sort);
 
 		<div class='formrow'>
 			<label for='description' class='left first'>Description:</label>
-			<textarea rows="10" name="newdescription" id="description" wrap="virtual"><?php echo htmlspecialchars(stripslashes($row[0]['description'])); ?></textarea>
+			<textarea rows="10" name="newdescription" id="description" cols="60"><?php echo htmlspecialchars(stripslashes($row[0]['description'])); ?></textarea>
 		</div>
 	</div>
 	<div class='formbuttons'>
-		<input type="submit" value="Update List" name="submit">
-		<input type="reset" class="button" value="Reset">
+		<input type="submit" value="Update List" name="submit" />
+		<input type="reset" class="button" value="Reset" />
 		<input type="checkbox" name="delete" id='delete' class='notfirst' title="ALL items will be deleted!" value="y" />
                 <input type="hidden" name="listId" value="<?php echo $values['listId'] ?>" />
 		<label for='delete'>Delete&nbsp;List</label>

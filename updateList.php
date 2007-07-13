@@ -1,6 +1,6 @@
 <?php
 //INCLUDES
-include_once('header.php');
+include_once('headerDB.inc.php');
 
 //RETRIEVE FORM URL VARIABLES
 $values=array();
@@ -13,18 +13,15 @@ $values['delete']=$_POST['delete']{0};
 //SQL CODE AREA
 if($values['delete']=="y") {
     query("deletelist",$config,$values);
-        //echo "<p>Number of lists deleted: ";
-        //echo mysql_affected_rows();
+    $_SESSION['message'][]=mysql_affected_rows().' lists deleted';
     query("removelistitems",$config,$values);
-        //echo "<p>Number of list items deleted: ";
-        //echo mysql_affected_rows();
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$values['listId'].'">';
-	}
-
-else {
+    $_SESSION['message'][]=mysql_affected_rows().' list items deleted';
+    $url='listList.php';
+}else {
     query("updatelist",$config,$values);
-    echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=listReport.php?listId='.$values['listId'].'">';
-	}
-
+    $_SESSION['message'][]="List {$values['newlistTitle']} updated";
+    $url="listReport.php?listId={$values['listId']}";
+}
+nextScreen($url);
 include_once('footer.php');
 ?>

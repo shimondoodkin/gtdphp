@@ -379,7 +379,7 @@ function nextPage() { // set up the forwarding to the next page
     $_SESSION['message']=$updateGlobals['actionMessage'];
     if ($nextURL=='') $nextURL="listItems.php?type=$t";
     $_SESSION[$key]=$tst;
-	echo nextScreen($nextURL,$config);
+	nextScreen($nextURL);
 }
 
 function literaldump($varname) { // dump a variable name, and its contents

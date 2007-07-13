@@ -12,7 +12,6 @@ $item = $result[0];
 
 //select all nextactions for test
 $nextactions=(getNextActionsArray($config,$values,$options,$sort));
-$wasNAonEntry = array(); // stash this in case we introduce marking actions as next actions onto this screen
 
 //Find previous and next projects
 
@@ -102,6 +101,7 @@ if ($childtype!=NULL) {
 	
 	//table display loop
 	foreach ($completed as $comp) foreach ($childtype as $thistype) {
+        $wasNAonEntry = array(); // reset for each table
 
 	    //Select items by type
 	    if ($thistype==='s') {

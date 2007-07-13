@@ -68,6 +68,7 @@ function validate(form) {
                 return false;                
         }
         if (!passed) {
+            if (formValid) thisfield.focus();
             formValid=false;
             formErrorMessage += itemErrorMessage + "<br />";
             thisfield.className='formerror';

@@ -81,10 +81,8 @@ function getTickleDate($deadline,$days) { // returns unix timestamp of date when
 function nothingFound($message, $prompt=NULL, $yeslink=NULL, $nolink="index.php"){
         //Give user ability to create a new entry, or go back to the index.
         echo "<h4>$message</h4>";
-        if($prompt){
-                echo $prompt;
-                echo "<a href='$yeslink'> Yes </a><a href='$nolink'>No</a>\n";
-        }
+        if($prompt)
+            echo "<p>$prompt;<a href='$yeslink'> Yes </a><a href='$nolink'>No</a></p>\n";
 }
 
 function sqlparts($part,$config,$values)  {
@@ -249,12 +247,25 @@ function getNextActionsArray($config,$values,$options,$sort) {
 	return $nextactions;
 }
 
-function nextScreen($url,$config) {
-if ($config['debug'])
-    $txt="<p>Next screen is <a href='$url'>".htmlspecialchars($url)."</a> - would be auto-refresh in non-debug mode</p>";
-else
-    $txt="<META HTTP-EQUIV='Refresh' CONTENT='0;$url' />";
-return $txt;
+function nextScreen($url) {
+    global $config;
+    if ($config['debug']) {
+        echo "<p>Next screen is <a href='$url'>".htmlspecialchars($url)."</a> - would be auto-refresh in non-debug mode</p>";
+    }elseif (headers_sent()) {
+        echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$url' />\n"
+            ,"<script type='text/javascript'>window.location.replace('$url');</script>\n"
+            ,"</head><body><a href='$url'>Click here to continue on to "
+            ,htmlspecialchars($url),"</a>\n";
+    }else{
+        $header="Location: http"
+                .(($_SERVER['HTTPS']!='')?'s':'')
+                ."://"
+                .$_SERVER['HTTP_HOST']
+                .rtrim(dirname($_SERVER['PHP_SELF']), '/\\')
+                .'/'.$url;
+        header($header);
+        exit;
+    }
 }
 
 function getChildType($parentType) {

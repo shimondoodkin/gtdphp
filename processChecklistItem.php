@@ -1,6 +1,6 @@
 <?php
 //INCLUDES
-include_once('header.php');
+include_once('headerDB.inc.php');
 
 //RETRIEVE URL AND FORM VARIABLES
 $values = array();
@@ -10,7 +10,7 @@ $values['notes']=$_POST['notes'];
 
 $result = query ("newchecklistitem",$config,$values);
 
-echo '<META HTTP-EQUIV="Refresh" CONTENT="0; url=checklistReport.php?checklistId='.$values['checklistId'].'"';
+nextScreen("checklistReport.php?checklistId={$values['checklistId']}");
 
 include_once('footer.php');
 ?>

@@ -1,6 +1,6 @@
 <?php
 //INCLUDES
-include_once('header.php');
+include_once('headerDB.inc.php');
 
 //RETRIEVE URL AND FORM VARIABLES
 $values=array();
@@ -15,7 +15,7 @@ $values['delete']=$_POST['delete']{0};
 $q=($values['delete']==="y")?'deletelistitem':'updatelistitem';
 query($q,$config,$values);
 
-echo nextScreen('listReport.php?listId='.$values['listId'],$config);
+nextScreen('listReport.php?listId='.$values['listId']);
 
 include_once('footer.php');
 ?>

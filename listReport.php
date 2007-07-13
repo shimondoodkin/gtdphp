@@ -58,7 +58,7 @@ if ($result!="-1") {
             echo "	</tr></thead>\n";
             foreach($result as $row) {
                     echo "	<tr>\n";
-            echo '               <td><a href = "editListItem.php?listItemId='.$row['listItemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['item'])).'">'.htmlspecialchars(stripslashes($row['item'])).'</td>'."\n";
+            echo '               <td><a href = "editListItem.php?listItemId='.$row['listItemId'].'" title="Edit '.htmlspecialchars(stripslashes($row['item'])).'">'.htmlspecialchars(stripslashes($row['item'])).'</a></td>'."\n";
             echo '          <td>'.htmlspecialchars(stripslashes($row['notes'])).'</td>'."\n";
             echo "	</tr>\n";
             }
