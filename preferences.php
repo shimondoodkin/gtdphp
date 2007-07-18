@@ -26,13 +26,14 @@ foreach ($themes as $t) {
 }
 ?>
 
-<h2>Theme</h2>
+<h2>Preference</h2>
 <form action="updatePreferences.php" method="post">
-    <p class='formrow'>
-        <select name="theme">
+    <div class='formrow'>
+        <label for='theme'>Theme:</label>
+        <select id='theme' name="theme">
             <?php echo $html; ?>
         </select>
         <input type="submit" class="button" value="Apply" name="submit" />
-    </p>
+    </div>
 </form>
 <?php include_once('footer.php'); ?>
