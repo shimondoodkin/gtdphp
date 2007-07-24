@@ -21,7 +21,7 @@ $sql = array(
         								FROM `". $config['prefix'] ."categories` as c 
         								ORDER BY {$sort['categoryselectbox']}",
         
-        "checkchecklistitem"        => 	"UPDATE `". $config['prefix'] ."checklistItems` 
+        "checkchecklistitem"        => 	"UPDATE `". $config['prefix'] ."checklistitems` 
         								SET `checked` = 'y' 
         								WHERE `checklistItemId`='{$values['Cli']}'",
 
@@ -32,15 +32,16 @@ $sql = array(
         								WHERE cl.`categoryId`=c.`categoryId` 
         								ORDER BY {$sort['checklistselectbox']}",
 
-        "clearchecklist"            => "UPDATE `". $config['prefix'] ."checklistItems` 
+        "clearchecklist"            => "UPDATE `". $config['prefix'] ."checklistitems` 
 										SET `checked` = 'n' 
 										WHERE `checklistId` = '{$values['checklistId']}'",
         
         "completeitem"              => "UPDATE `". $config['prefix'] ."itemstatus` 
-										SET `dateCompleted`=" . $values['dateCompleted']. "
+										SET `dateCompleted`=" . $values['dateCompleted'].
+                                        ", `lastModified` = NULL
 										WHERE `itemId`=" . $values['itemId'],
 
-        "completelistitem"          => "UPDATE `". $config['prefix'] ."listItems` 
+        "completelistitem"          => "UPDATE `". $config['prefix'] ."listitems` 
 										SET `dateCompleted`='{$values['date']}' 
 										WHERE `listItemId`='{$values['completedLi']}'",
 
@@ -98,7 +99,7 @@ $sql = array(
         								WHERE `categoryId`='{$values['id']}'",
         "deletechecklist"           => "DELETE FROM `". $config['prefix'] ."checklist` 
         								WHERE `checklistId`='{$values['checklistId']}'",
-        "deletechecklistitem"       => "DELETE FROM `". $config['prefix'] ."checklistItems` 
+        "deletechecklistitem"       => "DELETE FROM `". $config['prefix'] ."checklistitems` 
         								WHERE `checklistItemId`='{$values['checklistItemId']}'",
         "deleteitem"                => "DELETE FROM `". $config['prefix'] ."items` 
         								WHERE `itemId`='{$values['itemId']}'",
@@ -108,7 +109,7 @@ $sql = array(
         								WHERE `itemId`='{$values['itemId']}'",
         "deletelist"                => "DELETE FROM `". $config['prefix'] ."list` 
         								WHERE `listId`='{$values['listId']}'",
-        "deletelistitem"            => "DELETE FROM `". $config['prefix'] ."listItems` 
+        "deletelistitem"            => "DELETE FROM `". $config['prefix'] ."listitems` 
         								WHERE `listItemId`='{$values['listItemId']}'",
         "deletelookup"              => "DELETE FROM `". $config['prefix'] ."lookup` 
         								WHERE `itemId` ='{$values['itemId']}'",
@@ -128,7 +129,7 @@ $sql = array(
         
         "getchecklistitems"         => "SELECT cli.`checklistitemId`, cli.`item`, cli.`notes`, 
         										cli.`checklistId`, cli.`checked` 
-        								FROM `". $config['prefix'] . "checklistItems` as cli 
+        								FROM `". $config['prefix'] . "checklistitems` as cli 
         									LEFT JOIN `". $config['prefix'] ."checklist` as cl 
         										ON cli.`checklistId` = cl.`checklistId` 
 										WHERE cl.`checklistId` = '{$values['checklistId']}' 
@@ -258,7 +259,7 @@ $sql = array(
 										WHERE `itemId` = {$values['itemId']}",
 												
         "getlistitems"              => "SELECT li.`listItemId`, li.`item`, li.`notes`, li.`listId` 
-        								FROM `". $config['prefix'] . "listItems` as li 
+        								FROM `". $config['prefix'] . "listitems` as li 
         									LEFT JOIN `". $config['prefix'] . "list` as l
         										on li.`listId` = l.`listId`
 										WHERE l.`listId` = '{$values['listId']}' ".$values['filterquery']." 
@@ -322,7 +323,7 @@ $sql = array(
 										VALUES (NULL, '{$values['title']}', 
 												'{$values['categoryId']}', '{$values['description']}')",
 										
-        "newchecklistitem"          => "INSERT INTO `". $config['prefix'] . "checklistItems` 
+        "newchecklistitem"          => "INSERT INTO `". $config['prefix'] . "checklistitems` 
 										VALUES (NULL, '{$values['item']}', 
 												'{$values['notes']}', '{$values['checklistId']}', 'n')",
 
@@ -340,15 +341,15 @@ $sql = array(
 												'{$values['suppressUntil']}')",
 
         "newitemstatus"             => "INSERT INTO `". $config['prefix'] . "itemstatus` 
-        										(`itemId`,`dateCreated`,`dateCompleted`)
+        										(`itemId`,`dateCreated`,`lastModified`,`dateCompleted`)
 										VALUES ('{$values['newitemId']}',
-												CURRENT_DATE,{$values['dateCompleted']})",
+												CURRENT_DATE,NULL,{$values['dateCompleted']})",
 										
         "newlist"                   => "INSERT INTO `". $config['prefix'] . "list`
 										VALUES (NULL, '{$values['title']}', 
 												'{$values['categoryId']}', '{$values['description']}')",
 
-        "newlistitem"               => "INSERT INTO `". $config['prefix'] . "listItems`
+        "newlistitem"               => "INSERT INTO `". $config['prefix'] . "listitems`
 										VALUES (NULL, '{$values['item']}', 
 												'{$values['notes']}', '{$values['listId']}', NULL)",
 
@@ -402,11 +403,11 @@ $sql = array(
 
 
         "removechecklistitems"      => "DELETE
-										FROM `". $config['prefix'] . "checklistItems` 
+										FROM `". $config['prefix'] . "checklistitems` 
 										WHERE `checklistId`='{$values['checklistId']}'",
 
         "removelistitems"           => "DELETE
-										FROM `". $config['prefix'] . "listItems` 
+										FROM `". $config['prefix'] . "listitems` 
 										WHERE `listId`='{$values['listId']}'",
 
         "repeatnote"                => "UPDATE `". $config['prefix'] . "tickler`
@@ -433,7 +434,7 @@ $sql = array(
 												`notes`, 
 												`checklistId`, 
 												`checked`
-										FROM `". $config['prefix'] . "checklistItems`
+										FROM `". $config['prefix'] . "checklistitems`
 										WHERE `checklistItemId` = '{$values['checklistItemId']}'",
 
         "selectcontext"             => "SELECT `contextId`, `name`, `description`
@@ -477,7 +478,7 @@ $sql = array(
 
         "selectlistitem"            => "SELECT `listItemId`, `item`, 
         										`notes`, `listId`, `dateCompleted`
-										FROM `". $config['prefix'] . "listItems` 
+										FROM `". $config['prefix'] . "listitems` 
 										WHERE `listItemId` = {$values['listItemId']}",
 
         "selectnextaction"          => "SELECT `parentId`, `nextaction`
@@ -509,6 +510,10 @@ $sql = array(
 										FROM `". $config['prefix'] . "timeitems` as ti".$values['timefilterquery']."
 										ORDER BY {$sort['timecontextselectbox']}",
 
+        "touchitem"                 => "UPDATE `". $config['prefix'] . "itemstatus`
+										SET `lastModified` = NULL
+										WHERE `itemId` = '{$values['itemId']}'",
+
         "updatecategory"            => "UPDATE `". $config['prefix'] ."categories`
 										SET `category` ='{$values['name']}',
 												`description` ='{$values['description']}' 
@@ -520,7 +525,7 @@ $sql = array(
 												`categoryId` = '{$values['newcategoryId']}' 
 										WHERE `checklistId` ='{$values['checklistId']}'",
 
-        "updatechecklistitem"       => "UPDATE `". $config['prefix'] . "checklistItems`
+        "updatechecklistitem"       => "UPDATE `". $config['prefix'] . "checklistitems`
 										SET `notes` = '{$values['newnotes']}', `item` = '{$values['newitem']}', 
 												`checklistId` = '{$values['checklistId']}', 
 												`checked`='{$values['newchecked']}' 
@@ -549,18 +554,13 @@ $sql = array(
 												`suppressUntil`='{$values['suppressUntil']}' 
 										WHERE `itemId` = '{$values['itemId']}'",
 
-        "updateitemstatus"          => "UPDATE `". $config['prefix'] . "itemstatus`
-										SET `dateCompleted` = {$values['dateCompleted']},
-                                            `lastModified` = NULL
-										WHERE `itemId` = '{$values['itemId']}'",
-
         "updatelist"                => "UPDATE `". $config['prefix'] . "list`
 										SET `title` = '{$values['newlistTitle']}', 
 												`description` = '{$values['newdescription']}', 
 												`categoryId` = '{$values['newcategoryId']}' 
 										WHERE `listId` ='{$values['listId']}'",
 
-        "updatelistitem"            => "UPDATE `". $config['prefix'] . "listItems`
+        "updatelistitem"            => "UPDATE `". $config['prefix'] . "listitems`
 										SET `notes` = '{$values['newnotes']}', `item` = '{$values['newitem']}', 
 												`listId` = '{$values['listId']}', 
 												`dateCompleted`={$values['newdateCompleted']}

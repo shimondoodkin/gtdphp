@@ -44,7 +44,7 @@ if (!isset($_POST['submit'])) {
     if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0")
         $_SESSION['message'][]="Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext'];
 
-	$nextURL='checklistReport.php?checklistId='.mysql_insert_id();
+	$url='checklistReport.php?checklistId='.mysql_insert_id();
     nextScreen($url);
 }
 include_once('footer.php');

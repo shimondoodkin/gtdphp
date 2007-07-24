@@ -1,6 +1,4 @@
 <?php
-list($usec, $sec) = explode(" ", microtime());
-$starttime=(float)$usec + (float)$sec;
 require_once("headerDB.inc.php");
 
 if ($_SESSION['version']!==_GTD_VERSION) {

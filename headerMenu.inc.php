@@ -24,7 +24,7 @@ function makemenu($list) {
 			<ul>
 				<?php 
 				$thismenu[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Inbox item");
-				$thismenu[] = array('link'=>"note.php", 'title'=>"Create a reminder note", 'label'=>'Note'); 
+				$thismenu[] = array('link'=>"item.php?type=a&amp;suppress=true&amp;createnote=true", 'title'=>"Create a reminder note (deprecated)", 'label'=>'Note');
 				$thismenu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
 				$thismenu[] = array("link"=>"item.php?type=a", 'title'=>"Create a new action", 'label' => "Action");
 				$thismenu[] = array("link"=>"item.php?type=w", 'title'=>"Create a new waiting on item", 'label' => "Waiting On");

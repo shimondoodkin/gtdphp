@@ -186,10 +186,10 @@ function updateItem() { // update all the values for the current item
         // changing item type - sever child links
     	query("deletelookupparents",$config,$values);
 
-	if ($values['dateCompleted']!=='NULL')
-		completeItem();
+	if ($values['dateCompleted']==='NULL')
+		query("touchitem",$config,$values);
 	else
-		query("updateitemstatus",$config,$values);
+		completeItem();
 	$title=$values['title'];
 }
 
@@ -216,11 +216,13 @@ function makeNextAction() { // mark the current item as a next action
 		$values['parentId']=$parent['parentId'];
 		query($thisquery,$config,$values);
 	}
+	query("touchitem",$config,$values);
 }
 
 function removeNextAction() { // remove the next action reference for the current item
 	global $config,$values;
 	query("deletenextaction",$config,$values);
+	query("touchitem",$config,$values);
 }
 
 /* ===========================================================================================
@@ -321,7 +323,7 @@ function recurItem() { // mark a recurring item completed, and set up the recurr
 		createItem();
 	else {
 		query("updatedeadline",$config,$values);
-		query("updateitemstatus",$config,$values);
+		query("completeitem",$config,$values); // reset completed date to null, and touch the last modified date
 	}
 }
 

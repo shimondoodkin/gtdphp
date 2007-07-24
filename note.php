@@ -27,6 +27,9 @@ if ($values['noteId']) {
 }
 ?>
 <h2><?php echo $pagetitle; ?></h2>
+<p class='warning'>Deprecated feature: notes will be withdrawn before the 1.0 release of gtd-php.
+They have been superseded by tickler actions.
+Normal actions can be put into a tickler file, to be suppressed until a specified number of days before their deadlines</p>
 <div class='form'>
     <form action="<?php echo $pageaction; ?>" method="post" onsubmit="return validate(this);">
         <div class="formrow">

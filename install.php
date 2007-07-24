@@ -59,13 +59,18 @@ if (_USEFULLTEXT) {
 */
 $config=array();
 
-$tablesByVersion=array( // NB these must all be lower case
+$tablesByVersion=array( // NB the order of tables in these arrays is CRITICAL. they must be consistent across the 0.8 sub-versions
+    // we don't offer an upgrade path from 0.6.  Any 0.6 installations should first upgrade to 0.7, then run this routine
     '0.6'     => array('context','goals','maybe','maybesomeday','nextactions','projects','reference','waitingon'),
-    '0.7'     => array('categories','checklist','checklistitems','context','goals','itemattributes','items','itemstatus','list','listitems','nextactions','projectattributes','projects','projectstatus','tickler','timeitems'),
-    '0.8rc-1' => array('categories','checklist','checklistitems','context','itemattributes','items','itemstatus','list','listitems','lookup','nextactions','tickler','timeitems','version')
+    // 0.7 is the earliest version that we can upgrade from, here
+    '0.7'     => array('categories','checklist','checklistItems','context','goals','itemattributes','items','itemstatus','list','listItems','nextactions','projectattributes','projects','projectstatus','tickler','timeitems'),
+    // 0.8rc-1 was a major change, with goals, actions and projects all being merged into the items files
+    '0.8rc-1' => array('categories','checklist','checklistItems','context','itemattributes','items','itemstatus','list','listItems','lookup','nextactions','tickler','timeitems','version'),
+    // 0.8rc-2 added the preferences table
+    '0.8rc-3' => array('categories','checklist','checklistItems','context','itemattributes','items','itemstatus','list','listItems','lookup','nextactions','tickler','timeitems','version','preferences'),
+    // 0.8rc-4 saw all table names being standardised in lower case: this meant changing listItems and checklistItems
+    '0.8rc-4' => array('categories','checklist','checklistitems','context','itemattributes','items','itemstatus','list','listitems','lookup','nextactions','tickler','timeitems','version','preferences')
     );
-$tablesByVersion['0.8rc-2'] = $tablesByVersion['0.8rc-1'];
-array_unshift($tablesByVersion['0.8rc-2'],'preferences');
 
 $versions=array(
     '0.6'=>     array(  'tables'=>'0.6',
@@ -77,13 +82,10 @@ $versions=array(
     '0.8rc-1'=> array(  'tables'=>'0.8rc-1',
                         'database'=>'0.8rc-1',
                         'upgradepath'=>'0.8rc-1'),
-    '0.8rc-2'=> array(  'tables'=>'0.8rc-2',
-                        'database'=>'',
-                        'upgradepath'=>'0.8rc-2'),
-    '0.8rc-3'=> array(  'tables'=>'0.8rc-2',
+    '0.8rc-3'=> array(  'tables'=>'0.8rc-3',
                         'database'=>'0.8rc-3',
                         'upgradepath'=>'0.8rc-3'),
-    '0.8rc-4'=> array(  'tables'=>'0.8rc-2',
+    '0.8rc-4'=> array(  'tables'=>'0.8rc-4',
                         'database'=>'0.8rc-4',
                         'upgradepath'=>'copy')
     );
@@ -102,8 +104,6 @@ echo "</head><body><div id='container'>";
 
 //temporary warning - remove at release - TOFIX
 echo "<h2 class='warning'>This installer is in beta: back up your data before using it!</h2>\n";
-
-echo "<p>Read the <a href='INSTALL'>INSTALL</a> file for information on using this install/upgrade program</p>\n";
 
 if (_DEBUG) echo '<pre>'
 	,(_DRY_RUN)?'Executing Dry run - no tables will be amended in this run':'This is a <b>live</b> run'
@@ -176,6 +176,8 @@ function checkInstall() {
     register_shutdown_function('failDuringCheck');
 	$goodToGo=true; // assume we'll be able to upgrade, until we find something to stop us
 
+    echo "<p>Read the <a href='INSTALL'>INSTALL</a> file for information on using this install/upgrade program</p>\n";
+
 	if (_DEBUG) {
 		$included_files = get_included_files();
 		echo '<pre>Included files:',print_r($included_files,true),'</pre>';
@@ -223,7 +225,7 @@ function checkInstall() {
     $tablelist=array();
 	$tables = mysql_list_tables($config['db']);
 	while ($tbl = mysql_fetch_row($tables))
-	   array_push($tablelist,strtolower($tbl[0]));
+	   array_push($tablelist,$tbl[0]);
 	$nt=count($tablelist);
 	if (_DEBUG) echo "<pre>Number of tables: $nt<br />",print_r($tablelist,true),"</pre>";
 
@@ -410,11 +412,6 @@ function doInstall($installType,$fromPrefix) {
 	echo "<p>Installing ... please wait</p>\n";
 	if (version_compare(PHP_VERSION, "4.2.0",'>=')) ob_flush();
 	flush();
-/*
-    need to be a bit more clever here:
-    if tables[from version]=tables[this version] then it should be a straight copy,
-        together with updating the version table
-*/
     switch($installType){
 	  case '0': // new install =============================================================================
 		create_tables();
@@ -461,36 +458,39 @@ installation for use and familiarize yourself with the system.</p>\n
 		}
 	   $endMsg='<p>Database copied.</p>';
 	   break;
-	 case '0.8rc-3': // ugprade from 0.8rc-3      ============================================================
+	 case '0.8rc-3': // ugprade from 0.8rc-2 or -3    ============================================================
     	if ($fromPrefix===$config['prefix']){ // updating in place
+	       $q = "drop table IF EXISTS `{$fromPrefix}version`";
+	       send_query($q);
+            foreach (array('checklistItems','listItems') as $temptable) {
+                $q="rename table `{$config['prefix']}{$temptable}` to `{$config['prefix']}"
+                .strtolower($temptable)."`";
+                send_query($q);
+            }
             amendIndexes();
+            createVersion();
             fixAllDates();
-    	    updateVersion();
         } else {                              // updating to new prefix
 			create_tables();
-			foreach ($tablesByVersion[$versions[$installType]['tables']] as $table){
-				$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
+			foreach ($tablesByVersion[$versions[$installType]['tables']] as $key=>$table) if ($table!='version') {
+				$q = "INSERT INTO {$config['prefix']}".$tablesByVersion[$versions[_GTD_VERSION]['tables']][$key]
+                        . " select * from `$fromPrefix$table`";
 				send_query($q);
 			}
         	fixAllDates();
 			fixLastModifiedColumn();
 		}
-        updateVersion();
         $install_success = true;
         $endMsg='<p>GTD-PHP 0.8 upgraded from 0.8rc-3 to '._GTD_VERSION.' - thanks for your beta-testing</p>';
 	    break;
-	 case '0.8rc-2':  // upgrade from 0.8rc-2  - I think only Serge and Crisses might have this version, if anyone does - but probably no one does
-        fixAllDates();
-	   $q = "drop table IF EXISTS `{$fromPrefix}version`";
-	   send_query($q);
-	   amendIndexes();
-	   createVersion();
-       $install_success = true;
-	   $endMsg='<p>GTD-PHP 0.8 upgraded from 0.8rc-2 to '._GTD_VERSION.' - thanks for your beta-testing</p>';
-	   break;
 	 case '0.8rc-1':  // upgrade from 0.8rc-1 =================================================================
         // if there's a prefix, and there wasn't before, copy tables over
     	if ($fromPrefix==$config['prefix']) {
+            foreach (array('checklistItems','listItems') as $temptable) {
+                $q="rename table `{$config['prefix']}{$temptable}` to `{$config['prefix']}"
+                .strtolower($temptable)."`";
+                send_query($q);
+            }
     		create_table('preferences');
 	   		amendIndexes();
 	   		updateVersion();
@@ -498,8 +498,9 @@ installation for use and familiarize yourself with the system.</p>\n
 			create_tables();
 	   		foreach ($tablesByVersion[$versions[$installType]['tables']] as $table){
 				if ($table!="version") {
-					$q = "INSERT INTO ".$config['prefix']. $table . " select * from `". $fromPrefix . $table ."`";
-					send_query($q);
+                    $q = "INSERT INTO {$config['prefix']}".$tablesByVersion[$versions[_GTD_VERSION]['tables']][$key]
+                            . " select * from `$fromPrefix$table`";
+                    send_query($q);
 				}
 			}
 		}
@@ -533,9 +534,9 @@ installation for use and familiarize yourself with the system.</p>\n
 		$q="INSERT INTO ".$config['prefix']. $temp . "checklist  SELECT * FROM `checklist`";
 		send_query($q);
 
-		// checklistItems
-		create_table("checklistItems");
-		$q="INSERT INTO ".$config['prefix']. $temp . "checklistItems  SELECT * FROM `checklistItems`";
+		// checklistitems
+		create_table("checklistitems");
+		$q="INSERT INTO ".$config['prefix']. $temp . "checklistitems  SELECT * FROM `checklistItems`";
 		send_query($q);
 
 		// context
@@ -593,9 +594,9 @@ installation for use and familiarize yourself with the system.</p>\n
        $q="INSERT INTO ".$config['prefix']. $temp . "list  SELECT * FROM `list` ";
        send_query($q);
 
-		create_table("listItems");
+		create_table("listitems");
 
-       $q="INSERT INTO ".$config['prefix']. $temp . "listItems SELECT * FROM `listItems`";
+       $q="INSERT INTO ".$config['prefix']. $temp . "listitems SELECT * FROM `listItems`";
        send_query($q);
 
        $q="CREATE TABLE `{$config['prefix']}{$temp}nextactions` ( ";
@@ -1064,7 +1065,7 @@ function fixAllDates() {
    fixDate('itemstatus','dateCompleted');
    fixDate('itemstatus','dateCreated');
    fixDate('itemstatus','lastmodified');
-   fixDate('listItems','dateCompleted');
+   fixDate('listitems','dateCompleted');
    fixDate('tickler','date');
    fixData();
 }
@@ -1128,28 +1129,39 @@ function checkPrefix($prefix) {
 	$prefixOK=preg_match("/^[-_a-zA-Z0-9]*$/",$prefix);
 	if (!$prefixOK)
 		echo '<p class="error">Prefix "',$prefix, '" is invalid - change config.php.'
-			 ," The only valid characters are numbers, letters, _ (underscore) and - (hyphen)</p>\n";
+			 ," The only valid characters are numbers, letters, _ (underscore) and - (hyphen):"
+             ," for maximum compatibility and portability, we recommend using no upper case letters</p>\n";
 
 	return $prefixOK;
 }
 /*
    ======================================================================================
 */
-function checkPrefixedTables($prefix) {
+function checkTables($prefix,$ver) {
 	global $versions,$tablelist,$tablesByVersion;
-	if (_DEBUG) echo '<p class="debug">Is there a current 0.8 installation with prefix "',$prefix,'"? ';
-	$prefix=strtolower($prefix);
 	$doneOK=true;
-	foreach ($tablesByVersion[$versions[_GTD_VERSION]['tables']] as $thisTable)
+   	foreach ($tablesByVersion[$versions[$ver]['tables']] as $thisTable)
 		if (!in_array($prefix.$thisTable,$tablelist,true)) {
 			$doneOK=false;
 			break;
 		}
-	if (_DEBUG) echo ($doneOK)?'YES':'NO',"</p>\n";
-	if ($doneOK)
-        $retval=checkVersion($prefix);
-    else $retval=false;
-    if (_DEBUG) echo '<p class="debug">Resolved version number as: "',$retval,'"</p>';
+    return $doneOK;
+}
+/*
+   ======================================================================================
+*/
+function checkPrefixedTables($prefix) {
+	global $versions;
+	if (_DEBUG) echo '<p class="debug">Is there a current 0.8 installation with prefix "',$prefix,'"? ';
+	foreach (array('0.8rc-3','0.8rc-4') as $ver) {
+        $doneOK=checkTables($prefix,$ver);
+        if ($doneOK) {
+            $retval=$ver;
+            break;
+        }
+    }
+	if (!$doneOK) $retval=false;
+    if (_DEBUG) echo (($doneOK)?'YES':'NO'),"</p><p class='debug'>Resolved version number as: '$retval'</p>\n";
 	return $retval;
 }
 /*
@@ -1188,13 +1200,13 @@ function create_tables() {
 	create_table('preferences');
 	create_table("categories");
 	create_table("checklist");
-	create_table("checklistItems");
+	create_table("checklistitems");
 	create_table("context");
 	create_table("itemattributes");
 	create_table("items");
 	create_table("itemstatus");
 	create_table('list');
-	create_table("listItems");
+	create_table("listitems");
 	create_table('lookup');
 	create_table("nextactions");
 	create_table("tickler");
@@ -1209,11 +1221,11 @@ function amendIndexes() {
     $indexarray=array(
         'categories'    =>array('category','description'),
         'checklist'     =>array('description','title'),
-        'checklistItems'=>array('notes','item'),
+        'checklistitems'=>array('notes','item'),
         'context'       =>array('name','description'),
     	'items'         =>array('title','desiredOutcome','description'),
     	'list'          =>array('description','title'),
-    	'listItems'     =>array('notes','item'),
+    	'listitems'     =>array('notes','item'),
     	'tickler'       =>array('note','title'),
     	'timeitems'     =>array('timeframe','description') );
 
@@ -1415,7 +1427,7 @@ function create_table ($name) {
        $q.=_FULLTEXT." KEY `description` (`description`"._INDEXLEN."), ";
        $q.=_FULLTEXT." KEY `title` (`title`"._INDEXLEN."))"._CREATESUFFIX;
 	break;
-	case "checklistItems":
+	case "checklistitems":
        $q.="`checklistItemId` int(10) unsigned NOT NULL auto_increment, ";
        $q.="`item` text NOT NULL, ";
        $q.="`notes` text, ";
@@ -1479,7 +1491,7 @@ function create_table ($name) {
        $q.=_FULLTEXT." KEY `description` (`description`"._INDEXLEN."), ";
        $q.=_FULLTEXT." KEY `title` (`title`"._INDEXLEN.")) "._CREATESUFFIX;
 	break;
-	case "listItems":
+	case "listitems":
        $q.="`listItemId` int(10) unsigned NOT NULL auto_increment, ";
        $q.="`item` text NOT NULL, ";
        $q.="`notes` text, ";

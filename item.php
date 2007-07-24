@@ -86,6 +86,11 @@ $oldtype=$values['type'];
 
 //PAGE DISPLAY CODE
 echo '<h2>',($values['itemId']>0)?'Edit ':'New ',$typename,"</h2>\n";
+
+if (!empty($_REQUEST['createnote'])) echo
+    "<p class='warning'>Notes have been superseded by tickler actions. These actions get "
+    ," suppressed until a specified number of days before their deadlines</p>";
+
 echo '	<form action="processItems.php" method="post" onsubmit="return validate(this);">',"<div class='form'>\n";
 
 echo "<input type='hidden' name='action' value='",

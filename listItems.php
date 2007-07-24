@@ -64,6 +64,9 @@ require_once('listItems.inc.php')
 </div>
 <?php if (count($remindertable)) { ?>
     <h2><a href="note.php?&amp;type=<?php echo $values['type']; ?>&amp;referrer=t" title="Add new reminder">Reminder Notes</a></h2>
+<p class='warning'>Deprecated feature: notes will be withdrawn before the 1.0 release of gtd-php.
+They have been superseded by tickler actions.
+Normal actions can be put into a tickler file, to be suppressed until a specified number of days before their deadlines</p>
     <table class="datatable sortable" summary="table of reminders" id="remindertable">
         <thead>
             <tr>
