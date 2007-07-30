@@ -1064,7 +1064,7 @@ function fixAllDates() {
    fixDate('itemattributes','deadline');
    fixDate('itemstatus','dateCompleted');
    fixDate('itemstatus','dateCreated');
-   fixDate('itemstatus','lastmodified');
+   fixDate('itemstatus','lastModified');
    fixDate('listitems','dateCompleted');
    fixDate('tickler','date');
    fixData();

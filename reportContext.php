@@ -122,7 +122,7 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
         $wasNAonEntry=array();
 		if (is_array($result)) foreach ($result as $row) {
             $maintable[$i]=array();
-            $maintable[$i]['id']=$row['itemId'];
+            $maintable[$i]['itemId']=$row['itemId'];
 			$maintable[$i]['description']=$row['description'];
 			$maintable[$i]['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
 
@@ -136,9 +136,9 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
             $maintable[$i]['title']=makeclean($row['title']);
             $maintable[$i]['title.title']='Edit '.$maintable['title'];
 
-			$maintable[$i]['parent']=makeclean($row['ptitle']);
-			$maintable[$i]['parentid']=$row['parentId'];
-			$maintable[$i]['parent.title']='Go to '.$maintable['parent'].' project report';
+			$maintable[$i]['ptitle']=$row['ptitle'];
+			$maintable[$i]['parentId']=$row['parentId'];
+			if ($row['parentId']=='') $maintable[$i]['parent.class']='noparent';
 
 			$maintable[$i]['checkboxname']='isMarked[]';
 			$maintable[$i]['checkbox.title']='Complete '.$maintable['title'];

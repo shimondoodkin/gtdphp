@@ -4,8 +4,10 @@ function focusOnForm() {
         for (i = 0; i < document.forms[0].length; i++) {
             tst=document.forms[0].elements[i].type;
             if ( (tst == "button") || (tst == "checkbox") || (tst == "radio") || (tst == "select") || (tst == "select-one") || (tst == "text") || (tst == "textarea") ) {
-                document.forms[0].elements[i].focus();
-                break;
+                if (!document.forms[0].elements[i].disabled) {
+                  document.forms[0].elements[i].focus();
+                  break;
+                }
             }
         }
     }
@@ -348,14 +350,18 @@ function ts_sort_checkbox(a,b) {
 function filtertoggle(which) {
     var box=document.getElementById('everything');
     var isOn;
+    var i;
     if (which=='all')
         isOn=false;
     else isOn=box.checked;
-    for (var child in box.form.elements)
-        box.form.elements[child].disabled=isOn;
-    box.disabled=false;
-    document.getElementById('filtersubmit').disabled=false;
+    for (i=0;i<box.form.elements.length;i++)
+        if (box.form.elements[i].disabled!=undefined)
+            box.form.elements[i].disabled=isOn;
     document.getElementById('type').disabled=false;
+    document.getElementById('needle').disabled=false;
+    document.getElementById('filtersubmit').disabled=false;
+    box.disabled=false;
+    box.focus();
     return true;
 }
 

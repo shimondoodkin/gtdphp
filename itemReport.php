@@ -7,7 +7,8 @@ $values=array();
 $values['itemId'] = (int) $_GET['itemId'];
 
 //Get item details
-$result = query("selectitem",$config,$values,$options,$sort);
+$values['childfilterquery']=' WHERE '.sqlparts('singleitem',$config,$values);
+$result = query("getitemsandparent",$config,$values,$options,$sort);
 $item = $result[0];
 
 //select all nextactions for test
@@ -18,43 +19,53 @@ $nextactions=(getNextActionsArray($config,$values,$options,$sort));
 if ($item['isSomeday']=="y") $values['isSomeday']="y";
 else $values['isSomeday']="n";
 
-$values['type']=$item['type'];
-$values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
-$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-$result = query("getitems",$config,$values,$options,$sort);
 
-$c=0;
-if ($result!="-1") {
-    foreach ($result as $row) {
-        $ids[$c]=$row['itemId'];
-        $titles[$c]=$row['title'];
-        if($ids[$c]==$values['itemId']){
-            $id=$c;
-            }
-        $c++;
-        }
-    }
-
-$n=sizeof($ids);
-if(isset($id)){
-    if($id==$n-1){
-        $nextId=$ids[0];
-        $nexttitle=$titles[0];
-    }else{
-        $nextId=$ids[$id+1];
-        $nexttitle=$titles[$id+1];
-    }
-    if($id==0){
-        $previousId=$ids[$n-1];
-        $previoustitle=$titles[$n-1];
-    }else{
-        $previousId=$ids[$id-1];
-        $previoustitle=$titles[$id-1];
+if (isset($_SESSION['idlist-'.$item['type']])) {
+    $ndx=$_SESSION['idlist-'.$item['type']];
+    unset($result);
+} else {
+    $values['type']=$item['type'];
+    $values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
+    $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
+    $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
+    $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
+    $result = query("getitems",$config,$values,$options,$sort);
+    $c=0;
+    $ndx=array();
+    if ($result!="-1") {
+        foreach ($result as $row) $ndx[]=$row['itemId'];
+        $_SESSION['idlist-'.$item['type']]=$ndx;
     }
 }
 
+$cnt=count($ndx);
+if($cnt>1) {
+    $key=array_search($values['itemId'],$ndx);
+    if ($key!==false) {
+        if ($key==0)
+            $prev=$cnt-1;
+        else
+            $prev=$key-1;
+            
+        if ($key==$cnt-1)
+            $next=0;
+        else
+            $next=$key+1;
+
+        $previousId=$ndx[$prev];
+        $nextId    =$ndx[$next];
+        if (isset($result)) {
+            $previoustitle=$result[$prev]['title'];
+            $nexttitle    =$result[$next]['title'];
+        } else {
+            $previtem = query("selectitem",$config,array('itemId'=>$previousId),$options,$sort);
+            $previoustitle=$previtem[0]['title'];
+            $nextitem = query("selectitem",$config,array('itemId'=>$nextId),    $options,$sort);
+            $nexttitle    =$nextitem[0]['title'];
+        }
+    }
+}
+ 
 //PAGE DISPLAY AREA
 
 //set item labels
@@ -68,26 +79,40 @@ $childtype=getChildType($item['type']);
 echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday']=="y")?" (Someday) ":"")."</h1>\n";
 
 //Edit, next, and previous buttons
-echo '<span class="editbar">[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($item['title'])).'">Edit</a> ]'."\n";
+echo '<div class="editbar">[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($item['title'])).'">Edit</a> ]'."\n";
 if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" title="',makeclean($previoustitle),'">Previous</a> ]'."\n";
 if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="',makeclean($nexttitle),'">Next</a> ]'."\n";
-echo "</span>\n";
+
+echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
-echo '<p><span class="reportItem">Created:&nbsp;</span>'.$item['dateCreated']."<br />\n";
-if ($item['description']) echo "<span class='reportItem'>Description:&nbsp;</span>{$item['description']}<br />\n";
-if ($item['desiredOutcome']) echo "<span class='reportItem'>Desired Outcome:&nbsp;</span>{$item['desiredOutcome']}<br />\n";
-if ($item['categoryId']) echo '<span class="reportItem">Category:&nbsp;</span>'.makeclean($item['category'])."<br />\n";
-if ($item['contextId']) echo '<span class="reportItem">Space Context:&nbsp;</span>'.makeclean($item['cname'])."<br />\n";
-if ($item['timeframeId']) echo '<span class="reportItem">Time Context:&nbsp;</span>'.makeclean($item['timeframe'])."<br />\n";
-if ($item['deadline']) echo '<span class="reportItem">Deadline:&nbsp;</span>'.$item['deadline']."<br />\n";
-if ($item['repeat']) echo '<span class="reportItem">Repeat every&nbsp;</span>'.$item['repeat'].'&nbsp;days'."<br />\n";
+if ($item['description']) echo "<tr><th>Description:</th><td>{$item['description']}</td></tr>\n";
+if ($item['desiredOutcome']) echo "<tr><th>Desired Outcome:</th><td>{$item['desiredOutcome']}</td></tr>\n";
+if ($parents!=-1) {
+    echo "<tr><th>Parents:&nbsp;</th><td>";
+    $brk='';
+    $pids=explode(',',$item['parentId']);
+    $pnames=explode($config['separator'],$item['ptitle']);
+    foreach ($pids as $pkey=>$pid) {
+        $thisparent=makeclean($pnames[$pkey]);
+        echo "$brk<a href='itemReport.php?itemId=$pid' title='Go to the $thisparent report'>$thisparent</a> ";
+        $brk=', ';
+    }
+    echo "</td></tr>\n";
+}
+if ($item['categoryId']) echo "<tr><th>Category:</th><td><a href='editCat.php?id={$item['categoryId']}&amp;field=category'>".makeclean($item['category'])."</a></td></tr>\n";
+if ($item['contextId']) echo "<tr><th>Space Context:</th><td><a href='editCat.php?id={$item['contextId']}&amp;field=context'>".makeclean($item['cname'])."</a></td></tr>\n";
+if ($item['timeframeId']) echo "<tr><th>Time Context:</th><td><a href='editCat.php?id={$item['timeframeId']}&amp;field=time-context'>".makeclean($item['timeframe'])."</a></td></tr>\n";
+if ($item['deadline']) echo '<tr><th>Deadline:</th><td>'.$item['deadline']."</td></tr>\n";
+if ($item['repeat']) echo '<tr><th>Repeat every</th><td>'.$item['repeat'].' days'."</td></tr>\n";
 if ($item['suppress']==='y') {
 	$reminddate=getTickleDate($item['deadline'],$item['suppressUntil']);
-	echo '<span class="reportItem">Suppressed Until:&nbsp;</span>'.date($config['datemask'],$reminddate)."<br />\n";
+	echo '<tr><th>Suppressed Until:</th><td>'.date($config['datemask'],$reminddate)."</td></tr>\n";
 }
-if ($item['lastModified']) echo '<span class="reportItem">Last modified:&nbsp;</span>'.$item['lastModified']."<br />\n";
-if ($item['dateCompleted']>0) echo '<span class="reportItem">Completed On:&nbsp;</span>'.$item['dateCompleted']."\n";
-echo "</p>\n";
+echo '<tr><th>Created:</th><td>'.$item['dateCreated']."</td></tr>\n";
+if ($item['lastModified']) echo '<tr><th>Last modified:</th><td>'.$item['lastModified']."</td></tr>\n";
+if ($item['dateCompleted']) echo '<tr><th>Completed On:</th><td>'.$item['dateCompleted']."</td></tr>\n";
+
+echo "</tbody></table>\n";
 
 
 if ($childtype!=NULL) {
@@ -116,7 +141,22 @@ if ($childtype!=NULL) {
 
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
 		$values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
-		$result = query("getchildren",$config,$values,$options,$sort);
+		
+        if ($comp==='y' && $config['ReportMaxCompleteChildren']) {
+            $values['maxItemsToSelect']=1+$config['ReportMaxCompleteChildren'];
+            $values['limitquery'] =sqlparts('limit',$config,$values);
+        } else $values['limitquery'] ='';
+
+		$atLimit=0;
+        $result = query("getchildren",$config,$values,$options,$sort);
+        if ($values['limitquery'] !=='' && count($result)===1+$config['ReportMaxCompleteChildren']) {
+            $atLimit=array_pop(array_pop(query('countselected',$config,$values,$options,$sort)));
+            array_pop($result);
+            $tfoot="<tfoot><tr><td>\n"
+                ."<a href='listItems.php?type=$thistype&amp;parentId={$values['parentId']}&amp;completed=true'>"
+                ."more...($atLimit items in total)</a>\n</td></tr></tfoot>\n";
+
+        } else $tfoot='';
 
 		echo "<div class='reportsection'>\n"
             ,($result != "-1")?'<h2>':'<h3>No '
@@ -151,11 +191,12 @@ if ($childtype!=NULL) {
         $dispArray['NA.type']=($config['nextaction']==='single')?'radio':'checkbox';
 		$i=0;
 		$maintable=array();
+
         foreach ($result as $row) {
 			$cleantitle=makeclean($row['title']);
 
             $maintable[$i]=array();
-            $maintable[$i]['id']=$row['itemId'];
+            $maintable[$i]['itemId']=$row['itemId'];
             $maintable[$i]['title']=$cleantitle;
             $maintable[$i]['description']=$row['description'];
             $maintable[$i]['created']=date($config['datemask'],strtotime($row['dateCreated']));

@@ -15,7 +15,11 @@ $sqlparts = array(
     "hasparent"                 =>  " y.`parentId` = '{$values['parentId']}' ",
     "issomeday"                 =>  " ia.`isSomeday` = '{$values['isSomeday']}' ",
     "issomeday-parent"          =>  " y.`pisSomeday` = '{$values['isSomeday']}' OR y.`pisSomeday` IS NULL",
+    "limit"                     =>  " LIMIT {$values['maxItemsToSelect']} ",
     "listcategoryfilter"        =>  " l.`categoryId`='{$values['categoryId']}' ",
+    "matchall"                  =>  " (i.`title` LIKE '%{$values['needle']}%'
+                                      OR i.`description` LIKE '%{$values['needle']}%'
+                                      OR i.`desiredOutcome` LIKE '%{$values['needle']}%' )",
     "notcategoryfilter"         =>  " ia.`categoryId` != '{$values['categoryId']}' ",
     "notcategoryfilter-parent"  =>  " y.`pcategoryId` != '{$values['categoryId']}' ",
     "notcontextfilter"          =>  " ia.`contextId` != '{$values['contextId']}' ",
@@ -24,6 +28,7 @@ $sqlparts = array(
     "pendingitems"              =>  " its.`dateCompleted` IS NULL ",
     "pendingparents"            =>  " y.`pdatecompleted` IS NULL ",
     "repeating"                 =>  " ia.`repeat` >0 ",
+    "singleitem"                =>  " i.`itemId`='{$values['itemId']}' ",
     "suppresseditems"           =>  " ia.`suppress`='y' AND (CURDATE()<=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) ",
     "timeframefilter"           =>  " ia.`timeframeId` ='{$values['timeframeId']}' ",
     "timetype"                  =>  " ti.`type` = '{$values['type']}' ",

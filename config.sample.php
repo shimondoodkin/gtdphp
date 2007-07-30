@@ -1,5 +1,11 @@
 <?php
 include_once('gtd_constants.inc.php');
+/*
+    Note that for any of these settings, if you wish to set them to blank,
+    assign them an empty string, rather than deleting the line from the file:
+    e.g.:
+    "prefix" => '',
+*/
 
 /******************************************/
 /**********   REQUIRED SETTINGS    ********/
@@ -40,7 +46,7 @@ $config["theme"] = 'default'; //default | menu_sidebar
 $config["title_suffix"]	= false; // true | false - add filename to title tag
 $config["trimLength"] = 72;     // max visible length of descriptions when listing items
 $config["firstDayOfWeek"] = 0; // 0=Sunday, 1=Monday, ... 6=Saturday
-        
+$config['ReportMaxCompleteChildren']=0;  // maximum number of child items of any one type shown in itemReport
 
 // These are the shortcut settings for menu options.  Add a key for any page or page view in the main menus.
 // Note IE only allows 26 access keys (a-z).
@@ -114,7 +120,6 @@ $config["afterCreate"]	= array (  // parent | item | list | another - default vi
 
 
 
-
 /*********  Customize Weekly Review  ************/
 
 // Entirely optional: add custom items to the weekly review.  
@@ -144,7 +149,7 @@ $sort = array(
     "parentselectbox"       => "i.`title` ASC",
     "timecontextselectbox"  => "ti.`timeframe` DESC",
     "getlistitems"          => "li.`item` ASC",
-    "getitemsandparent"     => "ptitle ASC, pcatname ASC, type ASC, deadline ASC, title ASC, dateCreated DESC",
+    "getitemsandparent"     => "type ASC, ptitle ASC, title ASC, deadline ASC, dateCreated DESC",
     "getorphaneditems"      => "ia.`type` ASC, i.`title` ASC",
     "selectchecklist"       => "cl.`title` ASC",
     "getchecklists"         => "c.`category` ASC",
@@ -157,6 +162,7 @@ $sort = array(
 
 $config["storeRecurrences"] = true; // false | true - when recurring items are completed, store each occurrence as a completed item
 $config['useTypesForTimeContexts'] = false; // false | true - Time Contexts will be bound to a particular type
+$config['separator'] = '!£$€%'; // should be a string that you'll never use in titles of items; used to separate titles in mysql queries
 
 /*********  Developer Settings ************/
 

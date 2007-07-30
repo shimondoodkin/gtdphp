@@ -91,7 +91,9 @@ $sql = array(
 											AND (its.`dateCompleted` IS NULL)
                                             AND {$values['filterquery']}
 										GROUP BY ia.`contextId`, ia.`timeframeId`",
-										
+
+		"countselected"				=> "SELECT FOUND_ROWS()",
+
         "countspacecontexts"        => "SELECT COUNT(*)
         								FROM `". $config['prefix'] ."context`",
 
@@ -142,12 +144,14 @@ $sql = array(
 										WHERE cl.`categoryId`=c.`categoryId` ".$values['filterquery']." 
 										ORDER BY {$sort['getchecklists']}",
 			
-        "getchildren"               => 	"SELECT i.`itemId`, i.`title`, i.`description`, 
+        "getchildren"               => 	"SELECT "
+                                        .(($values['limitquery']=='')?'':' SQL_CALC_FOUND_ROWS ').
+                                        "i.`itemId`, i.`title`, i.`description`,
         									i.`desiredOutcome`, ia.`type`, 
         									ia.`isSomeday`, ia.`deadline`, ia.`repeat`, 
         									ia.`suppress`, ia.`suppressUntil`, 
         									its.`dateCreated`, its.`dateCompleted`, 
-        									its.`lastmodified`, ia.`categoryId`, 
+        									its.`lastModified`, ia.`categoryId`,
         									c.`category`, ia.`contextId`, 
         									cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe` 
 										FROM (`". $config['prefix'] . "itemattributes` as ia, 
@@ -164,7 +168,7 @@ $sql = array(
 												ON (ia.`timeframeId` = ti.`timeframeId`)
 										WHERE lu.`itemId`= ia.`itemId` 
 											AND lu.`parentId`= '{$values['parentId']}' ".$values['filterquery']." 
-										ORDER BY {$sort['getchildren']}",
+										ORDER BY {$sort['getchildren']} {$values['limitquery']}",
 
         "getgtdphpversion"         =>  "SELECT `version` FROM `{$config['prefix']}version`",
         
@@ -187,22 +191,18 @@ $sql = array(
         										x.`desiredOutcome`, x.`type`, x.`isSomeday`, 
         										x.`deadline`, x.`repeat`, x.`suppress`, 
         										x.`suppressUntil`, x.`dateCreated`, x.`dateCompleted`, 
-        										x.`lastmodified`, x.`categoryId`, x.`category`, 
+        										x.`lastModified`, x.`categoryId`, x.`category`,
         										x.`contextId`, x.`cname`, x.`timeframeId`, 
-        										x.`timeframe`, y.`parentId`, y.`ptitle`, 
-        										y.`pdescription`, y.`pdesiredOutcome`, y.`ptype`, 
-        										y.`pisSomeday`, y.`pdeadline`, y.`prepeat`, 
-        										y.`psuppress`, y.`psuppressUntil`, y.`pdateCreated`, 
-        										y.`pdateCompleted`, y.`plastmodified`, 
-        										y.`pcategoryId`, y.`pcatname`, y.`pcontextId`, y.`pcname`, 
-        										y.`ptimeframeId`, y.`ptimeframe` 
+        										x.`timeframe`,
+                                                GROUP_CONCAT(y.`parentId` ORDER BY y.`ptitle`) as `parentId`,
+                                                GROUP_CONCAT(y.`ptitle` ORDER BY y.`ptitle` SEPARATOR '{$config['separator']}') AS `ptitle`
 										FROM (
 												SELECT 
 														i.`itemId`, i.`title`, i.`description`, 
 														i.`desiredOutcome`, ia.`type`, ia.`isSomeday`, 
 														ia.`deadline`, ia.`repeat`, ia.`suppress`, 
 														ia.`suppressUntil`, its.`dateCreated`, 
-														its.`dateCompleted`, its.`lastmodified`, 
+														its.`dateCompleted`, its.`lastModified`,
 														ia.`categoryId`, c.`category`, ia.`contextId`, 
 														cn.`name` AS cname, ia.`timeframeId`, 
 														ti.`timeframe`, lu.`parentId` 
@@ -233,7 +233,7 @@ $sql = array(
 														ia.`suppressUntil` AS psuppressUntil,  
 														its.`dateCreated` AS pdateCreated, 
 														its.`dateCompleted` AS pdateCompleted, 
-														its.`lastmodified` AS plastmodified, 
+														its.`lastModified` AS plastModified,
 														ia.`categoryId` AS pcategoryId, 
 														c.`category` as pcatname, ia.`contextId` AS pcontextId, 
 														cn.`name` AS pcname, ia.`timeframeId` AS ptimeframeId, 
@@ -252,7 +252,16 @@ $sql = array(
 														ON (ia.`timeframeId` = ti.`timeframeId`)".$values['parentfilterquery']."
 											) as y 
 											ON (y.parentId = x.parentId) ".$values['filterquery']." 
-										ORDER BY {$sort['getitemsandparent']}",
+										GROUP BY x.`itemId`
+                                        ORDER BY {$sort['getitemsandparent']}",
+/* cut from SELECT in getitemsandparent as not used
+        										y.`pdescription`, y.`pdesiredOutcome`, y.`ptype`,
+        										y.`pisSomeday`, y.`pdeadline`, y.`prepeat`,
+        										y.`psuppress`, y.`psuppressUntil`, y.`pdateCreated`,
+        										y.`pdateCompleted`, y.`plastmodified`,
+        										y.`pcategoryId`, y.`pcatname`, y.`pcontextId`, y.`pcname`,
+        										y.`ptimeframeId`, y.`ptimeframe`
+*/
 
         "getitembrief"              => 	"SELECT `title`, `description`
         								FROM  `". $config['prefix'] . "items`
@@ -278,7 +287,7 @@ $sql = array(
         "getnextactions"            => "SELECT `nextaction` 
         								FROM `". $config['prefix'] . "nextactions`",
         
-		"getorphaneditems"	  		=> "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description` 
+		"getorphaneditems"	  		=> "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description`
 										FROM `". $config['prefix'] . "itemattributes` as ia, 
 												`". $config['prefix'] . "items` as i,
 												`". $config['prefix'] . "itemstatus` as its 

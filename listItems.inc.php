@@ -11,6 +11,7 @@ $show=array();
 $values = array();
 $filter = array();
 
+// I've used getVarFromGetPost instead of $_REQUEST, because I want $_GET to have higher priority than $_POST.
 $filter['type']           =getVarFromGetPost('type','a');
 $filter['contextId']      =getVarFromGetPost('contextId',NULL);
 if ($filter['contextId']==='0') $filter['contextId']=NULL;
@@ -30,6 +31,7 @@ $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeatin
 $filter['parentId']       =getVarFromGetPost('parentId');
 $filter['everything']     =getVarFromGetPost('everything');        //overrides filter:true/empty
 $filter['parentcompleted']=getVarFromGetPost('parentcompleted');
+$filter['needle']         =getVarFromGetPost('needle');            //search string (plain text)
 
 if ($filter['type']==='s') {
     $filter['someday']=true;
@@ -42,13 +44,14 @@ $values['parentId']       =$filter['parentId'];
 $values['contextId']      =$filter['contextId'];
 $values['categoryId']     =$filter['categoryId'];
 $values['timeframeId']    =$filter['timeframeId'];
+$values['needle']         =$filter['needle'];
 
 if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
 
 //SQL CODE
 
 //create filters for selectboxes
-$values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
+$values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='*')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create filter selectboxes
 $cashtml=categoryselectbox($config,$values,$options,$sort);
@@ -97,10 +100,11 @@ foreach($filter as $filterkey=>$filtervalue)
 
 //set default table column display options (kludge-- needs to be divided into multidimensional array for each table type and added to preferences table
 $show['parent']=TRUE;
+$show['type']=FALSE;
 $show['NA']=FALSE;
 $show['title']=TRUE;
 $show['description']=TRUE;
-$show['outcome']=FALSE;
+$show['desiredOutcome']=FALSE;
 $show['isSomeday']=FALSE;
 $show['suppress']=FALSE;
 $show['suppressUntil']=FALSE;
@@ -113,13 +117,14 @@ $show['deadline']=TRUE;
 $show['repeat']=TRUE;
 $show['dateCompleted']=FALSE;
 $show['checkbox']=TRUE;
-
+$showalltypes=false;
 //determine item and parent labels, set a few defaults
 switch ($values['type']) {
-    case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-    case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-    case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['outcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
-    case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['outcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
+    case "*" : $typename="Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['type']=TRUE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=FALSE; $showalltypes=TRUE; break;
+    case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['deadline']=FALSE; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
+    case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
     case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
     case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $show['category']=FALSE; $checkchildren=FALSE; break;
     case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
@@ -164,31 +169,38 @@ if ($filter['completed']=="true") {
 }
 
 if ($filter['everything']=="true") {
-$show['parent']=TRUE;
-$show['NA']=FALSE;
-$show['title']=TRUE;
-$show['description']=TRUE;
-$show['outcome']=FALSE;
-$show['isSomeday']=FALSE;
-$show['suppress']=FALSE;
-$show['suppressUntil']=TRUE;
-$show['dateCreated']=TRUE;
-$show['lastModified']=FALSE;
-$show['category']=TRUE;
-$show['context']=TRUE;
-$show['timeframe']=TRUE;
-$show['deadline']=TRUE;
-$show['repeat']=TRUE;
-$show['dateCompleted']=TRUE;
-$show['checkbox']=FALSE;    }
+    $show['parent']=!$showalltypes;
+    $show['NA']=FALSE;
+    $show['title']=TRUE;
+    $show['description']=TRUE;
+    $show['desiredOutcome']=$showalltypes;
+    $show['type']=$showalltypes;
+    $show['isSomeday']=FALSE;
+    $show['suppress']=FALSE;
+    $show['suppressUntil']=!$showalltypes;
+    $show['dateCreated']=TRUE;
+    $show['lastModified']=FALSE;
+    $show['category']=!$showalltypes;
+    $show['context']=!$showalltypes;
+    $show['timeframe']=!$showalltypes;
+    $show['deadline']=!$showalltypes;
+    $show['repeat']=!$showalltypes;
+    $show['dateCompleted']=TRUE;
+    $show['checkbox']=FALSE;
+}
     
 //set query fragments based on filters
-$values['childfilterquery'] = "";
+$values['childfilterquery'] = "WHERE TRUE";
 $values['parentfilterquery'] = "";
 $values['filterquery'] = "";
 
 //type filter
-$values['childfilterquery'] = " WHERE ".sqlparts("typefilter",$config,$values);
+if ($values['type']!=='*')
+    $values['childfilterquery'] .= " AND ".sqlparts("typefilter",$config,$values);
+
+// search string
+if ($filter['needle']!=='')
+    $values['childfilterquery'] .= " AND ".sqlparts("matchall",$config,$values);
 
 /*
 Override all filter selections if $filter['everything'] is true
@@ -307,14 +319,15 @@ $sectiontitle .= $typename;
     ===================================================================
 */
 $result=query("getitemsandparent",$config,$values,$options,$sort);
-// TOFIX - if an action has several project parents, it appears several times on the list
 $maintable=array();
 $thisrow=0;
+$allids=array();
 if ($result!="-1") {
     $nonext=FALSE;
     $nochildren=FALSE;
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
     foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']] || $filter['everything']=="true") {
+        $allids[]=$row['itemId'];
         //filter out all but nextactions if $filter['nextonly']==true
     
         $nochildren=false;
@@ -329,7 +342,7 @@ if ($result!="-1") {
         if ($isNextAction) array_push($wasNAonEntry,$row['itemId']);
         
         $maintable[$thisrow]=array();
-        $maintable[$thisrow]['id']=$row['itemId'];
+        $maintable[$thisrow]['itemId']=$row['itemId'];
         $maintable[$thisrow]['class'] = ($nonext || $nochildren)?'noNextAction':'';
         $maintable[$thisrow]['NA'] =$isNextAction;
 
@@ -338,9 +351,13 @@ if ($result!="-1") {
         $maintable[$thisrow]['dateCompleted']= $row['dateCompleted'];
         $maintable[$thisrow]['type'] =$row['type'];
 
-        $maintable[$thisrow]['parent']=makeclean($row['ptitle']);
-        $maintable[$thisrow]['parentid']=$row['parentId'];
-
+        if ($row['parentId']=='') {
+            $maintable[$thisrow]['parent.class']='noparent';
+            $maintable[$thisrow]['ptitle']='';
+        } else {
+            $maintable[$thisrow]['ptitle']=$row['ptitle'];
+            $maintable[$thisrow]['parentId']=$row['parentId'];
+        }
         // add markers to indicate if this is a next action, or a project with no next actions, or an item with no childern
         if ($nochildren)
             $maintable[$thisrow]['flags'] = 'noChild';
@@ -361,7 +378,7 @@ if ($result!="-1") {
         $maintable[$thisrow]['checkboxvalue']=$row['itemId'];
 
         $maintable[$thisrow]['description'] = $row['description'];
-        $maintable[$thisrow]['outcome'] = $row['outcome'];
+        $maintable[$thisrow]['desiredOutcome'] = $row['desiredOutcome'];
 
         $maintable[$thisrow]['category'] =makeclean($row['category']);
         $maintable[$thisrow]['categoryid'] =$row['categoryId'];
@@ -397,11 +414,12 @@ if ($result!="-1") {
     
     $dispArray=array(
         'parent'=>$parentname
+        ,'type'=>'type'
         ,'flags'=>'!'
         ,'NA'=>'NA'
         ,'title'=>$typename.'s'
         ,'description'=>'Description'
-        ,'outcome'=>'Desired Outcome'
+        ,'desiredOutcome'=>'Desired Outcome'
         ,'category'=>'Category'
         ,'context'=>'Space Context'
         ,'timeframe'=>'Time Context'
@@ -420,7 +438,7 @@ if ($result!="-1") {
     end of main query: finished building array of items
     ===================================================================
 */
-
+$_SESSION['idlist-'.$values['type']]=$allids;
 $numrows=count($maintable);
 if ($numrows!==1) $sectiontitle.='s';
 if ($filter['tickler']=="true" && $filter['everything']!="true") {

@@ -5,6 +5,7 @@
 </thead>
 <tbody>
 <?php
+if (!empty($tfoot)) echo $tfoot;
 foreach ($maintable as $row) {
     echo '<tr>';
     foreach ($dispArray as $key=>$val) if ($show[$key]) {
@@ -15,20 +16,20 @@ foreach ($maintable as $row) {
             ,'>';
         switch ($key) {
             case 'title': 
-                echo "<a href='itemReport.php?itemId={$row['id']}'>"
+                echo "<a href='itemReport.php?itemId={$row['itemId']}'>"
                     ,"<img src='themes/{$config['theme']}/report.gif' alt='Go to $row[$key] report' /></a>"
-                    ,"<a href='item.php?itemId={$row['id']}'>"
+                    ,"<a href='item.php?itemId={$row['itemId']}'>"
                     ,"<img src='themes/{$config['theme']}/edit.gif' alt='Edit $row[$key]' /></a>"
                     ,"<a ",($row['NA'])?"class='nextactionlink'":''
                     ," title='Edit {$row[$key]}' href='item"
                     ,($row['doreport'])?'Report':''
-                    ,".php?itemId={$row['id']}'>$row[$key]</a>";
+                    ,".php?itemId={$row['itemId']}'>$row[$key]</a>";
                 break;
             case 'checkbox':
                 echo "<input name='{$row['checkboxname']}' value='{$row['checkboxvalue']}' type='checkbox' />";
                 break;
             case 'NA':
-                echo "<input name='isNAs[]' value='{$row['id']}'"
+                echo "<input name='isNAs[]' value='{$row['itemId']}'"
                     ,"type='",($dispArray[$key.'.type']==='radio')?'radio':'checkbox',"'"
                     ,($row[$key])?" checked='checked' ":''
                     ,' />';
@@ -41,7 +42,7 @@ foreach ($maintable as $row) {
                         ,($row[$key]==='noNA')?
                             "No next action - click to assign one' href='itemReport.php?itemId="
                             :("No children - click to create one' href='item.php?type=".$row['childtype'].'&amp;parentId=')
-                        ,$row['id'],"'>!"
+                        ,$row['itemId'],"'>!"
                         ,($row[$key]==='noChild')?'!':'&nbsp;'
                         ,"</a>";
                 break;
@@ -52,10 +53,19 @@ foreach ($maintable as $row) {
                     echo '&nbsp;';
                 break;
             case 'parent':
-                if ($row[$key.'id'])
-                    echo "<a href='itemReport.php?itemId=", $row[$key.'id'],"' title='Go to the {$row[$key]} report'>{$row[$key]}</a>";
-                else
+                if ($row[$key.'id']==='')
                     echo '&nbsp;';
+                else {
+                    $out='';
+                    $brk='';
+                    $pids=explode(',',$row['parentId']);
+                    $pnames=explode($config['separator'],$row['ptitle']);
+                    foreach ($pids as $pkey=>$pid) {
+                        $thisparent=makeclean($pnames[$pkey]);
+                        echo "$brk<a href='itemReport.php?itemId=$pid' title='Go to the $thisparent report'>$thisparent</a> ";
+                        $brk="<br />\n";
+                    }
+                }
                 break;
             case 'context':
                 if ($row[$key]=='')
@@ -69,8 +79,11 @@ foreach ($maintable as $row) {
                 else
                     echo '&nbsp;';
                 break;
+            case 'type':
+                echo getTypes($row[$key]);
+                break;
             case 'description': // flows through to case 'outcome' deliberately
-            case 'outcome':
+            case 'desiredOutcome':
                 echo trimTaggedString($row[$key],$config['trimLength']);
                 break;
             default:

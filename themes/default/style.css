@@ -103,12 +103,10 @@ span.nextActionMarker {
 
 /* form styling */
 .form {
-	float: left;
 	padding: 1em;
 	margin-bottom: 1em;
 }
 .formrow {
-	float: left;
 	clear: left;
 	margin-bottom: .25em;
 }
@@ -120,10 +118,10 @@ span.nextActionMarker {
 
 .formbuttons {
 	clear: left;
-	margin-bottom: 2em;
+	margin-bottom: 1em;
+	padding-top:0.25em;
 }
 .formrow label, .formrow input, .formrow select, .formrow button, .formrow textarea {
-	float: left;
 }
 .formrow label.left {
 	margin-left: 2em;
@@ -132,9 +130,16 @@ span.nextActionMarker {
 .formrow label.right {
 	text-align: left;
 }
-.formrow label.first {
+.formrow label.first, .formrow label:first-child {
 	width: 9em;
 	margin-left: 0;
+	display:block;
+	float:left;
+}
+.formrow label.nomargin:first-child, .formrow label.nomargin {
+    display:inline;
+    float:none;
+    margin-left:0;
 }
 .formrow input[type="checkbox"], .formrow input[type="radio"], .formbuttons input[type="checkbox"] {
 	margin-top: .6em;
@@ -186,12 +191,30 @@ h3 {
 	background: none;
 }
 
-h4,.reportItem {
+h4 {
 	font-size: 11px;
 	font-weight: bold;
 	background: none;
 }
+.editbar {
+    padding-bottom:1em;
+}
+.hanging {
+    margin-left:10em;
+}
 
+.hanging p {
+    margin-top:0.25em;
+    margin-bottom:0.25em;
+}
+.hanging span {
+    text-indent:-10em;
+    font-size: 11px;
+	font-weight: bold;
+	display:block;
+    float:left;
+    margin-right:0.5em;
+}
 
 
 a, a:link {
@@ -271,7 +294,7 @@ td.nextactioncell {
 
 a.nextactionlink {
 	font-weight: bold;
-	color: #F80;
+	color: #C80;
 }
 
 tr.overdue { /* class not implemented yet */
@@ -282,7 +305,13 @@ td.overdue, span.overdue {
 	color: #F00;
 }
 
-td.maincolumn { background-color:#eee}
+td.maincolumn {
+  background-color:#fFfFf3;
+}
+
+.noparent {
+    background-color:#ff8;
+}
 
 p.warning {
     background-color:white;

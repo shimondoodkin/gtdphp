@@ -7,7 +7,7 @@ require_once('listItems.inc.php')
 <div id="filter">
     <form action="listItems.php" method="post">
         <div class="formrow">
-            <label for='categoryId' class='left'>Category:</label>
+            <label for='categoryId' class='left nomargin'>Category:</label>
             <select name="categoryId" id="categoryId" title="Filter items by parent category">
             <?php echo $cashtml; ?>
             </select>
@@ -38,8 +38,7 @@ require_once('listItems.inc.php')
         <div class="formbuttons">
             <select name="type" id="type" title="Filter items by type">
             <?php
-                $types=array();
-                $types=getTypes();
+                $types=array('*'=>'Any')+getTypes();
                 foreach($types as $key=>$thistype) if ($key!=='s'){
                     echo "<option value='$key'"
                         ,($filter['type']==$key)?" selected='selected' ":''
@@ -56,6 +55,8 @@ require_once('listItems.inc.php')
                         ,">$key</option>\n";
            ?>
            </select>
+           <label for='needle' class='notfirst'>Find:</label>
+           <input type='text' name='needle' id='needle' value='<?php echo $values['needle']; ?>' />
             <input type="submit" id="filtersubmit" class="button" value="Filter"
                 name="submit" onclick="javascript:filtertoggle('all');"
                 title="Filter <?php echo $typename ?>s by selected criteria" />

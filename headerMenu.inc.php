@@ -17,7 +17,6 @@ function makemenu($list) {
 <div id="header">
 	<h1 id='sitename'><a href='index.php'><?php echo $config['title'];?></a></h1>
 </div>
-
 <div id="menudiv">
 	<ul id="menulist">
 	 	<li>Capture
@@ -119,6 +118,7 @@ function makemenu($list) {
 			<ul>
 				<?php
 				$thismenu[] = array("link"=>"version.php", 'title'=>"Version information", 'label' => "Version");
+				$thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp/newticket", 'title'=>"Report a bug on the gtd-php trac system", 'label' => "Report a bug");
 				$thismenu[] = array("link"=>"license.php", 'title'=>"The GTD-PHP license", 'label' => "License");
 				$thismenu[] = array("link"=>"credits.php", 'title'=>"The GTD-PHP development team", 'label' => "Credits");
 				$thismenu[] = array("link"=>"http://toae.org/boards", 'title'=>"Help and development discussions", 'label' => "Forum");
