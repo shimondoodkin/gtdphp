@@ -48,6 +48,8 @@ function validate(form) {
     for(var i = 0;i<requiredList.length;i++){
         requiredItem = requiredList[i].split(":");
         thisfield = form.elements[requiredItem[0]];
+        if (thisfield.type==='hidden') continue; // don't process hidden fields
+
         checkType = requiredItem[1];
         itemErrorMessage = requiredItem[2];
         itemValue = thisfield.value;
@@ -62,7 +64,8 @@ function validate(form) {
                 break;
             case "depends":
             	fieldRequires = form.elements[requiredItem[3]];
-            	passed=checkForNull(thisfield) || !checkForNull(fieldRequires);
+            	passed=checkForNull(thisfield) || !checkForNull(fieldRequires) || (fieldRequires.type==='hidden');
+;
             	if (!passed) fieldRequires.className='formerror';
 				break; 
             default:

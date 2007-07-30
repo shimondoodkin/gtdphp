@@ -79,10 +79,12 @@ $childtype=getChildType($item['type']);
 echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday']=="y")?" (Someday) ":"")."</h1>\n";
 
 //Edit, next, and previous buttons
-echo '<div class="editbar">[ <a href="item.php?itemId='.$values['itemId'].'" title="Edit '.htmlspecialchars(stripslashes($item['title'])).'">Edit</a> ]'."\n";
-if(isset($previousId)) echo '[ <a href="itemReport.php?itemId='.$previousId.'" title="',makeclean($previoustitle),'">Previous</a> ]'."\n";
-if(isset($nextId))  echo '[ <a href="itemReport.php?itemId='.$nextId.'" title="',makeclean($nexttitle),'">Next</a> ]'."\n";
-
+echo "<div class='editbar'>\n";
+if ($item['type']==='i') echo "[<a href='assignType.php?itemId={$values['itemId']}'>Assign Type</a>] \n";
+echo " [<a href='item.php?itemId={$values['itemId']}' title='Edit "
+    ,makeclean($item['title']),"'>Edit</a>] \n";
+if(isset($previousId)) echo " [<a href='itemReport.php?itemId=$previousId' title='",makeclean($previoustitle),"'>Previous</a>] \n";
+if(isset($nextId))  echo " [<a href='itemReport.php?itemId=$nextId' title='",makeclean($nexttitle),"'>Next</a>] \n";
 echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
 if ($item['description']) echo "<tr><th>Description:</th><td>{$item['description']}</td></tr>\n";

@@ -117,6 +117,7 @@ $show['deadline']=TRUE;
 $show['repeat']=TRUE;
 $show['dateCompleted']=FALSE;
 $show['checkbox']=TRUE;
+$show['assignType']=FALSE;
 $showalltypes=false;
 //determine item and parent labels, set a few defaults
 switch ($values['type']) {
@@ -129,7 +130,7 @@ switch ($values['type']) {
     case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $show['category']=FALSE; $checkchildren=FALSE; break;
     case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
     case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $checkchildren=FALSE; break;
-    case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $checkchildren=FALSE; break;
+    case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $show['assignType']=TRUE; $checkchildren=FALSE; break;
     default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE; 
 }
 
@@ -430,6 +431,7 @@ if ($result!="-1") {
         ,'lastModified'=>'Last Modified'
         ,'dateCompleted'=>'Date Completed'
         ,'checkbox'=>'Complete'
+        ,'assignType'=>'Assign'
         );
     if ($config['debug'] & _GTD_DEBUG) echo '<pre>values to print:',print_r($maintable,true),'</pre>';
 } // end of: if($result!="-1")

@@ -563,6 +563,10 @@ $sql = array(
 												`suppressUntil`='{$values['suppressUntil']}' 
 										WHERE `itemId` = '{$values['itemId']}'",
 
+        "updateitemtype"            => "UPDATE `". $config['prefix'] . "itemattributes`
+										SET `type` = '{$values['type']}'
+										WHERE `itemId` = '{$values['itemId']}'",
+
         "updatelist"                => "UPDATE `". $config['prefix'] . "list`
 										SET `title` = '{$values['newlistTitle']}', 
 												`description` = '{$values['newdescription']}', 

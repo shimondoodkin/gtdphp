@@ -173,15 +173,11 @@ function parentselectbox($config,$values,$options,$sort) {
     if ($result!="-1")
         foreach($result as $row) {
             $thisOpt= makeOption($row,$parents)."\n";
-/*
- the 2 commented lines below marked with //PATCH, if uncommented,
- will force the active current parents to always appear at the top of the select box
-*/
             if($parents[$row['itemId']]) {
-//                $pshtml =$thisOpt.$pshtml; //PATCH
+                $pshtml =$thisOpt.$pshtml;
                 $parents[$row['itemId']]=false;
-            } //else //PATCH
-            $pshtml .=$thisOpt;
+            } else
+                $pshtml .=$thisOpt;
         }
     foreach ($parents as $key=>$val) if ($val) {
         // $key is a parentId which wasn't found for the drop-down box, so need to add it in
@@ -308,5 +304,45 @@ function escapeChars($str) {
     $outStr=str_replace(array('&','…'),array('&amp;','&hellip'),$str);
     $outStr=str_replace(array('&amp;amp;','&amp;hellip;'),array('&amp;','&hellip;'),$outStr);
 	return $outStr;
+}
+
+function getShow($where,$type) {
+    global $config;
+    $show=array(
+        'title'         => true,
+        'description'   => true,
+
+        // only show if editing, not creating
+        'lastModified'  =>($where==='edit'),
+        'dateCreated'   =>($where==='edit'),
+        'type'          =>($where==='edit' && $type==='i'),
+
+        // fields suppressed on certain types
+        'desiredOutcome'=>($type!=='r'),
+        'category'      =>($type!=='m'),
+        'ptitle'        =>($type!=='m' && $type!=='i'),
+        'dateCompleted' =>($type!=='m'),
+        'complete'      =>($type!=='m' && $type!=='r'),
+        'timeframe'     =>($type!=='m' && $type!=='w' && $type!=='r' && $type!=='i'),
+        'context'       =>($type!=='m' && $type!=='v' && $type!=='o' && $type!=='g'),
+
+        // fields only shown for certain types
+        'deadline'      =>($type==='p' || $type==='a' || $type==='w' || $type==='i'),
+        'suppress'      =>($type==='p' || $type==='a' || $type==='w'),
+        'suppressUntil' =>($type==='p' || $type==='a' || $type==='w'),
+        'repeat'        =>($type==='p' || $type==='a'),
+        'NA'            =>($type==='a' || $type==='w'),
+        'isSomeday'     =>($type==='p'),
+
+        // fields never shown on item.php
+        'checkbox'      => false,
+        'flags'         => false
+        );
+
+    if ($config['forceAllFields'])
+        foreach ($show as $key=>$value)
+            $show[$key]=true;
+                
+    return $show;
 }
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

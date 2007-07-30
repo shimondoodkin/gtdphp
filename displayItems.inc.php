@@ -25,6 +25,9 @@ foreach ($maintable as $row) {
                     ,($row['doreport'])?'Report':''
                     ,".php?itemId={$row['itemId']}'>$row[$key]</a>";
                 break;
+            case 'assignType':
+                echo "<a href='assignType.php?itemId={$row['itemId']}'>Set type</a>";
+                break;
             case 'checkbox':
                 echo "<input name='{$row['checkboxname']}' value='{$row['checkboxvalue']}' type='checkbox' />";
                 break;
