@@ -77,8 +77,8 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         //always included; text/codes shown in errors on individual pages as warranted...
         $GLOBALS['ecode'] = mysql_errno();
         $GLOBALS['etext'] = mysql_error();
-        if ($GLOBALS['ecode']!=0) $_SESSION['message'][]="Error {$GLOBALS['ecode']}: '{$GLOBALS['etext']}' in query: $query";
-        }
+        if ($GLOBALS['ecode']!=0) $_SESSION['message'][]="Error {$GLOBALS['ecode']} in query '$querylabel': '{$GLOBALS['etext']}'";
+    }
 
     elseif($config['dbtype']=="postgres") {
         $reply = pg_query($query) or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".pg_error():"Error in query");

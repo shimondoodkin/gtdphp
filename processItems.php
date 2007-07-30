@@ -14,7 +14,6 @@ $action = $_POST['action'];
 $updateGlobals=array();
 $updateGlobals['multi']    = (isset($_POST['multi']) && $_POST['multi']==='y');
 $updateGlobals['referrer'] = $_POST['referrer'];
-$updateGlobals['actionMessage'] = array();
 $updateGlobals['parents'] = $_POST['parentId'];
 if (!is_array($updateGlobals['parents'])) $updateGlobals['parents']=array($updateGlobals['parents']);
 
@@ -71,7 +70,7 @@ if ($updateGlobals['multi']) {
 	doAction($action);
 }
 
-nextpage();
+nextPage();
 if ($html)
     include_once('footer.php');
 else
@@ -135,7 +134,7 @@ function doAction($localAction) { // do the current action on the current item; 
 		default: // failed to identify which action we should be taking, so quit
 			return FALSE;
 	}
-	$updateGlobals['actionMessage'][] = $msg;
+	$_SESSION['message'][] = $msg;
 	return TRUE; // we have successfully carried out some action
 }
 
@@ -378,7 +377,6 @@ function nextPage() { // set up the forwarding to the next page
             ,'session=',print_r($_SESSION,true),'<br />'
             ,'</pre>';
     }
-    $_SESSION['message']=$updateGlobals['actionMessage'];
     if ($nextURL=='') $nextURL="listItems.php?type=$t";
     $_SESSION[$key]=$tst;
 	nextScreen($nextURL);
