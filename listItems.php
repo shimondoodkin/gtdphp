@@ -36,17 +36,7 @@ require_once('listItems.inc.php')
             <input type="checkbox" name="everything" id="everything" class="notfirst" value="true" <?php if ($filter['everything']=="true") echo 'checked="checked"'?> title="Show all <?php echo $typename ?>s, regardless of status or labels" onclick='javascript:filtertoggle("toggle");' /><label for='everything'>Show all</label>
         </div>
         <div class="formbuttons">
-            <select name="type" id="type" title="Filter items by type">
-            <?php
-                $types=array('*'=>'Any')+getTypes();
-                foreach($types as $key=>$thistype) if ($key!=='s'){
-                    echo "<option value='$key'"
-                        ,($filter['type']==$key)?" selected='selected' ":''
-                        ,">$thistype</option>\n";
-                }
-            ?>
-            </select>
-           <label for="parentcompleted" class='notfirst'>Parent completion status:</label>
+           <label for="parentcompleted" class='left first'>Status of parent:</label>
            <select name="parentcompleted" id="parentcompleted" title="Completion status of parents">
            <?php
                 foreach (array('Incomplete'=>'false','Any'=>'*','Complete'=>'true') as $key=>$val)
@@ -55,6 +45,17 @@ require_once('listItems.inc.php')
                         ,">$key</option>\n";
            ?>
            </select>
+           <label for='type' class='left notfirst'>Type:</label>
+            <select name="type" id="type" title="Filter items by type">
+            <?php
+                $types=array('*'=>'(any)')+getTypes();
+                foreach($types as $key=>$thistype) if ($key!=='s'){
+                    echo "<option value='$key'"
+                        ,($filter['type']==$key)?" selected='selected' ":''
+                        ,">$thistype</option>\n";
+                }
+            ?>
+            </select>
            <label for='needle' class='notfirst'>Find:</label>
            <input type='text' name='needle' id='needle' value='<?php echo $values['needle']; ?>' />
             <input type="submit" id="filtersubmit" class="button" value="Filter"

@@ -38,6 +38,8 @@ if ($values['itemId']) { // editing an item
     }
     if ($_GET['nextonly']=='true') $nextaction=true;
 
+    $values['deadline']=getVarFromGetPost('deadline');
+
     $tmp=getVarFromGetPost('parentId');
     if ($tmp!=='') $values['parentId'][0] = (int) $tmp;
 

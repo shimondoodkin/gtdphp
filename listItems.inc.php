@@ -54,9 +54,9 @@ if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>'
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='*')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create filter selectboxes
-$cashtml=categoryselectbox($config,$values,$options,$sort);
-$cshtml=contextselectbox($config,$values,$options,$sort);
-$tshtml=timecontextselectbox($config,$values,$options,$sort);
+$cashtml=str_replace('--','(any)',categoryselectbox   ($config,$values,$options,$sort));
+$cshtml =str_replace('--','(any)',contextselectbox    ($config,$values,$options,$sort));
+$tshtml =str_replace('--','(any)',timecontextselectbox($config,$values,$options,$sort));
 
 //select all nextactions for test
 $nextactions=(getNextActionsArray($config,$values,$options,$sort));
@@ -226,27 +226,26 @@ if ($filter['everything']!="true") {
     }
 
     //filter box filters
-    if ($filter['categoryId'] != NULL)
-        if ($filter['notcategory']=="true")
-            $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
-        else {
-            $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
-            $linkfilter .= '&amp;categoryId='.$values['categoryId'];
-        }
-    if ($filter['contextId'] != NULL)
-        if ($filter['notspacecontext']=="true")
-            $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
-        else {
-            $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
-            $linkfilter .= '&amp;contextId='.$values['contextId'];
-        }
-    if ($filter['timeframeId'] != NULL)
-        if ($filter['nottimecontext']=="true")
-            $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
-        else {
-            $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
-            $linkfilter .= '&amp;timeframeId='.$values['timeframeId'];
-        }
+    if ($filter['categoryId'] != NULL && $filter['notcategory']=="true")
+        $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
+    elseif($filter['categoryId'] != NULL || $filter['notcategory']=="true") {
+        $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
+        $linkfilter .= '&amp;categoryId='.$values['categoryId'];
+    }
+    
+    if ($filter['contextId'] != NULL && $filter['notspacecontext']=="true")
+        $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
+    elseif ($filter['contextId'] != NULL || $filter['notspacecontext']=="true") {
+        $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
+        $linkfilter .= '&amp;contextId='.$values['contextId'];
+    }
+    
+    if ($filter['timeframeId'] != NULL && $filter['nottimecontext']=="true")
+        $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
+    elseif ($filter['timeframeId'] != NULL || $filter['nottimecontext']=="true") {
+        $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
+        $linkfilter .= '&amp;timeframeId='.$values['timeframeId'];
+    }
     
     if ($filter['completed']=="true") $values['childfilterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
     else $values['childfilterquery'] .= " AND " .sqlparts("pendingitems",$config,$values);
@@ -472,7 +471,7 @@ else {
         $endmsg['link']=$link;
     }
 }
-if ($filter['completed']!="true" || $filter['everything']=="true")
+if (($filter['completed']!="true" || $filter['everything']=="true") && $filter['type']!=='*')
     $sectiontitle = "<a title='Add new' href='$link'>$sectiontitle</a>";
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

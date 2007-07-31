@@ -159,19 +159,23 @@ if ($childtype!=NULL) {
                 ."more...($atLimit items in total)</a>\n</td></tr></tfoot>\n";
 
         } else $tfoot='';
-
-		echo "<div class='reportsection'>\n"
-            ,($result != "-1")?'<h2>':'<h3>No '
-			,($comp=="y")?('Completed&nbsp;'):('<a href="item.php?parentId='.$values['itemId'].'&amp;action=create&amp;type='.$thistype.'" title="Add new '.$typename[$value].'">')
-			,$typename[$thistype],'s'
-			,($comp=="y")?'':'</a>'
-			,($result != "-1")?'</h2>':'</h3>'
-			,"\n";
-	    if ($result == "-1") {
-	    	echo '</div>';
-			continue;
-		}
-		if ($comp!=='y')echo "<form action='processItems.php' method='post'>\n";
+        ?>
+<div class='reportsection'>
+        <?php
+        $title=$typename[$thistype].'s';
+        if ($comp==="y") {
+            $title="Completed $title";
+        } else {
+            $createURL="item.php?parentId={$values['itemId']}&amp;action=create&amp;type=$thistype";
+            // inherit some defaults from parent:
+            foreach (array('categoryId','contextId','deadline') as $field)
+                if ($item[$field]) $createURL.="&amp;$field={$item[$field]}";
+            $title="<a href='$createURL' title='Add new {$typename[$value]}'>$title</a>";
+        }
+        if ($result=="-1") {
+            echo "<h3>No $title</h3></div>";
+            continue;
+        }
 
 		$shownext= ($comp==='n') && ($values['type']==='a' || $values['type']==='w');
 		$suppressed=0;
@@ -243,9 +247,13 @@ if ($childtype!=NULL) {
 			$i++;
 		}
 		?>
-		<table class='datatable sortable' id='i<?php echo $comp,$thistype; ?>' summary='table of children of this item'>
+<h2><?php echo $title; ?></h2>
+		<?php if ($comp!=='y') { ?>
+<form action='processItems.php' method='post'>
+        <?php } ?>
+<table class='datatable sortable' id='i<?php echo $comp,$thistype; ?>' summary='table of children of this item'>
             <?php require('displayItems.inc.php'); ?>
-		</table>
+</table>
 		<?php
 		if ($suppressed) {
 			echo '<p><a href="listItems.php?tickler=true&amp;type=',$thistype
@@ -254,21 +262,18 @@ if ($childtype!=NULL) {
 				,($suppressed===1)?'is also 1 tickler item':"are also $suppressed tickler items"
 				," not yet due for action</a></p>\n";
 		}
-		if ($comp=="n") {
-            ?>
+		if ($comp==="n") { ?>
 <p>
+<input type="submit" class="button" value="Update marked <?php echo $typename[$thistype]; ?>s" name="submit" />
 <input type='hidden' name='referrer' value='<?php echo "{$thisfile}?itemId={$values['itemId']}"; ?>' />
 <input type="hidden" name="multi" value="y" />
 <input type="hidden" name="action" value="complete" />
 <input type="hidden" name="wasNAonEntry" value='<?php echo implode(' ',$wasNAonEntry); ?>' />
-<input type="submit" class="button" value="Update marked <?php echo $typename[$thistype]; ?>s" name="submit" />
 </p>
 </form>
-            <?php }
-		if(!count($maintable))
-			echo 'No&nbsp;'.$typename[$thistype]."&nbsp;items\n";
-
-		echo "</div>\n";
+        <?php } if(!count($maintable)) echo "No {$typename[$thistype]} items\n"; ?>
+</div>
+<?php
     }
 }
 include_once('footer.php');
