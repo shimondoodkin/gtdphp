@@ -5,7 +5,7 @@ function makeClean($textIn) {
 	if ($cleaned==='') return '&nbsp;'; else return $cleaned;
 }
 
-function trimTaggedString($inStr,$inLength,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified) 	// TOFIX -  we don't handle "%XX" strings yet.
+function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified) 	// TOFIX -  we don't handle "%XX" strings yet.
 	// constants - might move permittedTags to config file
 	$permittedTags=array(
 		 array('/^<a ((href)|(file))=[^>]+>/i','</a>')
@@ -115,9 +115,9 @@ function categoryselectbox($config,$values,$options,$sort) {
     $cashtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
-            $cashtml .= '   <option value="'.$row['categoryId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+            $cashtml .= '   <option value="'.$row['categoryId'].'" title="'.makeclean($row['description']).'"';
             if($row['categoryId']==$values['categoryId']) $cashtml .= ' selected="selected"';
-            $cashtml .= '>'.htmlspecialchars(stripslashes($row['category']))."</option>\n";
+            $cashtml .= '>'.makeclean($row['category'])."</option>\n";
             }
         }
     return $cashtml;
@@ -128,9 +128,9 @@ function contextselectbox($config,$values,$options,$sort) {
     $cshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
             foreach($result as $row) {
-            $cshtml .= '                    <option value="'.$row['contextId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+            $cshtml .= '                    <option value="'.$row['contextId'].'" title="'.makeclean($row['description']).'"';
             if($row['contextId']==$values['contextId']) $cshtml .= ' selected="selected"';
-            $cshtml .= '>'.htmlspecialchars(stripslashes($row['name']))."</option>\n";
+            $cshtml .= '>'.makeclean($row['name'])."</option>\n";
             }
         }
     return $cshtml;
@@ -141,9 +141,9 @@ function timecontextselectbox($config,$values,$options,$sort) {
     $tshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
-            $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+            $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.makeclean($row['description']).'"';
             if($row['timeframeId']==$values['timeframeId']) $tshtml .= ' selected="selected"';
-            $tshtml .= '>'.htmlspecialchars(stripslashes($row['timeframe']))."</option>\n";
+            $tshtml .= '>'.makeclean($row['timeframe'])."</option>\n";
             }
         }
     return $tshtml;
@@ -194,9 +194,9 @@ function checklistselectbox($config,$values,$options,$sort) {
     $cshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
-            $cshtml .= '                    <option value="'.$row['checklistId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+            $cshtml .= '                    <option value="'.$row['checklistId'].'" title="'.makeclean($row['description']).'"';
             if($row['checklistId']==$values['checklistId']) $cshtml .= ' selected="selected"';
-            $cshtml .= '>'.htmlspecialchars(stripslashes($row['title']))."</option>\n";
+            $cshtml .= '>'.makeclean($row['title'])."</option>\n";
             }
         }
     return $cshtml;
@@ -207,9 +207,9 @@ function listselectbox($config,$values,$options,$sort) {
     $lshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
-            $lshtml .= '                    <option value="'.$row['listId'].'" title="'.htmlspecialchars(stripslashes($row['description'])).'"';
+            $lshtml .= '                    <option value="'.$row['listId'].'" title="'.makeclean($row['description']).'"';
             if($row['listId']==$values['listId']) $lshtml .= ' selected="selected"';
-            $lshtml .= '>'.htmlspecialchars(stripslashes($row['title']))."</option>\n";
+            $lshtml .= '>'.makeclean($row['title'])."</option>\n";
             }
         }
     return $lshtml;
@@ -245,13 +245,13 @@ function getNextActionsArray($config,$values,$options,$sort) {
 
 function nextScreen($url) {
     global $config;
+    $cleanurl=htmlspecialchars($url);
     if ($config['debug']) {
-        echo "<p>Next screen is <a href='$url'>".htmlspecialchars($url)."</a> - would be auto-refresh in non-debug mode</p>";
+        echo "<p>Next screen is <a href='$cleanurl'>$cleanurl</a> - would be auto-refresh in non-debug mode</p>";
     }elseif (headers_sent()) {
-        echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$url' />\n"
-            ,"<script type='text/javascript'>window.location.replace('$url');</script>\n"
-            ,"</head><body><a href='$url'>Click here to continue on to "
-            ,htmlspecialchars($url),"</a>\n";
+        echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$cleanurl' />\n"
+            ,"<script type='text/javascript'>window.location.replace('$cleanurl');</script>\n"
+            ,"</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
     }else{
         $header="Location: http"
                 .(($_SERVER['HTTPS']!='')?'s':'')

@@ -114,7 +114,7 @@ if ($show['type']) { ?>
         <?php if($show['title']) { ?>
             <div class='formrow'>
                     <label for='title' class='left first'>Title:</label>
-                    <input type="text" name="title" id="title" value="<?php echo $values['title']; ?>" />
+                    <input type="text" name="title" id="title" value="<?php echo makeclean($values['title']); ?>" />
             </div>
         <?php } else $hiddenvars['title']=$values['title'];
 
@@ -186,16 +186,16 @@ if ($show['type']) { ?>
         <?php if ($show['description']) { ?>
             <div class='formrow'>
                     <label for='description' class='left first'>Description:</label>
-                    <textarea rows='12' cols='50' name='description' id='description'><?php echo htmlspecialchars(stripslashes($values['description']),ENT_QUOTES); ?></textarea>
+                    <textarea rows='12' cols='50' name='description' id='description'><?php echo makeclean($values['description']); ?></textarea>
             </div>
-        <?php } else $hiddenvars['description']=htmlspecialchars(stripslashes($values['description']),ENT_QUOTES );
+        <?php } else $hiddenvars['description']=$values['description'];
         if ($show['desiredOutcome']) { ?>
             <div class='formrow'>
                     <label for='outcome' class='left first'>Desired Outcome:</label>
-                    <textarea rows='4'  cols='50' name='desiredOutcome' id='outcome' class='big'><?php echo htmlspecialchars(stripslashes($values['desiredOutcome']),ENT_QUOTES) ?></textarea>
+                    <textarea rows='4'  cols='50' name='desiredOutcome' id='outcome' class='big'><?php echo makeclean($values['desiredOutcome']); ?></textarea>
             </div>
         <?php
-        } else $hiddenvars['desiredOutcome']=htmlspecialchars(stripslashes($values['desiredOutcome']),ENT_QUOTES );
+        } else $hiddenvars['desiredOutcome']=$values['desiredOutcome'];
         if ($show['repeat']) { ?>
             <div class='formrow'>
                     <label for='repeat' class='left first'>Repeat every&nbsp;</label><input type='text' name='repeat' id='repeat' size='3' value='<?php echo $values['repeat']; ?>' /><label for='repeat'>&nbsp;days</label>
@@ -282,6 +282,7 @@ if ($values['itemId']) {
 }
 include_once('footer.php');
 function hidePostVar($name,$val) {
-     return "<input type='hidden' name='$name' value='$val' />\n";
+    $val=makeclean($val);
+    return "<input type='hidden' name='$name' value='$val' />\n";
 }
 ?>

@@ -53,11 +53,11 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
         </div>
         <div class="formrow">
             <label for="text" id="text" class="left first">Title</label>
-            <input type="text" size="68" name="title" id="title" value="<?php echo htmlspecialchars(stripslashes($currentrow['title'])) ?>" />
+            <input type="text" size="68" name="title" id="title" value="<?php echo makeclean($currentrow['title']); ?>" />
         </div>
         <div class="formrow">
             <label for="note" id="note" class="left first">Details</label>
-            <textarea rows="12" class="big" name="note" id="description" cols="80"><?php echo htmlspecialchars(stripslashes($currentrow['note'])) ?></textarea>
+            <textarea rows="12" class="big" name="note" id="description" cols="80"><?php echo makeclean($currentrow['note']); ?></textarea>
         </div>
         <div class="formbuttons">
             <input type="submit" class="button" value="<?php echo $pagesubmit; ?>" name="submit" />

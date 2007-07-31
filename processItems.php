@@ -379,6 +379,7 @@ function nextPage() { // set up the forwarding to the next page
     }
     if ($nextURL=='') $nextURL="listItems.php?type=$t";
     $_SESSION[$key]=$tst;
+    $nextURL=html_entity_decode($nextURL);
 	nextScreen($nextURL);
 }
 

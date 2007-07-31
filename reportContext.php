@@ -10,16 +10,17 @@ $contextResults = query("getspacecontexts",$config,$values,$option,$sort);
 $contextNames=array(0=>'none');
 if ($contextResults!=-1)
     foreach ($contextResults as $row)
-	   $contextNames[$row['contextId']]=htmlspecialchars(stripslashes($row[name]));
+	   $contextNames[$row['contextId']]=makeclean($row[name]);
 
 //obtain all timeframes
 $values['type']='a';
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
 $timeframeResults = query("gettimecontexts",$config,$values,$options,$sort);
 $timeframeNames=array(0=>'none');
+$timeframeDesc=array(0=>'none');
 if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
-	$timeframeNames[$row[timeframeId]]=htmlspecialchars(stripslashes($row[timeframe]));
-	$timeframeDesc[$row[timeframeId]]=htmlspecialchars(stripslashes($row[timeframe]));
+	$timeframeNames[$row['timeframeId']]=makeclean($row['timeframe']);
+	$timeframeDesc[$row['timeframeId']]=makeclean($row['description']);
 	}
 
 //select all nextactions for test
@@ -152,7 +153,7 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
 		}
         if (count($maintable)) {
             echo "<a id='c{$values['contextId']}t{$values['timeframeId']}'></a>\n"
-                ,"<h3><a href='editCat.php?field=time-context&amp;id={$values['timeframeId']}'>"
+                ,"<h3><a href='editCat.php?field=time-context&amp;id={$values['timeframeId']}' title='{$timeframeDesc[$values['timeframeId']]}'>"
                 ,"Time Context:&nbsp;",$timeframeNames[$values['timeframeId']],"</a></h3>\n";
             ?>
             <form action="processItems.php" method="post">

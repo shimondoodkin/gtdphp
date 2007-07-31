@@ -59,8 +59,8 @@ if ($reminderresult!="-1") {
         $tablehtml="";
         foreach ($reminderresult as $row) {
                 $notehtml .= "<p>".date($config['datemask'],strtotime($row['date'])).": ";
-                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&amp;referrer=s" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>";
-                if ($row['note']!="") $notehtml .= " - ".nl2br(stripslashes($row['note']));
+                $notehtml .= '<a href = "note.php?noteId='.$row['ticklerId'].'&amp;referrer=s" title="Edit '.makeclean($row['title']).'">'.makeclean($row['title'])."</a>";
+                if ($row['note']!="") $notehtml .= " - ".trimTaggedString($row['note']);
                 $notehtml .= "</p>\n";
         }
     echo $notehtml;

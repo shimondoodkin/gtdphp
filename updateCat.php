@@ -55,7 +55,7 @@ if ($GLOBALS['ecode']=="0") $_SESSION['message'][]="$msg $field '{$values['name'
 
 $nexturl="editCat.php?field=$field";
 if (isset($_POST['next']))
-    $nexturl.='&amp;id='.$_POST['next'];
+    $nexturl.='&id='.$_POST['next'];
 nextScreen($nexturl);
 
 if ($html)
