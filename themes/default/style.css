@@ -70,8 +70,10 @@ select, input, textarea {
 input[type="submit"], input[type="reset"] {
 	margin: 0px 10px;
 }
-
-
+input.hasdate {
+    margin-right:0;
+    padding-right:0;
+}
 table {
 	margin: 0 4px 10px 4px;
 }
@@ -121,8 +123,6 @@ span.nextActionMarker {
 	margin-bottom: 1em;
 	padding-top:0.25em;
 }
-.formrow label, .formrow input, .formrow select, .formrow button, .formrow textarea {
-}
 .formrow label.left {
 	margin-left: 2em;
 	text-align: right;
@@ -141,7 +141,7 @@ span.nextActionMarker {
     float:none;
     margin-left:0;
 }
-.formrow input[type="checkbox"], .formrow input[type="radio"], .formbuttons input[type="checkbox"] {
+.formrow input[type="checkbox"], .formrow input[type="radio"], .formbuttons input[type="checkbox"],button {
 	margin-top: .6em;
 	margin-right: .5em;
 }
@@ -239,7 +239,7 @@ img {
         margin-right: 2px;
 };
 
-select, input, textarea {
+select, input, textarea,button {
 	color: #665;
 	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
 	font-size: 11px;

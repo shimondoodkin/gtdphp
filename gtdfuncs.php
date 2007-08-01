@@ -2,7 +2,7 @@
 
 function makeClean($textIn) {
 	$cleaned=htmlspecialchars(stripslashes($textIn),ENT_QUOTES);
-	if ($cleaned==='') return '&nbsp;'; else return $cleaned;
+	return $cleaned;
 }
 
 function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified) 	// TOFIX -  we don't handle "%XX" strings yet.

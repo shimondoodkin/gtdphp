@@ -237,10 +237,8 @@ function retrieveFormVars() {
 	if (isset($_POST['title']))          $values['title']          = $_POST['title'];
 	if (isset($_POST['description']))    $values['description']    = $_POST['description'];
 	if (isset($_POST['desiredOutcome'])) $values['desiredOutcome'] = $_POST['desiredOutcome'];
-
-	// session variables
-	$values['categoryId']  = getVarFromGetPost('categoryId',0);
-	$values['contextId']   = getVarFromGetPost('contextId',0);
+	if (isset($_POST['categoryId']))     $values['categoryId']     = $_POST['categoryId'];
+	if (isset($_POST['contextId']))      $values['contextId']      = $_POST['contextId'];
 
 	// binary yes/no
 	$values['nextAction'] = ($_POST['nextAction']==="y")?'y':'n';
