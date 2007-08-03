@@ -5,6 +5,8 @@ include_once('header.php');
 //RETRIEVE URL VARIABLES
 $values=array();
 $maintable = query("getorphaneditems",$config,$values,$options,$sort);
+foreach ($maintable as $key=>$row) $maintable[$key]['title']=makeclean($row['title']);
+
 $dispArray=array();
 $thisrow=0;
 $dispArray=array(
