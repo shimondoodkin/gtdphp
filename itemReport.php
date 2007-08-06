@@ -8,23 +8,19 @@ $values['itemId'] = (int) $_GET['itemId'];
 
 //Get item details
 $values['childfilterquery']=' WHERE '.sqlparts('singleitem',$config,$values);
+$values['filterquery']=sqlparts('isNA',$config,$values);
+$values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
 $result = query("getitemsandparent",$config,$values,$options,$sort);
 $item = $result[0];
 
-//select all nextactions for test
-$nextactions=(getNextActionsArray($config,$values,$options,$sort));
+$values['isSomeday']=($item['isSomeday']=="y")?'y':'n';
+$values['type']=$item['type'];
 
 //Find previous and next projects
-
-if ($item['isSomeday']=="y") $values['isSomeday']="y";
-else $values['isSomeday']="n";
-
-
 if (isset($_SESSION['idlist-'.$item['type']])) {
     $ndx=$_SESSION['idlist-'.$item['type']];
     unset($result);
 } else {
-    $values['type']=$item['type'];
     $values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
     $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
     $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
@@ -41,7 +37,10 @@ if (isset($_SESSION['idlist-'.$item['type']])) {
 $cnt=count($ndx);
 if($cnt>1) {
     $key=array_search($values['itemId'],$ndx);
-    if ($key!==false) {
+    if ($key===false) {
+        $next=0;
+        $prev=$cnt-1;
+    } else {
         if ($key==0)
             $prev=$cnt-1;
         else
@@ -51,18 +50,17 @@ if($cnt>1) {
             $next=0;
         else
             $next=$key+1;
-
-        $previousId=$ndx[$prev];
-        $nextId    =$ndx[$next];
-        if (isset($result)) {
-            $previoustitle=$result[$prev]['title'];
-            $nexttitle    =$result[$next]['title'];
-        } else {
-            $previtem = query("selectitem",$config,array('itemId'=>$previousId),$options,$sort);
-            $previoustitle=$previtem[0]['title'];
-            $nextitem = query("selectitem",$config,array('itemId'=>$nextId),    $options,$sort);
-            $nexttitle    =$nextitem[0]['title'];
-        }
+    }
+    $previousId=$ndx[$prev];
+    $nextId    =$ndx[$next];
+    if (isset($result)) {
+        $previoustitle=$result[$prev]['title'];
+        $nexttitle    =$result[$next]['title'];
+    } else {
+        $previtem = query("selectitem",$config,array('itemId'=>$previousId),$options,$sort);
+        $previoustitle=$previtem[0]['title'];
+        $nextitem = query("selectitem",$config,array('itemId'=>$nextId),    $options,$sort);
+        $nexttitle    =$nextitem[0]['title'];
     }
 }
  
@@ -87,8 +85,8 @@ if(isset($previousId)) echo " [<a href='itemReport.php?itemId=$previousId' title
 if(isset($nextId))  echo " [<a href='itemReport.php?itemId=$nextId' title='",makeclean($nexttitle),"'>Next</a>] \n";
 echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
-if ($item['description']) echo "<tr><th>Description:</th><td>{$item['description']}</td></tr>\n";
-if ($item['desiredOutcome']) echo "<tr><th>Desired Outcome:</th><td>{$item['desiredOutcome']}</td></tr>\n";
+if ($item['description']) echo "<tr><th>Description:</th><td>",nl2br(escapeChars($item['description'])),"</td></tr>\n";
+if ($item['desiredOutcome']) echo "<tr><th>Desired Outcome:</th><td>",nl2br(escapeChars($item['desiredOutcome'])),"</td></tr>\n";
 if ($parents!=-1) {
     echo "<tr><th>Parents:&nbsp;</th><td>";
     $brk='';
@@ -105,6 +103,7 @@ if ($item['categoryId']) echo "<tr><th>Category:</th><td><a href='editCat.php?id
 if ($item['contextId']) echo "<tr><th>Space Context:</th><td><a href='editCat.php?id={$item['contextId']}&amp;field=context'>".makeclean($item['cname'])."</a></td></tr>\n";
 if ($item['timeframeId']) echo "<tr><th>Time Context:</th><td><a href='editCat.php?id={$item['timeframeId']}&amp;field=time-context'>".makeclean($item['timeframe'])."</a></td></tr>\n";
 if ($item['deadline']) echo '<tr><th>Deadline:</th><td>'.$item['deadline']."</td></tr>\n";
+if ($item['type']==='a' || $item['type']==='w') echo '<tr><th>Next Action?</th><td>',($item['NA'])?'Yes':'No',"</td></tr>\n";
 if ($item['repeat']) echo '<tr><th>Repeat every</th><td>'.$item['repeat'].' days'."</td></tr>\n";
 if ($item['suppress']==='y') {
 	$reminddate=getTickleDate($item['deadline'],$item['suppressUntil']);
@@ -146,12 +145,12 @@ if ($childtype!=NULL) {
 		
         if ($comp==='y' && $config['ReportMaxCompleteChildren']) {
             $values['maxItemsToSelect']=1+$config['ReportMaxCompleteChildren'];
-            $values['limitquery'] =sqlparts('limit',$config,$values);
-        } else $values['limitquery'] ='';
+            $values['limitfilterquery'] =sqlparts('limit',$config,$values);
+        } else $values['limitfilterquery'] ='';
 
 		$atLimit=0;
         $result = query("getchildren",$config,$values,$options,$sort);
-        if ($values['limitquery'] !=='' && count($result)===1+$config['ReportMaxCompleteChildren']) {
+        if ($values['limitfilterquery'] !=='' && count($result)===1+$config['ReportMaxCompleteChildren']) {
             $atLimit=array_pop(array_pop(query('countselected',$config,$values,$options,$sort)));
             array_pop($result);
             $tfoot="<tfoot><tr><td>\n"
@@ -236,7 +235,7 @@ if ($childtype!=NULL) {
     			$maintable[$i]['checkboxvalue']=$row['itemId'];
 
     			if ($shownext) {
-                    $maintable[$i]['NA']=$comp!=="y" && $nextactions[$row['itemId']];
+                    $maintable[$i]['NA']=$comp!=="y" && $row['NA'];
                     $maintable[$i]['NA.title']='Mark as a Next Action';
                     if ($maintable[$i]['NA']) array_push($wasNAonEntry,$row['itemId']);
                 }

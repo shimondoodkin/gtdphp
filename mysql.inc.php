@@ -145,7 +145,7 @@ $sql = array(
 										ORDER BY {$sort['getchecklists']}",
 			
         "getchildren"               => 	"SELECT "
-                                        .(($values['limitquery']=='')?'':' SQL_CALC_FOUND_ROWS ').
+                                        .(($values['limitfilterquery']=='')?'':' SQL_CALC_FOUND_ROWS ').
                                         "i.`itemId`, i.`title`, i.`description`,
         									i.`desiredOutcome`, ia.`type`, 
         									ia.`isSomeday`, ia.`deadline`, ia.`repeat`, 
@@ -153,22 +153,23 @@ $sql = array(
         									its.`dateCreated`, its.`dateCompleted`, 
         									its.`lastModified`, ia.`categoryId`,
         									c.`category`, ia.`contextId`, 
-        									cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe` 
-										FROM (`". $config['prefix'] . "itemattributes` as ia, 
-												`". $config['prefix'] . "lookup` as lu) 
-											JOIN `". $config['prefix'] . "items` as i
-												ON (ia.`itemId` = i.`itemId`)
-											JOIN `". $config['prefix'] . "itemstatus` as its
-												ON (ia.`itemId` = its.`itemId`)
-											LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+        									cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe`
+                                            , na.nextaction as NA
+										FROM `". $config['prefix'] . "itemattributes` as ia
+											JOIN `{$config['prefix']}lookup` AS lu USING (`itemId`)
+											JOIN `". $config['prefix'] . "items` AS i USING (`itemId`)
+											JOIN `". $config['prefix'] . "itemstatus` AS its USING (`itemId`)
+											LEFT OUTER JOIN `". $config['prefix'] . "context` AS cn
 												ON (ia.`contextId` = cn.`contextId`) 
-											LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
+											LEFT OUTER JOIN `". $config['prefix'] ."categories` AS c
 												ON (ia.`categoryId` = c.`categoryId`) 
-											LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti 
+											LEFT OUTER JOIN `". $config['prefix'] . "timeitems` AS ti
 												ON (ia.`timeframeId` = ti.`timeframeId`)
-										WHERE lu.`itemId`= ia.`itemId` 
-											AND lu.`parentId`= '{$values['parentId']}' ".$values['filterquery']." 
-										ORDER BY {$sort['getchildren']} {$values['limitquery']}",
+										LEFT JOIN (
+                                                SELECT nextaction FROM {$config['prefix']}nextactions
+                                            ) AS na ON(na.nextaction=i.itemId)
+										WHERE lu.`parentId`= '{$values['parentId']}' {$values['filterquery']}
+										ORDER BY {$sort['getchildren']} {$values['limitfilterquery']}",
 
         "getgtdphpversion"         =>  "SELECT `version` FROM `{$config['prefix']}version`",
         
@@ -196,6 +197,7 @@ $sql = array(
         										x.`timeframe`,
                                                 GROUP_CONCAT(y.`parentId` ORDER BY y.`ptitle`) as `parentId`,
                                                 GROUP_CONCAT(y.`ptitle` ORDER BY y.`ptitle` SEPARATOR '{$config['separator']}') AS `ptitle`
+                                                {$values['extravarsfilterquery']}
 										FROM (
 												SELECT 
 														i.`itemId`, i.`title`, i.`description`, 
@@ -231,37 +233,18 @@ $sql = array(
 														ia.`deadline` AS pdeadline, ia.`repeat` AS prepeat, 
 														ia.`suppress` AS psuppress, 
 														ia.`suppressUntil` AS psuppressUntil,  
-														its.`dateCreated` AS pdateCreated, 
-														its.`dateCompleted` AS pdateCompleted, 
-														its.`lastModified` AS plastModified,
-														ia.`categoryId` AS pcategoryId, 
-														c.`category` as pcatname, ia.`contextId` AS pcontextId, 
-														cn.`name` AS pcname, ia.`timeframeId` AS ptimeframeId, 
-														ti.`timeframe` AS ptimeframe 
+														its.`dateCompleted` AS pdateCompleted
 												FROM 
 														`". $config['prefix'] . "itemattributes` as ia 
 													JOIN `". $config['prefix'] . "items` as i
 														ON (ia.`itemId` = i.`itemId`)
 													JOIN `". $config['prefix'] . "itemstatus` as its
 														ON (ia.`itemId` = its.`itemId`)
-													LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
-														ON (ia.`contextId` = cn.`contextId`)
-													LEFT OUTER JOIN `". $config['prefix'] . "categories` as c
-														ON (ia.`categoryId` = c.`categoryId`)
-													LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti 
-														ON (ia.`timeframeId` = ti.`timeframeId`)".$values['parentfilterquery']."
 											) as y 
-											ON (y.parentId = x.parentId) ".$values['filterquery']." 
-										GROUP BY x.`itemId`
+											ON (y.parentId = x.parentId)  
+                                        {$values['filterquery']} GROUP BY x.`itemId`
                                         ORDER BY {$sort['getitemsandparent']}",
-/* cut from SELECT in getitemsandparent as not used
-        										y.`pdescription`, y.`pdesiredOutcome`, y.`ptype`,
-        										y.`pisSomeday`, y.`pdeadline`, y.`prepeat`,
-        										y.`psuppress`, y.`psuppressUntil`, y.`pdateCreated`,
-        										y.`pdateCompleted`, y.`plastmodified`,
-        										y.`pcategoryId`, y.`pcatname`, y.`pcontextId`, y.`pcname`,
-        										y.`ptimeframeId`, y.`ptimeframe`
-*/
+
 
         "getitembrief"              => 	"SELECT `title`, `description`
         								FROM  `". $config['prefix'] . "items`
@@ -284,20 +267,14 @@ $sql = array(
         								FROM `". $config['prefix'] . "tickler`  as tk".$values['filterquery']."
         								ORDER BY {$sort['getnotes']}",
         								
-        "getnextactions"            => "SELECT `nextaction` 
-        								FROM `". $config['prefix'] . "nextactions`",
-        
-		"getorphaneditems"	  		=> "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description`
-										FROM `". $config['prefix'] . "itemattributes` as ia, 
-												`". $config['prefix'] . "items` as i,
-												`". $config['prefix'] . "itemstatus` as its 
-										WHERE i.`itemId`=ia.`itemId` 
-											AND its.`itemId`=ia.`itemId` 
-											AND (its.`dateCompleted` IS NULL) 
+		"getorphaneditems"	  		=> "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description`, ia.`isSomeday`
+										FROM `{$config['prefix']}itemattributes` AS ia
+										JOIN `{$config['prefix']}items`          AS i   USING (itemId)
+										JOIN `{$config['prefix']}itemstatus`     AS its USING (itemId)
+										WHERE (its.`dateCompleted` IS NULL)
 											AND ia.`type`!='m' 
 											AND ia.`type`!='i' 
-											AND 
-												(
+											AND (
 												ia.`itemId` NOT IN 
 													(
 													SELECT lu.`itemId` 

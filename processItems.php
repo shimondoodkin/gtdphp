@@ -85,7 +85,7 @@ function doAction($localAction) { // do the current action on the current item; 
 	global $config,$values,$updateGlobals,$title;
 	if ($values['itemId']) {
         $result=query('getitembrief',$config,$values);
-    	if ($result!=-1) $title=makeclean($result[0]['title']);
+    	if ($result!=-1) $title=$result[0]['title'];
     } else
         $title=$_POST['title'];
 

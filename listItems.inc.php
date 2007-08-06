@@ -58,9 +58,6 @@ $cashtml=str_replace('--','(any)',categoryselectbox   ($config,$values,$options,
 $cshtml =str_replace('--','(any)',contextselectbox    ($config,$values,$options,$sort));
 $tshtml =str_replace('--','(any)',timecontextselectbox($config,$values,$options,$sort));
 
-//select all nextactions for test
-$nextactions=(getNextActionsArray($config,$values,$options,$sort));
-
 /*
     ===================================================================
     build array of notes
@@ -133,7 +130,6 @@ switch ($values['type']) {
     case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $show['assignType']=TRUE; $checkchildren=FALSE; break;
     default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE; 
 }
-
 $show['flags']=$checkchildren; // temporary measure; to be made user-configurable later
 
 
@@ -193,7 +189,6 @@ if ($filter['everything']=="true") {
 //set query fragments based on filters
 $values['childfilterquery'] = "WHERE TRUE";
 $values['parentfilterquery'] = "";
-$values['filterquery'] = "";
 
 //type filter
 if ($values['type']!=='*')
@@ -203,25 +198,37 @@ if ($values['type']!=='*')
 if ($filter['needle']!=='')
     $values['childfilterquery'] .= " AND ".sqlparts("matchall",$config,$values);
 
-/*
-Override all filter selections if $filter['everything'] is true
-*/
-
 $linkfilter='';
 
+if ($checkchildren) {
+    $values['filterquery'] = sqlparts("checkchildren",$config,$values);
+    $values['extravarsfilterquery'] = sqlparts("countchildren",$config,$values);;
+} else {
+    // get next actions array
+    $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);
+    if ($filter['nextonly']=='true' && $filter['everything']!="true")
+        $values['filterquery'] = sqlparts("onlynextactions",$config,$values);
+    else
+        $values['filterquery'] = sqlparts("isNA",$config,$values);
+}
+
+/*
+    Only use filter selections if $filter['everything'] is not true;
+    i.e. if we are not forcing the listing of *all* items
+*/
 if ($filter['everything']!="true") {
     switch ($filter['parentcompleted']) {
         case '*': // don't filter on completion status of parents
-            $values['filterquery'] = ' WHERE TRUE '; // yes, I know this looks odd, but we may be concatenating an "AND {extra condition}" later
+            $values['filterquery'] .= ' WHERE TRUE '; // yes, I know this looks odd, but we may be concatenating an "AND {extra condition}" later
             break;
 
         case 'true': // only select items with completed parents
-            $values['filterquery'] = " WHERE " .sqlparts("completedparents",$config,$values);
+            $values['filterquery'] .= " WHERE " .sqlparts("completedparents",$config,$values);
             break;
 
         case 'false': // deliberately flows through to default case
         default:     //Filter out items with completed parents
-            $values['filterquery'] = " WHERE " .sqlparts("pendingparents",$config,$values);
+            $values['filterquery'] .= " WHERE " .sqlparts("pendingparents",$config,$values);
             break;
     }
 
@@ -284,7 +291,6 @@ if ($filter['everything']!="true") {
     */   
 
 }
-
 /*
 Section Heading
 */
@@ -326,29 +332,26 @@ if ($result!="-1") {
     $nonext=FALSE;
     $nochildren=FALSE;
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
-    foreach ($result as $row) if (($filter['nextonly']!="true")  || $nextactions[$row['itemId']] || $filter['everything']=="true") {
+    foreach ($result as $row) {
         $allids[]=$row['itemId'];
-        //filter out all but nextactions if $filter['nextonly']==true
     
         $nochildren=false;
         $nonext=false;
         if ($checkchildren) {
-            $values['parentId']=$row['itemId'];
-            $nochildren=(query("countchildren",$config,$values)==="-1");
-            if ($values['type']=="p") $nonext=(query("selectnextaction",$config,$values)=="-1");
+            $nochildren=!$row['numChildren'];
+            $nonext=!$row['numNA'];
         }
-        
-        $isNextAction = $nextactions[$row['itemId']]===true;
-        if ($isNextAction) array_push($wasNAonEntry,$row['itemId']);
+        if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
         
         $maintable[$thisrow]=array();
         $maintable[$thisrow]['itemId']=$row['itemId'];
         $maintable[$thisrow]['class'] = ($nonext || $nochildren)?'noNextAction':'';
-        $maintable[$thisrow]['NA'] =$isNextAction;
+        $maintable[$thisrow]['NA'] =$row['NA'];
 
         $maintable[$thisrow]['dateCreated'] = $row['dateCreated'];
         $maintable[$thisrow]['lastModified']= $row['lastModified'];
         $maintable[$thisrow]['dateCompleted']= $row['dateCompleted'];
+        $maintable[$thisrow]['isSomeday'] =$row['isSomeday'];
         $maintable[$thisrow]['type'] =$row['type'];
 
         if ($row['parentId']=='') {
@@ -395,8 +398,10 @@ if ($result!="-1") {
         if($row['deadline']) {
             $deadline=prettyDueDate($row['deadline'],$config['datemask']);
             $maintable[$thisrow]['deadline'] =$deadline['date'];
-            $maintable[$thisrow]['deadline.class']=$deadline['class'];
-            $maintable[$thisrow]['deadline.title']=$deadline['title'];
+            if (empty($row['dateCompleted'])) {
+                $maintable[$thisrow]['deadline.class']=$deadline['class'];
+                $maintable[$thisrow]['deadline.title']=$deadline['title'];
+            }
         } else $maintable[$thisrow]['deadline']='';
              
         $maintable[$thisrow]['repeat'] =((($row['repeat'])=="0")?'&nbsp;':($row['repeat']));
@@ -410,7 +415,7 @@ if ($result!="-1") {
                     
         
         $thisrow++;
-    } // end of: foreach ($result as $row) if (($filter['nextonly']!="true")
+    } // end of: foreach ($result as $row)
     
     $dispArray=array(
         'parent'=>$parentname

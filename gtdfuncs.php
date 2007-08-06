@@ -236,13 +236,6 @@ function getVarFromGetPost($varName,$default='') {
 	return $retval;
 }
 
-function getNextActionsArray($config,$values,$options,$sort) {
-	$result= query("getnextactions",$config,$values,$options,$sort);
-	$nextactions=array();
-	if(is_array($result))foreach ($result as $row) $nextactions[(int) $row['nextaction']]=true;
-	return $nextactions;
-}
-
 function nextScreen($url) {
     global $config;
     $cleanurl=htmlspecialchars($url);

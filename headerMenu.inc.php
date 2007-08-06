@@ -108,7 +108,8 @@ function makemenu($list) {
 				$thismenu[] = array("link"=>"editCat.php?field=context", 'title'=>"Spatial contexts", 'label' => "Space Contexts");
 				$thismenu[] = array("link"=>"editCat.php?field=time-context", 'title'=>"Time contexts", 'label' => "Time Contexts");
 				$thismenu[] = array("link"=>"preferences.php", 'title'=>"User preferences", 'label' => "User Preferences");
-
+                if ($config['showAdmin'])
+                    $thismenu[] = array("link"=>"admin.php", 'title'=>"Administration", 'label' => "Admin");
 				makemenu($thismenu);
 				unset($thismenu);
 				?>

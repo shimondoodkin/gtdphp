@@ -8,7 +8,6 @@ if ($html) include_once('header.php');
 $values=array('itemId' => (int) $_GET['itemId']);
 if (isset($_GET['type'])) {
     $values['type'] = $_GET['type'];
-    // TOFIX - do query here to set type
     query("updateitemtype",$config,$values,$options,$sort);
     query("touchitem",$config,$values,$options,$sort);
     nextScreen("item.php?itemId={$values['itemId']}");

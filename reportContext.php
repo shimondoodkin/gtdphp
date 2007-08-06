@@ -23,14 +23,13 @@ if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
 	$timeframeDesc[$row['timeframeId']]=makeclean($row['description']);
 	}
 
-//select all nextactions for test
-$nextactions=(getNextActionsArray($config,$values,$options,$sort));
-
 //obtain all active item timeframes and count instances of each
 $values['filterquery']=sqlparts("activeitems",$config,$values);
 if ($config['contextsummary'] == "all") $itemresults = query("countcontextreport_all",$config,$values,$options,$sort);
 else $itemresults = query("countcontextreport_naonly",$config,$values,$options,$sort);
-$values['filterquery']='';
+
+$values['filterquery']=sqlparts('isNA',$config,$values);
+$values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
 
 foreach ($itemresults as $contextRow) {
 	$contextArray[$contextRow['contextId']][$contextRow['timeframeId']] = $contextRow['count'];
@@ -145,9 +144,8 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
 			$maintable[$i]['checkbox.title']='Complete '.$maintable['title'];
 			$maintable[$i]['checkboxvalue']=$row['itemId'];
 
-            $isNextAction = $nextactions[$row['itemId']]===true;
-            if ($isNextAction) array_push($wasNAonEntry,$row['itemId']);
-            $maintable[$i]['NA'] = $isNextAction;
+            $maintable[$i]['NA'] = $row['NA'];
+            if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
 
 			$i++;
 		}

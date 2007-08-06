@@ -3,7 +3,7 @@
 include_once('header.php');
 
 $values = array();
-$values['itemId']= (int) getVarFromGetPost('itemId');
+$values['itemId']= (int) $_REQUEST['itemId'];
 $values['parentId']=array();
 
 //SQL CODE
@@ -23,7 +23,7 @@ if ($values['itemId']) { // editing an item
 } else { // creating an item
     $where='create';
     //RETRIEVE URL VARIABLES
-    $values['type']=getVarFromGetPost('type');
+    $values['type']=$_REQUEST['type'];
     if ($values['type']==='s') {
         $values['isSomeday']='y';
         $values['type']='p';
@@ -38,13 +38,12 @@ if ($values['itemId']) { // editing an item
     }
     if ($_GET['nextonly']=='true') $nextaction=true;
 
-    $values['deadline']=getVarFromGetPost('deadline');
+    if (!empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
 
-    $tmp=getVarFromGetPost('parentId');
-    if ($tmp!=='') $values['parentId'][0] = (int) $tmp;
+    if (!empty($_REQUEST['parentId'])) $values['parentId'][0] = (int) $_REQUEST['parentId'];
 
     foreach ( array('categoryId','contextId','timeframeId') as $cat)
-        $values[$cat]= (int) getVarFromGetPost($cat);
+        $values[$cat]= (int) $_REQUEST[$cat];
 
     $_SESSION['lastcreate']=$_SERVER['QUERY_STRING'];
 }
@@ -152,7 +151,7 @@ if ($show['type']) { ?>
         <div class='formrow'>
             <?php if ($show['deadline']) { ?>
                 <label for='deadline' class='left first'>Deadline:</label>
-                <input type='text' size='10' name='deadline' id='deadline' value='<?php echo $values['deadline']; ?>'/>
+                <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>'/>
                 <button type='reset' id='deadline_trigger'>...</button>
                     <script type='text/javascript'>
                         Calendar.setup({
@@ -167,7 +166,7 @@ if ($show['type']) { ?>
                     </script>
             <?php } else $hiddenvars['deadline']=$values['deadline'];
             if ($show['dateCompleted']) { ?>
-                <label for='dateCompleted' class='left'>Completed:</label><input type='text' size='10' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted'] ?>'/>
+                <label for='dateCompleted' class='left'>Completed:</label><input type='text' size='10' class='hasdate' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted'] ?>'/>
                 <button type='reset' id='dateCompleted_trigger'>...</button>
                     <script type='text/javascript'>
                         Calendar.setup({
@@ -225,8 +224,7 @@ if ($show['type']) { ?>
     	<input type='hidden' name='dateformat' value='ccyy-mm-dd' />
 <?php
 foreach ($hiddenvars as $key=>$val) echo hidePostVar($key,$val);
-$referrer=getVarFromGetPost('referrer');
-echo "<input type='hidden' name='referrer' value='$referrer' />\n";
+echo "<input type='hidden' name='referrer' value='{$_REQUEST['referrer']}' />\n";
 $key='afterCreate'.$values['type'];
 // always use config value when creating
 if (isset($config['afterCreate'][$values['type']]) && !isset($_SESSION[$key]))

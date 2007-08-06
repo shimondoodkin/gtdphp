@@ -3,9 +3,9 @@
     <?php foreach ($dispArray as $key=>$val) if ($show[$key]) echo "<th class='col-$key'>$val</th>"; ?>
     </tr>
 </thead>
+<?php if (!empty($tfoot)) echo $tfoot; ?>
 <tbody>
 <?php
-if (!empty($tfoot)) echo $tfoot;
 foreach ($maintable as $row) {
     echo '<tr>';
     foreach ($dispArray as $key=>$val) if ($show[$key]) {
@@ -15,11 +15,11 @@ foreach ($maintable as $row) {
             ,(isset($row["$key.title"]))?(' title="'.$row["$key.title"].'"'):''
             ,'>';
         switch ($key) {
-            case 'title': 
+            case 'title':
                 echo "<a href='itemReport.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/report.gif' alt='Go to $row[$key] report' /></a>"
+                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Go to $row[$key] report' /></a>"
                     ,"<a href='item.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/edit.gif' alt='Edit $row[$key]' /></a>"
+                    ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit $row[$key]' /></a>"
                     ,"<a ",($row['NA'])?"class='nextactionlink'":''
                     ," title='Edit {$row[$key]}' href='item"
                     ,($row['doreport'])?'Report':''
@@ -83,7 +83,10 @@ foreach ($maintable as $row) {
                     echo '&nbsp;';
                 break;
             case 'type':
-                echo getTypes($row[$key]);
+                if (isset($row['isSomeday']) && $row['isSomeday']==='y')
+                    echo 'Someday';
+                else
+                    echo getTypes($row[$key]);
                 break;
             case 'description': // flows through to case 'outcome' deliberately
             case 'desiredOutcome':
