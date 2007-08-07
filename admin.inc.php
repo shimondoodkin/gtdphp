@@ -21,8 +21,8 @@ function checkErrors($prefix) {
 
     $totals=array(
                      'items'=>$items[0]
-                    ,'next actions'=>$na[0]
-                    ,'orphans (incomplete or completed)'=>$orphans[0]
+                    ,'next actions (including ticklers)'=>$na[0]
+                    ,'orphans (including completed items)'=>$orphans[0]
                 );
 
 

@@ -195,8 +195,8 @@ $sql = array(
         										x.`lastModified`, x.`categoryId`, x.`category`,
         										x.`contextId`, x.`cname`, x.`timeframeId`, 
         										x.`timeframe`,
-                                                GROUP_CONCAT(y.`parentId` ORDER BY y.`ptitle`) as `parentId`,
-                                                GROUP_CONCAT(y.`ptitle` ORDER BY y.`ptitle` SEPARATOR '{$config['separator']}') AS `ptitle`
+                                                GROUP_CONCAT(DISTINCT y.`parentId` ORDER BY y.`ptitle`) as `parentId`,
+                                                GROUP_CONCAT(DISTINCT y.`ptitle` ORDER BY y.`ptitle` SEPARATOR '{$config['separator']}') AS `ptitle`
                                                 {$values['extravarsfilterquery']}
 										FROM (
 												SELECT 
