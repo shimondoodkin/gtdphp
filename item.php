@@ -103,9 +103,11 @@ if ($values['itemId']) {
 <?php if (!empty($_REQUEST['createnote'])) { ?>
     <p class='warning'>Notes have been superseded by tickler actions. These actions get
     suppressed until a specified number of days before their deadlines</p>
-<?php }
-if ($show['type']) { ?>
-    <a href='assignType.php?itemId=<?php echo $values['itemId']; ?>'>Assign Type</a>
+<?php } if ($show['type']) {
+    ?><p>
+        <a href='assignType.php?itemId=<?php echo $values['itemId']; ?>'>Assign Type</a>
+        (Warning, changing an item's type will sever all relationships to its parent and child items)
+    </p>
 <?php } ?>
 
 <form action="processItems.php" method="post" onsubmit="return validate(this);"><div class='form'>

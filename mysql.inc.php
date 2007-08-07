@@ -450,7 +450,7 @@ $sql = array(
 											AND i.`itemId` = '{$values['itemId']}'",
 
         "selectitemshort"           => "SELECT i.`itemId`, i.`title`,
-												i.`description`, ia.`isSomeday`
+												i.`description`, ia.`isSomeday`,ia.`type`
 										FROM `". $config['prefix'] . "items` as i,
 												`". $config['prefix'] . "itemattributes` as ia,
 												`". $config['prefix'] . "itemstatus` as its
@@ -540,8 +540,9 @@ $sql = array(
 												`suppressUntil`='{$values['suppressUntil']}' 
 										WHERE `itemId` = '{$values['itemId']}'",
 
-        "updateitemtype"            => "UPDATE `". $config['prefix'] . "itemattributes`
-										SET `type` = '{$values['type']}'
+        "updateitemtype"            => "UPDATE `{$config['prefix']}itemattributes`
+										SET `type` = '{$values['type']}',
+                                            `isSomeday`= '{$values['isSomeday']}'
 										WHERE `itemId` = '{$values['itemId']}'",
 
         "updatelist"                => "UPDATE `". $config['prefix'] . "list`

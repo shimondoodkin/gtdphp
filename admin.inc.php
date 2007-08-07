@@ -7,15 +7,17 @@
 function checkErrors($prefix) {
 
     $q="SELECT COUNT(*) FROM `{$prefix}items`";
-    $items=@mysql_fetch_row(mysql_query($q));
+    $items=@mysql_fetch_row(send_query($q,false));
+    if (empty($items)) return false;
 
     $q="SELECT COUNT(DISTINCT `nextaction`) FROM `{$prefix}nextactions`";
-    $na=@mysql_fetch_row(mysql_query($q));
+    $na=@mysql_fetch_row(send_query($q,false));
     
-    $q="SELECT COUNT(*) FROM `{$prefix}items` JOIN `{$prefix}itemstatus` AS `its` USING (`itemId`)
-            WHERE `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}lookup`)
+    $q="SELECT COUNT(*) FROM `{$prefix}items` AS `i`
+            JOIN `{$prefix}itemstatus` AS `its` USING (`itemId`)
+            WHERE `i`.`itemId` NOT IN (SELECT `itemId` FROM `{$prefix}lookup`)
             AND `its`.`dateCompleted` IS NULL";
-    $orphans=@mysql_fetch_row(mysql_query($q));
+    $orphans=@mysql_fetch_row(send_query($q,false));
 
     $totals=array(
                      'items'=>$items[0]
@@ -26,27 +28,33 @@ function checkErrors($prefix) {
 
     $q="SELECT COUNT(*) FROM `{$prefix}nextactions` WHERE ROW(`parentId`,`nextaction`) NOT IN
             (SELECT * FROM `{$prefix}lookup`)";
-    $excessNA=@mysql_fetch_row(mysql_query($q));
+    $excessNA=@mysql_fetch_row(send_query($q,false));
 
     $q="SELECT COUNT(*) FROM `{$prefix}lookup` WHERE
             ROW(`parentId`,`itemId`) NOT IN (SELECT * FROM `{$prefix}nextactions`)
             AND `itemID` IN (SELECT `nextaction` FROM `{$prefix}nextactions`)";
-    $missingNA=@mysql_fetch_row(mysql_query($q));
+    $missingNA=@mysql_fetch_row(send_query($q,false));
     
+    $q="SELECT COUNT(*) FROM `{$prefix}nextactions` AS `na`
+            JOIN `{$prefix}itemstatus` AS `its` ON (na.`nextaction`=its.`itemId`)
+            WHERE its.`dateCompleted` IS NOT NULL";
+    $completedNA=@mysql_fetch_row(send_query($q,false));
+
     $q="SELECT COUNT(*) FROM `{$prefix}itemattributes` WHERE `suppress`='y' AND `deadline`=NULL";
-    $noTickleDate=@mysql_fetch_row(mysql_query($q));
+    $noTickleDate=@mysql_fetch_row(send_query($q,false));
 
     $q="SELECT COUNT(*) FROM `{$prefix}items` where `title`=NULL OR `title`=''";
-    $noTitle=@mysql_fetch_row(mysql_query($q));
+    $noTitle=@mysql_fetch_row(send_query($q,false));
 
     $q="SELECT COUNT(*) FROM `{$prefix}lookup` WHERE 
             `parentId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)
            OR `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)";
-    $redundantparent=@mysql_fetch_row(mysql_query($q));
+    $redundantparent=@mysql_fetch_row(send_query($q,false));
 
     $errors=array(
                      'redundant nextaction entries'=>$excessNA[0]
                     ,'missing nextaction entries'=>$missingNA[0]
+                    ,'completed items marked as next actions'=>$completedNA[0]
                     ,'missing tickle dates'=>$noTickleDate[0]
                     ,'missing titles'=>$noTitle[0]
                     ,'redundant parent entries'=>$redundantparent[0]
@@ -57,7 +65,7 @@ function checkErrors($prefix) {
     $items2=$items1;
     foreach ($items1 as $t1) foreach ($items2 as $t2) if ($t1!=$t2) {
         $q="SELECT COUNT(DISTINCT `itemId`) FROM `{$prefix}$t1` WHERE `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}$t2`)";
-        $val=@mysql_fetch_row(mysql_query($q));
+        $val=@mysql_fetch_row(send_query($q,false));
         $errors["IDs are in $t1, but not in $t2"]=$val[0];
     }
 
@@ -67,15 +75,19 @@ function checkErrors($prefix) {
    ======================================================================================
 */
 function backupData($prefix) {
+    require_once('mysql.funcs.inc.php');
     $sep="-- *******************************\n";
     $tables=array('categories','checklist','checklistitems','context','itemattributes','items','itemstatus','list','listitems','lookup','nextactions','tickler','timeitems','version','preferences');
     $data='';
     $header='';
+    $creators='';
     foreach ($tables as $tab) {
         $table=$prefix.$tab;
         $data .=$sep;
         $header .="TRUNCATE TABLE `$table`;\n";
-        $rows = mysql_query("SELECT * FROM `$table`");
+		$tableStructure = @mysql_fetch_assoc(send_query("SHOW CREATE TABLE $table"));
+        $creators .= "DROP TABLE IF EXISTS `{$table}`; \n".$tableStructure['Create Table'].";\n";
+        $rows = send_query("SELECT * FROM `$table`",false);
         while ($rec = @mysql_fetch_assoc($rows) ) {
         	$thisdata='';
         	foreach ($rec as $key => $value)
@@ -84,7 +96,7 @@ function backupData($prefix) {
             $data .= "INSERT INTO `$table` VALUES ($thisdata);\n";
         }
     }
-    $data=htmlspecialchars($header.$sep.$data,ENT_NOQUOTES);
+    $data=htmlspecialchars($creators.$sep.$header.$sep.$data,ENT_NOQUOTES);
     return $data;
 }
 /*
@@ -103,13 +115,13 @@ function recreateNextactions($prefix) { // recreate the nextactions table, remov
     send_query($q);
 
     $q="SELECT COUNT(*) FROM {$prefix}nextactions";
-    $tot=send_query($q);
+    $tot=send_query($q,false);
     $q="SELECT COUNT(DISTINCT nextaction) FROM {$prefix}nextactions";
-    $unique=send_query($q);
+    $unique=send_query($q,false);
     $q="SELECT COUNT(*) FROM {$prefix}nextactions WHERE ROW(parentId,nextaction) NOT IN (SELECT * FROM {$prefix}tempNA)";
-    $added=send_query($q);
+    $added=send_query($q,false);
     $q="SELECT COUNT(*) FROM {$prefix}tempNA WHERE ROW(parentId,nextaction) NOT IN (SELECT * FROM {$prefix}nextactions)";
-    $removed=send_query($q);
+    $removed=send_query($q,false);
 
     $q="DROP TABLE {$prefix}tempNA";
     send_query($q);
@@ -173,7 +185,13 @@ function fixData($prefix) {
            OR `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)";
     send_query($q);
 
-    // and finally, fix nextactions
+    // remove next action flag from completed items
+    $q="DELETE FROM `{$prefix}nextactions` WHERE nextaction IN (
+            SELECT `itemId` FROM `{$prefix}itemstatus` WHERE dateCompleted IS NOT NULL
+            )";
+    send_query($q);
+    
+    // and finally, fix nextactions by recreating it completely
     recreateNextactions($prefix);
 }
 /*

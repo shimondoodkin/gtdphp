@@ -104,7 +104,13 @@ function doAction($localAction) { // do the current action on the current item; 
             $msg="'$title' is no longer a next action";
 			break;
 			
-		case 'create':
+		case 'changeType':
+			changeType();
+			$newtype=getTypes($values['type']);
+			$msg="$newtype is now the type for item: '$title'";
+			break;
+
+        case 'create':
 			retrieveFormVars();
 			createItem();
 			$msg="Created item: '$title'";
@@ -224,6 +230,16 @@ function removeNextAction() { // remove the next action reference for the curren
 	query("touchitem",$config,$values);
 }
 
+function changeType() {
+	global $config,$values;
+    $values['type'] = $_POST['type'];
+    $values['isSomeday']='n';
+    query("updateitemtype",$config,$values);
+	query("deletelookup",$config,$values);
+	query("deletelookupparents",$config,$values);
+	removeNextAction();
+	query("deletenextactionparents",$config,$values);
+}
 /* ===========================================================================================
 	utility functions for the primary actions
    =========================================== */
@@ -335,11 +351,6 @@ function makeComplete() { // mark an action as completed, and removes next actio
    ========================================================= */
 
 function nextPage() { // set up the forwarding to the next page
-	/*	APS note: I'm not really happy about doing it this way;
-		the forwarding should be done in PHP, not via the user's browser.
-		However, that requires a bigger rewrite: we need to split header.php into 2 separate files:
-		1 for UI, 1 for backend. Then we'd only use the backend half here
-	*/
 	global $config,$values,$updateGlobals;
 	$t = (array_key_exists('oldtype',$values))? $values['oldtype']:$values['type'];
 	$key='afterCreate'.$t;

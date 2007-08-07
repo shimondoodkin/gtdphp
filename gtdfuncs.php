@@ -308,7 +308,7 @@ function getShow($where,$type) {
         // only show if editing, not creating
         'lastModified'  =>($where==='edit'),
         'dateCreated'   =>($where==='edit'),
-        'type'          =>($where==='edit' && $type==='i'),
+        'type'          =>($where==='edit' && ($type==='i' || $config['allowChangingTypes'])),
 
         // fields suppressed on certain types
         'desiredOutcome'=>($type!=='r'),
