@@ -166,7 +166,7 @@ $sql = array(
 											LEFT OUTER JOIN `". $config['prefix'] . "timeitems` AS ti
 												ON (ia.`timeframeId` = ti.`timeframeId`)
 										LEFT JOIN (
-                                                SELECT nextaction FROM {$config['prefix']}nextactions
+                                                SELECT DISTINCT nextaction FROM {$config['prefix']}nextactions
                                             ) AS na ON(na.nextaction=i.itemId)
 										WHERE lu.`parentId`= '{$values['parentId']}' {$values['filterquery']}
 										ORDER BY {$sort['getchildren']} {$values['limitfilterquery']}",
