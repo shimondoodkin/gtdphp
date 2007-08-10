@@ -51,6 +51,9 @@ function checkErrors($prefix) {
            OR `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)";
     $redundantparent=@mysql_fetch_row(send_query($q,false));
 
+    $q="SELECT COUNT(version) FROM `{$prefix}version`";
+    $excessVersions=@mysql_fetch_row(send_query($q,false));
+
     $errors=array(
                      'redundant nextaction entries'=>$excessNA[0]
                     ,'missing nextaction entries'=>$missingNA[0]
@@ -58,6 +61,7 @@ function checkErrors($prefix) {
                     ,'missing tickle dates'=>$noTickleDate[0]
                     ,'missing titles'=>$noTitle[0]
                     ,'redundant parent entries'=>$redundantparent[0]
+                    ,'redundant version tags'=>-1+(int) $excessVersions[0]
                 );
 
     // remove partial items from database
@@ -156,6 +160,18 @@ function fixAllDates($prefix) {
 */
 function fixData($prefix) {
     global $config;
+
+    // remove duplicate version tags
+    $q="CREATE TABLE `{$prefix}versiontemp`
+            SELECT * FROM `{$prefix}version` WHERE `updated` >= ALL
+                (SELECT `updated` FROM `{$prefix}version`)";
+    send_query($q);
+    $q="TRUNCATE `{$prefix}version`";
+    send_query($q);
+    $q="INSERT INTO `{$prefix}version` SELECT * FROM `{$prefix}versiontemp`";
+    send_query($q);
+    $q="DROP TABLE `{$prefix}versiontemp`";
+    send_query($q);
 
     // it's possible that some legacy items might have no itemstatus: fix that now
     $q="INSERT INTO `{$prefix}itemstatus` (`itemId`)

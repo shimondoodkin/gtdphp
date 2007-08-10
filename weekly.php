@@ -2,19 +2,27 @@
 //INCLUDES
 include_once('header.php');
 
-$values=array();
+    $values=array();
 
 //SQL CODE AREA
 //select active projects
-        $values['isSomeday']="n";
-        $values['type']='p';
-        $values['filterquery']  = " WHERE " .sqlparts("typefilter",$config,$values);
-        $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-        $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
-        $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
-
-        $result = query("getitems",$config,$values,$options,$sort);
-
+    $values['isSomeday']="n";
+    $values['type']='p';
+    $values['childfilterquery']  = " WHERE " .sqlparts("typefilter",$config,$values);
+    $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
+    $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
+    $values['childfilterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
+    $values['filterquery'] = sqlparts("checkchildren",$config,$values);
+    $values['extravarsfilterquery'] = sqlparts("countchildren",$config,$values);;
+    $result = query("getitemsandparent",$config,$values,$options,$sort);
+    $maintable=array();
+    if ($result==-1)
+        $numProjects=0;
+    else {
+        $numProjects=count($result);
+        foreach ($result as $row) if (!$row['numNA']) $maintable[]=$row;
+    }
+    $numNoNext=count($maintable);
 //PAGE DISPLAY CODE
 ?>
 <h2>The Weekly Review</h2>
@@ -39,25 +47,21 @@ $values=array();
             and <a href="item.php?type=p&amp;someday=true" title="Add Someday/Maybe">someday/maybes</a> that are not yet in the system.</td></tr>
 	<tr>
         <td>Review <a href="listItems.php?type=p">Projects list</a></td>
-        <td>Evaluate status of each project, goals, outcomes, one by one, ensuring that at least one next action exists for each.
-            Projects without Next Actions defined:<br />
-            <ul>
-<?php
-        $counter=0;
-        if ($result!="-1") {
-	    foreach($result as $row) {
-                $values['parentId']=$row['itemId'];
-                $nonext=query("selectnextaction",$config,$values);
-	        if ($nonext=="-1") {
-                    echo '<li><a href="itemReport.php?referrer=weekly.php&amp;itemId='.$row['itemId'].'" title="Go to '.makeclean($row['title']).'  project report">'.makeclean($row['title'])."</a></li>\n";
-	           $counter++;
-                   } 
-                }
-           }
-        else echo "<li>None!</li>";
-?>
-        </ul>
-    </td></tr>
+        <td><?php
+            if ($numNoNext) {
+                $dispArray=array('title'=>'title','desiredOutcome'=>'Desired outcome');
+                $show=array('title'=>true,'desiredOutcome'=>true);
+                echo "$numNoNext of your $numProjects ";
+                ?> projects have no next action. Evaluate the status for each, consider the desired outcome,
+                and work out what the next action is for each.  If you cannot devise the next action for a project, then
+                either it should have a Waiting-On marked as a next action, or it should be classed as a someday/maybe project.
+                <table summary='projects without next actions'>
+                    <caption>Projects without Next Actions defined</caption>
+                    <?php include 'displayItems.inc.php'; ?>
+                </table><?php
+             } else echo "All $numProjects have next actions defined.";
+        ?></td>
+    </tr>
 	<tr><td>Review <a href="listItems.php?type=a">Actions list</a></td><td>Mark off any completed actions, review for reminders of further actions to capture.</td></tr>
 	<tr><td>Review <a href="listItems.php?type=w">WaitingOn list</a></td><td>Mark off any returned items, and determine any further actions.</td></tr>
 	<tr><td>Review <a href="listList.php">Lists</a></td><td>Review relevant lists for actionable items or projects.</td></tr>

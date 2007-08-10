@@ -83,17 +83,13 @@ $acckey = array(
 	"listItems.php?type=w"					=> "w", // Waiting On
 	"listList.php"							=> "l", // Lists
 	"management.php"						=> "", // Management
-	"newCategory.php"						=> "", // new Categories
 	"newChecklist.php"						=> "", // new Checklist
-	"newContext.php"						=> "", // new Space Contexts
 	"newList.php"							=> "", // new List
-	"newTimeContext.php"					=> "", // new Time Contexts
-	"note.php"								=> "o", // Note
 	"orphans.php"							=> "", // Orphaned Items
 	"preferences.php"						=> "", // User Preferences
-	"reportCategory.php"					=> "g", // Categories
+	"reportCategory.php"					=> "", // Categories
 	"reportContext.php"						=> "x", // Space Contexts
-	"reportTimeContext.php"					=> "t", // Time Contexts
+	"reportTimeContext.php"					=> "", // Time Contexts
 	"summaryAlone.php"						=> "s", // Summary
 	"weekly.php"							=> "r" // Weekly Review
 );

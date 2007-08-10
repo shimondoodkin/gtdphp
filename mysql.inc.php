@@ -272,15 +272,9 @@ $sql = array(
 										JOIN `{$config['prefix']}items`          AS i   USING (itemId)
 										JOIN `{$config['prefix']}itemstatus`     AS its USING (itemId)
 										WHERE (its.`dateCompleted` IS NULL)
-											AND ia.`type`!='m' 
-											AND ia.`type`!='i' 
-											AND (
-												ia.`itemId` NOT IN 
-													(
-													SELECT lu.`itemId` 
-													FROM `". $config['prefix'] . "lookup` as lu
-													)
-												) 
+											AND ia.`type` NOT IN ({$values['notOrphansfilterquery']})
+											AND ia.`itemId` NOT IN 
+												(SELECT lu.`itemId` FROM `". $config['prefix'] . "lookup` as lu)
 										ORDER BY {$sort['getorphaneditems']}",
 
         "getspacecontexts"          => "SELECT `contextId`, `name`
@@ -466,10 +460,6 @@ $sql = array(
         										`notes`, `listId`, `dateCompleted`
 										FROM `". $config['prefix'] . "listitems` 
 										WHERE `listItemId` = {$values['listItemId']}",
-
-        "selectnextaction"          => "SELECT `parentId`, `nextaction`
-										FROM `". $config['prefix'] . "nextactions` 
-										WHERE `parentId` = '{$values['parentId']}'",
 
         "selectnote"                => "SELECT `ticklerId`, `title`, `note`, 
         										`date`, `repeat`, `suppressUntil`

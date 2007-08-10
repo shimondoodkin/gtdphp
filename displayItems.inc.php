@@ -16,14 +16,15 @@ foreach ($maintable as $row) {
             ,'>';
         switch ($key) {
             case 'title':
+                $cleaned=makeclean($row[$key]);
                 echo "<a href='itemReport.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Go to $row[$key] report' /></a>"
+                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Go to $cleaned report' /></a>"
                     ,"<a href='item.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit $row[$key]' /></a>"
+                    ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' /></a>"
                     ,"<a ",($row['NA'])?"class='nextactionlink'":''
-                    ," title='Edit {$row[$key]}' href='item"
+                    ," title='Edit $cleaned' href='item"
                     ,($row['doreport'])?'Report':''
-                    ,".php?itemId={$row['itemId']}'>$row[$key]</a>";
+                    ,".php?itemId={$row['itemId']}'>$cleaned</a>";
                 break;
             case 'assignType':
                 echo "<a href='assignType.php?itemId={$row['itemId']}'>Set type</a>";
@@ -91,6 +92,9 @@ foreach ($maintable as $row) {
             case 'description': // flows through to case 'outcome' deliberately
             case 'desiredOutcome':
                 echo trimTaggedString($row[$key],$config['trimLength']);
+                break;
+            case 'fulldesc':
+                echo trimTaggedString($row[$key],0);
                 break;
             default:
                 echo $row[$key];

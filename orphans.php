@@ -4,8 +4,8 @@ include_once('header.php');
 
 //RETRIEVE URL VARIABLES
 $values=array();
+$values['notOrphansfilterquery']="'m','i'";
 $maintable = query("getorphaneditems",$config,$values,$options,$sort);
-foreach ($maintable as $key=>$row) $maintable[$key]['title']=makeclean($row['title']);
 
 $dispArray=array();
 $thisrow=0;
@@ -23,10 +23,6 @@ if ($maintable!=-1 && count($maintable)) { ?>
     <table class="datatable sortable" id="typetable" summary='table of orphans'>
         <?php require('displayItems.inc.php'); ?>
     </table>
-<?php } else {
-    $message="Nothing was found.";
-    nothingFound($message);
-}
-
-include_once('footer.php');
-?>
+<?php } else { ?>
+    <p>Congratulations: you have no orphaned items.</p>
+<?php } include_once('footer.php'); ?>

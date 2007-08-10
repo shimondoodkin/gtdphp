@@ -133,7 +133,7 @@ foreach ($contextArray as $values['contextId'] => $timeframe) {
                 $maintable[$i]['deadline.title']=$deadline['title'];
             } else $maintable[$i]['deadline']='';
         
-            $maintable[$i]['title']=makeclean($row['title']);
+            $maintable[$i]['title']=$row['title'];
             $maintable[$i]['title.title']='Edit '.$maintable['title'];
 
 			$maintable[$i]['ptitle']=$row['ptitle'];

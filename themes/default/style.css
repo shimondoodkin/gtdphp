@@ -300,7 +300,7 @@ a.nextactionlink {
 tr.overdue { /* class not implemented yet */
 }
 
-td.overdue, span.overdue {
+td.overdue, span.overdue,.warnresult {
 	font-weight: bold;
 	color: #F00;
 }
@@ -385,7 +385,7 @@ a.subheading:hover {
 	color: #F80;
 }
 
-.due {
+.due,.goodresult {
 	color:green;
 	font-weight:bold;
 }

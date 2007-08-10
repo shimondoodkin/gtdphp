@@ -65,7 +65,6 @@ if ($reminderresult!="-1") {
         }
     echo $notehtml;
     }
-echo '<p>Reminder notes can be added <a href="note.php?referrer=s" title="Add new reminder">here</a>.</p>'."\n";
 echo "</div>";
 
 echo "<div class='reportsection'>\n";

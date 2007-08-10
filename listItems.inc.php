@@ -374,7 +374,7 @@ if ($result!="-1") {
         
         $cleantitle=makeclean($row['title']);
         $maintable[$thisrow]['title.class'] = 'maincolumn';
-        $maintable[$thisrow]['title'] =$cleantitle;
+        $maintable[$thisrow]['title'] =$row['title'];
 
         $maintable[$thisrow]['checkbox.title']='Complete '.$cleantitle;
         $maintable[$thisrow]['checkboxname']= 'isMarked[]';

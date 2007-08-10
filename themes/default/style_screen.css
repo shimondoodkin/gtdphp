@@ -43,6 +43,10 @@
 	top: 1.7em;
 	left: -1px;
 }
+#menudiv .menuseparator {
+    border-top: 3px solid black;
+}
+
 #menudiv li li { /* second-level list items */
 	display: block;
 	padding: 0em;

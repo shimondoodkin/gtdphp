@@ -116,7 +116,7 @@ if ($item['dateCompleted']) echo '<tr><th>Completed On:</th><td>'.$item['dateCom
 echo "</tbody></table>\n";
 
 
-if ($childtype!=NULL) {
+if (!empty($childtype)) {
 	$values['parentId']=$values['itemId'];
 	
 	$thisurl=parse_url($_SERVER['PHP_SELF']);
@@ -178,10 +178,12 @@ if ($childtype!=NULL) {
 
 		$shownext= ($comp==='n') && ($values['type']==='a' || $values['type']==='w');
 		$suppressed=0;
+        // remove the /* */ tags below, to display *full* descriptions for incomplete children
+		$descriptionField=/*($comp==="n")?'fulldesc':*/'description'; 
 		$dispArray=array();
         if ($shownext) $dispArray['NA']='Next';
         $dispArray['title']=$typename[$thistype].'s';
-        $dispArray['description']='Description';
+        $dispArray[$descriptionField]='Description';
         $dispArray['context']='context';
         $dispArray['created']='Date Created';
 		if ($comp=="n") {
@@ -202,8 +204,8 @@ if ($childtype!=NULL) {
 
             $maintable[$i]=array();
             $maintable[$i]['itemId']=$row['itemId'];
-            $maintable[$i]['title']=$cleantitle;
-            $maintable[$i]['description']=$row['description'];
+            $maintable[$i]['title']=$row['title'];
+            $maintable[$i][$descriptionField]=$row['description'];
             $maintable[$i]['created']=date($config['datemask'],strtotime($row['dateCreated']));
 
 			$maintable[$i]['contextId']=$row['contextId'];
@@ -247,21 +249,17 @@ if ($childtype!=NULL) {
 		}
 		?>
 <h2><?php echo $title; ?></h2>
-		<?php if ($comp!=='y') { ?>
-<form action='processItems.php' method='post'>
-        <?php } ?>
-<table class='datatable sortable' id='i<?php echo $comp,$thistype; ?>' summary='table of children of this item'>
-            <?php require('displayItems.inc.php'); ?>
-</table>
 		<?php
-		if ($suppressed) {
-			echo '<p><a href="listItems.php?tickler=true&amp;type=',$thistype
-				,"&amp;parentId=",$values['parentId']
-				,'"> There '
-				,($suppressed===1)?'is also 1 tickler item':"are also $suppressed tickler items"
-				," not yet due for action</a></p>\n";
-		}
-		if ($comp==="n") { ?>
+		if (count($maintable)) {
+            if ($comp==='n') { ?>
+                <form action='processItems.php' method='post'>
+            <?php } ?>
+            <table class='datatable sortable' id='i<?php echo $comp,$thistype; ?>' summary='table of children of this item'>
+            <?php require('displayItems.inc.php'); ?>
+            </table>
+		    <?php
+        }
+		if ($comp==="n" && count($maintable)) { ?>
 <p>
 <input type="submit" class="button" value="Update marked <?php echo $typename[$thistype]; ?>s" name="submit" />
 <input type='hidden' name='referrer' value='<?php echo "{$thisfile}?itemId={$values['itemId']}"; ?>' />
@@ -270,10 +268,20 @@ if ($childtype!=NULL) {
 <input type="hidden" name="wasNAonEntry" value='<?php echo implode(' ',$wasNAonEntry); ?>' />
 </p>
 </form>
-        <?php } if(!count($maintable)) echo "No {$typename[$thistype]} items\n"; ?>
+        <?php
+        }
+        if(!count($maintable)) echo "No {$typename[$thistype]} items\n";
+    	if ($suppressed) {
+            $is=($suppressed===1)?'is':'are';
+            $also=(count($maintable))?'also':'';
+            $plural=($suppressed===1)?'':'s';
+    		echo "<p><a href='listItems.php?tickler=true&amp;type={$thistype}&amp;parentId={$values['parentId']}'>"
+    			,"There $is $also $suppressed tickler {$typename[$thistype]}$plural not yet due for action</a></p>\n";
+    	}
+        ?>
 </div>
 <?php
-    }
-}
+    } // end of foreach ($completed as $comp) foreach ($childtype as $thistype)
+} // end of if ($childtype!=NULL)
 include_once('footer.php');
 ?>
