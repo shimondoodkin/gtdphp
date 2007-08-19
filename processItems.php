@@ -371,9 +371,13 @@ function nextPage() { // set up the forwarding to the next page
 		case "item"    : $nextURL="itemReport.php?itemId=$id"; break;
 		case "another" :
             $nextURL="item.php?";
-            if (isset($_SESSION['lastcreate']) && $_SESSION['lastcreate']!='')
-                $nextURL.=$_SESSION['lastcreate'];
-            else
+            //TOFIX consider whether to take over parentId too, and if so, how
+            if (!empty($_POST['lastcreate'])) {
+                $nextURL.=$_POST['lastcreate'];
+                foreach ( array('categoryId','contextId','timeframeId') as $cat)
+                    if ($values[$cat] && !strpos($nextURL,$cat))
+                        $nextURL.="&amp;$cat=".$values[$cat];
+            } else
                 $nextURL.="type=$t";
             break;
 		case "list"	   : $nextURL="listItems.php?type=$t"; break;

@@ -260,9 +260,9 @@ function nextScreen($url) {
 function getChildType($parentType) {
 $childtype=array();
 switch ($parentType) {
-    case "m" : $childtype=array("v"); break;
-    case "v" : $childtype=array("o"); break;
-    case "o" : $childtype=array("g"); break;
+    case "m" : $childtype=array("v","o","g"); break;
+    case "v" : $childtype=array("o","g"); break;
+    case "o" : $childtype=array("g","p","s"); break;
     case "g" : $childtype=array("p","s"); break;
     case "p" : $childtype=array("a","w","r","p","s"); break;
     case "s" : $childtype=array("a","w","r","s"); break;
@@ -317,9 +317,9 @@ function getShow($where,$type) {
         'dateCompleted' =>($type!=='m'),
         'complete'      =>($type!=='m' && $type!=='r'),
         'timeframe'     =>($type!=='m' && $type!=='w' && $type!=='r' && $type!=='i'),
-        'context'       =>($type!=='m' && $type!=='v' && $type!=='o' && $type!=='g'),
 
         // fields only shown for certain types
+        'context'       =>($type==='i' || $type==='a' || $type==='w' || $type==='r'),
         'deadline'      =>($type==='p' || $type==='a' || $type==='w' || $type==='i'),
         'suppress'      =>($type==='p' || $type==='a' || $type==='w'),
         'suppressUntil' =>($type==='p' || $type==='a' || $type==='w'),
@@ -338,4 +338,29 @@ function getShow($where,$type) {
                 
     return $show;
 }
+/*
+   ======================================================================================
+*/
+function columnedTable($cols,$data,$link='itemReport.php') {
+    $nrows=count($data);
+    $displace=round($nrows/$cols+0.499,0);
+    for ($i=0;$i<$nrows;) {
+        echo "<tr>\n";
+        for ($j=0;$j<$cols;$j++) {
+            $ndx=$i/$cols+$j*$displace;
+            if ($ndx<$nrows) {
+                $row=$data[$ndx];
+                echo "<td>"
+                    ,"<a href='$link?itemId={$row['itemId']}' title='"
+                    ,makeclean($row['description']),"'>"
+                    ,makeclean($row['title']),"</a></td>\n";
+            }
+        }
+        echo "</tr>\n";
+        $i+=$cols;
+    }
+}
+/*
+   ======================================================================================
+*/
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

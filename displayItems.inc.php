@@ -18,7 +18,7 @@ foreach ($maintable as $row) {
             case 'title':
                 $cleaned=makeclean($row[$key]);
                 echo "<a href='itemReport.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Go to $cleaned report' /></a>"
+                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report /' /></a>"
                     ,"<a href='item.php?itemId={$row['itemId']}'>"
                     ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' /></a>"
                     ,"<a ",($row['NA'])?"class='nextactionlink'":''

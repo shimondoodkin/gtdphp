@@ -93,55 +93,6 @@ if($numbercontexts==1) {
 }
     echo "</div>\n";
 
-    $i=0;
-    $w1=$numberprojects/3;
-    if ($pres!=-1) {
-    foreach($pres as $row) {
-            if($i < $w1){
-                    $c1[]=makeclean($row['title']);
-                    $i1[]=$row['itemId'];
-                    $q1[]=makeclean($row['description']);
-            }
-            elseif($i< 2*$w1){
-                    $c2[]=makeclean($row['title']);
-                    $i2[]=$row['itemId'];
-                    $q2[]=makeclean($row['description']);
-            }
-            else{
-                    $c3[]=makeclean($row['title']);
-                    $i3[]=$row['itemId'];
-                    $q3[]=makeclean($row['description']);
-            }
-            $i+=1;
-            }
-    }
-
-//Somedays
-   if($numbersomeday){
-	$i=0;
-        $w2=$numbersomeday/3;
-        if ($sm!=-1) {
-	foreach($sm as $row) {
-                if($i < $w2){
-                        $d1[]=makeclean($row['title']);
-                        $j1[]=$row['itemId'];
-                        $k1[]=makeclean($row['description']);
-                }
-                elseif($i< 2*$w2){
-                        $d2[]=makeclean($row['title']);
-                        $j2[]=$row['itemId'];
-                        $k2[]=makeclean($row['description']);
-                }
-                else{
-                        $d3[]=makeclean($row['title']);
-                        $j3[]=$row['itemId'];
-                        $k3[]=makeclean($row['description']);
-                }
-                $i+=1;
-            }
-        }
-   }
-
     echo "<div class='reportsection'>\n";
 	echo "<h3>Project</h3>\n";
 
@@ -152,20 +103,9 @@ if($numbercontexts==1) {
     }
 
 	if($numberprojects) {
-        $s="<table summary='table of projects'>\n";
-    	$nr = count($c1);
-
-    	for($i=0;$i<$nr;$i+=1){
-    		$s.="	<tr>\n";
-    		$s.='		<td><a href="itemReport.php?itemId='.$i1[$i].'" title="'.$q1[$i].'">'.$c1[$i]."</a></td>\n";
-    		if ($i2[$i]!="" || $nr>1) $s.='		<td><a href="itemReport.php?itemId='.$i2[$i].'" title="'.$q2[$i].'">'.$c2[$i]."</a></td>\n";
-    		if ($i3[$i]!="" || $nr>1) $s.='		<td><a href="itemReport.php?itemId='.$i3[$i].'" title="'.$q3[$i].'">'.$c3[$i]."</a></td>\n";
-    		$s.="	</tr>\n";
-    	}
-
-    	$s.="</table>\n";
-
-    	echo $s;
+        echo "<table summary='table of projects'><tbody>\n"
+            ,columnedTable(3,$pres)
+            ,"</tbody></table>\n";
     }
 	echo "</div>\n";
 
@@ -178,22 +118,10 @@ if($numbercontexts==1) {
         echo '<p>There are ' .$numbersomeday.' <a href="listItems.php?type=p&amp;someday=true">Someday/Maybes</a>.</p>'."\n";
     }
 
-
 	if($numbersomeday) {
-        $t="<table summary='table of someday/maybe items'>\n";
-    	$nr = count($d1);
-
-    	for($i=0;$i<$nr;$i+=1){
-    		$t.="	<tr>\n";
-    		$t.='		<td><a href="itemReport.php?itemId='.$j1[$i].'" title="'.$k1[$i].'">'.$d1[$i]."</a></td>\n";
-    		if ($j2[$i]!="" || $nr>1) $t.='		<td><a href="itemReport.php?itemId='.$j2[$i].'" title="'.$k2[$i].'">'.$d2[$i]."</a></td>\n";
-    		if ($j3[$i]!="" || $nr>1) $t.='		<td><a href="itemReport.php?itemId='.$j3[$i].'" title="'.$k3[$i].'">'.$d3[$i]."</a></td>\n";
-    		$t.="	</tr>\n";
-    	}
-
-    	$t.="</table>\n";
-
-    	echo $t;
+        echo "<table summary='table of someday/maybe items'><tbody>\n"
+            ,columnedTable(3,$sm)
+            ,"</tbody></table>\n";
     }
 	echo "</div>\n";
 

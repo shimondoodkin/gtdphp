@@ -14,13 +14,17 @@ include_once('header.php');
     $values['childfilterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
     $values['filterquery'] = sqlparts("checkchildren",$config,$values);
     $values['extravarsfilterquery'] = sqlparts("countchildren",$config,$values);;
-    $result = query("getitemsandparent",$config,$values,$options,$sort);
+    $result = query("getitemsandparent",$config,$values,$options,array('getitemsandparent'=>'title ASC'));
     $maintable=array();
+    $noOutcomes=array();
     if ($result==-1)
         $numProjects=0;
     else {
         $numProjects=count($result);
-        foreach ($result as $row) if (!$row['numNA']) $maintable[]=$row;
+        foreach ($result as $row) {
+            if (empty($row['numNA'])) $maintable[]=$row;
+            if (empty($row['desiredOutcome'])) $noOutcomes[]=$row;
+        }
     }
     $numNoNext=count($maintable);
 //PAGE DISPLAY CODE
@@ -28,6 +32,7 @@ include_once('header.php');
 <h2>The Weekly Review</h2>
 <table class='weeklytable' summary='table of weekly actions'>
 	<thead><tr><td>Step</td><td>Description</td></tr></thead>
+	<tbody>
 	<tr><td>Gather all loose papers</td><td></td></tr>
 	<tr><td>Process all notes</td><td></td></tr>
 	<tr><td>Check all voice mail</td><td></td></tr>
@@ -42,28 +47,42 @@ include_once('header.php');
         <td>Put in writing any new
             <a href="item.php?type=p" title="Add project">projects</a>,
             <a href="item.php?type=a" title="Add action">actions</a>,
-            <a href="item.php?type=w" title="Add waitingOn">waitingOn</a>,
+            <a href="item.php?type=w" title="Add waitingOn">things you are waiting for</a>,
             <a href="item.php?type=r" title="Add reference">references</a>,
             and <a href="item.php?type=p&amp;someday=true" title="Add Someday/Maybe">someday/maybes</a> that are not yet in the system.</td></tr>
 	<tr>
         <td>Review <a href="listItems.php?type=p">Projects list</a></td>
         <td><?php
             if ($numNoNext) {
-                $dispArray=array('title'=>'title','desiredOutcome'=>'Desired outcome');
-                $show=array('title'=>true,'desiredOutcome'=>true);
                 echo "$numNoNext of your $numProjects ";
                 ?> projects have no next action. Evaluate the status for each, consider the desired outcome,
                 and work out what the next action is for each.  If you cannot devise the next action for a project, then
                 either it should have a Waiting-On marked as a next action, or it should be classed as a someday/maybe project.
                 <table summary='projects without next actions'>
-                    <caption>Projects without Next Actions defined</caption>
-                    <?php include 'displayItems.inc.php'; ?>
+                    <tbody>
+                    <?php columnedTable(3,$maintable); ?>
+                    </tbody>
                 </table><?php
              } else echo "All $numProjects have next actions defined.";
         ?></td>
     </tr>
+    <?php if ($config['reviewProjectsWithoutOutcomes'] && count($noOutcomes)) { ?>
+    <tr>
+        <td>Review Projects with no outcomes</td>
+        <td>All of your projects should have a clear statement of the desired outcome.
+            The following <?php echo count($noOutcomes); ?> projects currently have no desired outcome specified:
+            For each one, ask yourself: "what would wild success look like?".  What would
+            the situation look like, in order for you to be able to mark this project as
+            complete?  
+        <table summary='projects with no outcome defined'>
+        <tbody><?php
+                columnedTable(3,$noOutcomes,'item.php');
+             ?></tbody>
+        </table></td>
+    </tr>
+    <?php } ?>
 	<tr><td>Review <a href="listItems.php?type=a">Actions list</a></td><td>Mark off any completed actions, review for reminders of further actions to capture.</td></tr>
-	<tr><td>Review <a href="listItems.php?type=w">WaitingOn list</a></td><td>Mark off any returned items, and determine any further actions.</td></tr>
+	<tr><td>Review <a href="listItems.php?type=w">WaitingOn list</a></td><td>Mark off any items which have now happened; for each such item's parent project, decide what the new next action is.</td></tr>
 	<tr><td>Review <a href="listList.php">Lists</a></td><td>Review relevant lists for actionable items or projects.</td></tr>
 	<tr><td>Review <a href="listChecklist.php">Checklists</a></td><td>Review relevant Checklists for actionable items or projects.</td></tr>
 	<tr><td>Review <a href="listItems.php?type=p&amp;someday=true">Someday/Maybe List</a></td><td>Add new fun things, move any existing items into Projects if they are ready to go</td></tr>
@@ -80,10 +99,10 @@ include_once('header.php');
 			echo "	<tr><td>{$review_title}</td><td>{$review_text}</td></tr>\n";
 		}
 	}
-	echo "</table>\n";
-
-if ($config['show7']==TRUE) {
 ?>
+</tbody>
+</table>
+<?php if ($config['show7']==TRUE) { ?>
 <h3>Seven Habits of Highly Effective People</h3>
 <ol>
     <li>Be Proactive

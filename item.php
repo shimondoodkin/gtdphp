@@ -19,33 +19,30 @@ if ($values['itemId']) { // editing an item
         echo "<p class='error'>Failed to retrieve item {$values['itemId']}</p>";
         return;
     }
-    //$_SESSION['lastcreate']=''; // I don't think we need to do this, so have commented it out for now. [Andrew]
 } else { // creating an item
     $where='create';
+    $nextaction=false;
     //RETRIEVE URL VARIABLES
     $values['type']=$_REQUEST['type'];
     if ($values['type']==='s') {
         $values['isSomeday']='y';
         $values['type']='p';
-    }
-    if ($_GET['someday']=='true') $values['isSomeday']='y';
-    if ($_GET['suppress']=='true') $values['suppress']='y';
-
-    $nextaction=false;
-    if ($values['type']==='n') {
+    } elseif ($values['type']==='n') {
         $nextaction=true;
         $values['type']='a';
     }
-    if ($_GET['nextonly']=='true') $nextaction=true;
+}
+$show=getShow($where,$values['type']);
+if (!$values['itemId']) {
+    if ($_GET['someday']=='true') $values['isSomeday']='y';
+    
+    if ($show['suppress'] && $_REQUEST['suppress']=='true') $values['suppress']='y';
+    if ($show['NA']       && $_REQUEST['nextonly']=='true') $nextaction=true;
+    if ($show['deadline'] && !empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
+    if ($show['ptitle']   && !empty($_REQUEST['parentId'])) $values['parentId'][0] = (int) $_REQUEST['parentId'];
 
-    if (!empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
-
-    if (!empty($_REQUEST['parentId'])) $values['parentId'][0] = (int) $_REQUEST['parentId'];
-
-    foreach ( array('categoryId','contextId','timeframeId') as $cat)
-        $values[$cat]= (int) $_REQUEST[$cat];
-
-    $_SESSION['lastcreate']=$_SERVER['QUERY_STRING'];
+    foreach ( array('category','context','timeframe') as $cat)
+        if ($show[$cat]) $values[$cat.'Id']= (int) $_REQUEST[$cat.'Id'];
 }
 
 //determine item and parent labels
@@ -79,8 +76,6 @@ $cshtml = contextselectbox($config,$values,$options,$sort);
 $tshtml = timecontextselectbox($config,$values,$options,$sort);
 
 $oldtype=$values['type'];
-
-$show=getShow($where,$values['type']);
 
 //PAGE DISPLAY CODE
 $title=(($values['itemId']>0)?'Edit ':'New ').$typename;
@@ -225,6 +220,7 @@ if ($values['itemId']) {
     	value='title:notnull:Title can not be blank.,deadline:date:Deadline must be a valid date.,dateCompleted:date:Completion date is not valid.,suppress:depends:You must set a deadline to base the tickler on:deadline,suppress:depends:You must set a number of days for the tickler to be active from:suppressUntil' />
     	<input type='hidden' name='dateformat' value='ccyy-mm-dd' />
 <?php
+if (!$values['itemId']) $hiddenvars['lastcreate']=$_SERVER['QUERY_STRING'];
 foreach ($hiddenvars as $key=>$val) echo hidePostVar($key,$val);
 echo "<input type='hidden' name='referrer' value='{$_REQUEST['referrer']}' />\n";
 $key='afterCreate'.$values['type'];
