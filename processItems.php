@@ -367,22 +367,38 @@ function nextPage() { // set up the forwarding to the next page
     if ($action=='delete' && $tst=='item') $tst='list';
 
 	switch ($tst) {
-		case "parent"  : $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php'); break;
-		case "item"    : $nextURL="itemReport.php?itemId=$id"; break;
 		case "another" :
-            $nextURL="item.php?";
-            //TOFIX consider whether to take over parentId too, and if so, how
-            if (!empty($_POST['lastcreate'])) {
-                $nextURL.=$_POST['lastcreate'];
-                foreach ( array('categoryId','contextId','timeframeId') as $cat)
-                    if ($values[$cat] && !strpos($nextURL,$cat))
-                        $nextURL.="&amp;$cat=".$values[$cat];
-            } else
-                $nextURL.="type=$t";
+            $nextURL="item.php?type=$t";
+            if (!empty($updateGlobals['parents'])) {
+                if (is_array($updateGlobals['parents'])) {
+                    $nextURL.='&amp;parentId='.implode(',',$updateGlobals['parents']);
+                } else {
+                    $nextURL.='&amp;parentId='.$updateGlobals['parents'];
+                }
+            }
+            foreach ( array(
+              'categoryId'=>'categoryId','contextId'=>'contextId',
+              'timeframeId'=>'timeframeId','nextAction'=>'nextonly',
+              'suppress'=>'suppress','deadline'=>'deadline',
+              'isSomeday'=>'isSomeday','suppressUntil'=>'suppressUntil'
+              ) as $key=>$cat )
+                  if (!empty($values[$key]) && $values[$key]!='NULL') $nextURL.="&amp;$cat=".str_replace("'","",$values[$key]);
             break;
-		case "list"	   : $nextURL="listItems.php?type=$t"; break;
-		case "referrer": $nextURL=$_SESSION["lastfilter$t"];break;
-        default        : $nextURL=$tst;break;
+		case "item"    :
+            $nextURL="itemReport.php?itemId=$id";
+            break;
+		case "list"	   :
+            $nextURL="listItems.php?type=$t";
+            break;
+		case "parent"  :
+            $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php');
+            break;
+		case "referrer":
+            $nextURL=$_SESSION["lastfilter$t"];
+            break;
+        default        :
+            $nextURL=$tst;
+            break;
 	}
 	if ($config['debug'] & _GTD_DEBUG) {
         echo '<pre>$referrer=',print_r($updateGlobals['referrer'],true),'<br />'

@@ -7,7 +7,9 @@
 <tbody>
 <?php
 foreach ($maintable as $row) {
-    echo '<tr>';
+    echo '<tr'
+        ,(!empty($row['row.class']))?" class='{$row['row.class']}' ":''
+        ,">\n";
     foreach ($dispArray as $key=>$val) if ($show[$key]) {
         echo "<td class='col-$key"
             ,(isset($row["$key.class"]))?" ".$row["$key.class"]:''
@@ -93,7 +95,8 @@ foreach ($maintable as $row) {
             case 'desiredOutcome':
                 echo trimTaggedString($row[$key],$config['trimLength']);
                 break;
-            case 'fulldesc':
+            case 'fulldesc': // flows through to case 'fulloutcome' deliberately
+            case 'fulloutcome':
                 echo trimTaggedString($row[$key],0);
                 break;
             default:

@@ -35,11 +35,14 @@ if ($values['itemId']) { // editing an item
 $show=getShow($where,$values['type']);
 if (!$values['itemId']) {
     if ($_GET['someday']=='true') $values['isSomeday']='y';
-    
-    if ($show['suppress'] && $_REQUEST['suppress']=='true') $values['suppress']='y';
-    if ($show['NA']       && $_REQUEST['nextonly']=='true') $nextaction=true;
+
+    if ($show['suppress'] && ($_REQUEST['suppress']=='true' || $_REQUEST['suppress']==='y')) {
+        $values['suppress']='y';
+        $values['suppressUntil']=$_REQUEST['suppressUntil'];
+    }
+    if ($show['NA']       && ($_REQUEST['nextonly']=='true' || $_REQUEST['nextonly']==='y')) $nextaction=true;
     if ($show['deadline'] && !empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
-    if ($show['ptitle']   && !empty($_REQUEST['parentId'])) $values['parentId'][0] = (int) $_REQUEST['parentId'];
+    if ($show['ptitle']   && !empty($_REQUEST['parentId'])) $values['parentId'] = explode(',',$_REQUEST['parentId']);
 
     foreach ( array('category','context','timeframe') as $cat)
         if ($show[$cat]) $values[$cat.'Id']= (int) $_REQUEST[$cat.'Id'];

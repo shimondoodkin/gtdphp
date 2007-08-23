@@ -114,6 +114,6 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
 if (isset($endmsg['header'])) echo "<h4>{$endmsg['header']}</h4>\n";
 if (isset($endmsg['link'])) echo "<a href='{$endmsg['link']}'>{$endmsg['prompt']}</a>\n";
 $_SESSION['lastfilter'.$values['type']]=$referrer;
-echo "<p>To bookmark this filtered list, bookmark <a href='$referrer'>this link</a></p>\n";
+echo "<p class='noprint'>To bookmark this filtered list, bookmark <a href='$referrer'>this link</a></p>\n";
 include_once('footer.php');
 ?>
