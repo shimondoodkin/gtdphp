@@ -20,11 +20,13 @@ foreach ($maintable as $row) {
             case 'title':
                 $cleaned=makeclean($row[$key]);
                 echo "<a href='itemReport.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report /' /></a>"
+                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report' title='View Report' /></a>"
                     ,"<a href='item.php?itemId={$row['itemId']}'>"
-                    ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' /></a>"
+                    ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' title='Edit' /></a>"
                     ,"<a ",($row['NA'])?"class='nextactionlink'":''
-                    ," title='Edit $cleaned' href='item"
+                    ," title='"
+                    ,($row['doreport'])?'View Report':'Edit'
+                    ,"' href='item"
                     ,($row['doreport'])?'Report':''
                     ,".php?itemId={$row['itemId']}'>$cleaned</a>";
                 break;
@@ -53,8 +55,8 @@ foreach ($maintable as $row) {
                         ,"</a>";
                 break;
             case 'category':
-                if ($row[$key.'id'])
-                    echo "<a href='editCat.php?field=category&amp;id=",$row[$key.'id'],"' title='Edit the {$row[$key]} category'>{$row[$key]}</a>";
+                if ($row[$key.'Id'])
+                    echo "<a href='editCat.php?field=category&amp;id=",$row[$key.'Id'],"' title='Edit the {$row[$key]} category'>{$row[$key]}</a>";
                 else
                     echo '&nbsp;';
                 break;
@@ -67,8 +69,9 @@ foreach ($maintable as $row) {
                     $pids=explode(',',$row['parentId']);
                     $pnames=explode($config['separator'],$row['ptitle']);
                     foreach ($pids as $pkey=>$pid) {
-                        $thisparent=makeclean($pnames[$pkey]);
-                        echo "$brk<a href='itemReport.php?itemId=$pid' title='Go to the $thisparent report'>$thisparent</a> ";
+                        echo "$brk<a href='itemReport.php?itemId=$pid' title='View report'>"
+                            ,makeclean($pnames[$pkey])
+                            ,"</a> ";
                         $brk="<br />\n";
                     }
                 }
@@ -77,11 +80,11 @@ foreach ($maintable as $row) {
                 if ($row[$key]=='')
                     echo '&nbsp;';
                 else
-                    echo "<a href='reportContext.php#c",$row[$key.'id'],"' title='Go to the ",$row[$key]," context report'>{$row[$key]}</a>";
+                    echo "<a href='reportContext.php#c",$row[$key.'Id'],"' title='Go to the ",$row[$key]," context report'>{$row[$key]}</a>";
                 break;
             case 'timeframe':
-                if ($row[$key.'id'])
-                    echo "<a href='editCat.php?field=time-context&amp;id=",$row[$key.'id'],"' title='Edit the {$row[$key]} time context'>{$row[$key]}</a>";
+                if ($row[$key.'Id'])
+                    echo "<a href='editCat.php?field=time-context&amp;id=",$row[$key.'Id'],"' title='Edit the {$row[$key]} time context'>{$row[$key]}</a>";
                 else
                     echo '&nbsp;';
                 break;
@@ -97,7 +100,7 @@ foreach ($maintable as $row) {
                 break;
             case 'fulldesc': // flows through to case 'fulloutcome' deliberately
             case 'fulloutcome':
-                echo trimTaggedString($row[$key],0);
+                echo trimTaggedString($row[$key],$config["trimLengthInReport"]);
                 break;
             default:
                 echo $row[$key];

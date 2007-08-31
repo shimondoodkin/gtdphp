@@ -27,9 +27,8 @@ $sql = array(
 
         "checklistselectbox"        => "SELECT cl.`checklistId`, cl.`title`, 
         										cl.`description`, cl.`categoryId`, c.`category` 
-        								FROM `". $config['prefix'] ."checklist` as cl, 
-        										`". $config['prefix'] ."categories` as c 
-        								WHERE cl.`categoryId`=c.`categoryId` 
+        								FROM `". $config['prefix'] ."checklist` as cl
+        								LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
         								ORDER BY {$sort['checklistselectbox']}",
 
         "clearchecklist"            => "UPDATE `". $config['prefix'] ."checklistitems` 
@@ -139,10 +138,9 @@ $sql = array(
         
 		"getchecklists"			    => 	"SELECT cl.`checklistId`, cl.`title`, 
 												cl.`description`, cl.`categoryId`, c.`category` 
-										FROM `". $config['prefix'] ."checklist` as cl, 
-												`". $config['prefix'] ."categories` as c 
-										WHERE cl.`categoryId`=c.`categoryId` ".$values['filterquery']." 
-										ORDER BY {$sort['getchecklists']}",
+										FROM `". $config['prefix'] ."checklist` as cl
+										LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`) "
+										.$values['filterquery']." ORDER BY {$sort['getchecklists']}",
 			
         "getchildren"               => 	"SELECT "
                                         .(($values['limitfilterquery']=='')?'':' SQL_CALC_FOUND_ROWS ').
@@ -240,8 +238,8 @@ $sql = array(
 														ON (ia.`itemId` = i.`itemId`)
 													JOIN `". $config['prefix'] . "itemstatus` as its
 														ON (ia.`itemId` = its.`itemId`)
-											) as y 
-											ON (y.parentId = x.parentId)  
+										        {$values['parentfilterquery']}
+                                            ) as y ON (y.parentId = x.parentId)
                                         {$values['filterquery']} GROUP BY x.`itemId`
                                         ORDER BY {$sort['getitemsandparent']}",
 
@@ -258,10 +256,9 @@ $sql = array(
 										ORDER BY {$sort['getlistitems']}",
         
         "getlists"                  => "SELECT l.`listId`, l.`title`, l.`description`, l.`categoryId`, c.`category` 
-        								FROM `". $config['prefix'] . "list` as l, 
-												`". $config['prefix'] ."categories` as c 
-        								WHERE l.`categoryId`=c.`categoryId` ".$values['filterquery']." 
-        								ORDER BY {$sort['getlists']}",
+        								FROM `". $config['prefix'] . "list` as l
+                                        LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`) "
+                                        .$values['filterquery']." ORDER BY {$sort['getlists']}",
         
         "getnotes"                  => "SELECT `ticklerId`, `title`, `note`, `date` 
         								FROM `". $config['prefix'] . "tickler`  as tk".$values['filterquery']."
@@ -287,14 +284,15 @@ $sql = array(
         
         "listselectbox"             => "SELECT l.`listId`, l.`title`, l.`description`, 
         										l.`categoryId`, c.`category`
-										FROM `". $config['prefix'] . "list` as l, 
-												`". $config['prefix'] ."categories` as c 
-										WHERE l.`categoryId`=c.`categoryId`
+										FROM `". $config['prefix'] . "list` as l
+        								LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
 										ORDER BY {$sort['listselectbox']}",
 
-        "lookupparent"              => "SELECT `parentId`
-										FROM `". $config['prefix'] . "lookup` 
-										WHERE `itemId`='{$values['itemId']}'",
+        "lookupparent"              => "SELECT `parentId`,`title` AS `ptitle`,`type` AS `ptype`
+										FROM `". $config['prefix'] . "lookup` AS lu
+                                        JOIN `{$config['prefix']}items` AS i ON (lu.`parentId` = i.`itemId`)
+                                        JOIN `{$config['prefix']}itemattributes` AS ia ON (lu.`parentId` = ia.`itemId`)
+										WHERE lu.`itemId`='{$values['itemId']}'",
 
         "newcategory"               => "INSERT INTO `". $config['prefix'] ."categories`
 										VALUES (NULL, '{$values['name']}', '{$values['description']}')",
@@ -316,7 +314,7 @@ $sql = array(
         										(`itemId`,`type`,`isSomeday`,`categoryId`,`contextId`,
 												`timeframeId`,`deadline`,`repeat`,`suppress`,`suppressUntil`)
 										VALUES ('{$values['newitemId']}','{$values['type']}','{$values['isSomeday']}',
-												{$values['categoryId']},'{$values['contextId']}','{$values['timeframeId']}',
+												'{$values['categoryId']}','{$values['contextId']}','{$values['timeframeId']}',
 												{$values['deadline']},'{$values['repeat']}','{$values['suppress']}',
 												'{$values['suppressUntil']}')",
 
@@ -357,15 +355,12 @@ $sql = array(
 										VALUES ('{$values['name']}', '{$values['description']}', '{$values['type']}')",
 
         "parentselectbox"           => "SELECT i.`itemId`, i.`title`, 
-												i.`description`, ia.`isSomeday`
-										FROM `". $config['prefix'] . "items` as i, 
-												`". $config['prefix'] . "itemattributes` as ia, 
-												`". $config['prefix'] . "itemstatus` as its
-										WHERE ia.`itemId`=i.`itemId`
-											AND its.`itemId`=i.`itemId`
-											AND ia.`type`='{$values['ptype']}'
-											AND (its.`dateCompleted` IS NULL)
-										ORDER BY i.`title`",
+												i.`description`, ia.`isSomeday`,ia.`type`
+										FROM `". $config['prefix'] . "items` as i
+										JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
+										JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
+										WHERE (its.`dateCompleted` IS NULL) {$values['ptypefilterquery']}
+										ORDER BY ia.`type`,i.`title`",
 										#ORDER BY {$sort['parentselectbox']}",
 
 
@@ -445,12 +440,10 @@ $sql = array(
 
         "selectitemshort"           => "SELECT i.`itemId`, i.`title`,
 												i.`description`, ia.`isSomeday`,ia.`type`
-										FROM `". $config['prefix'] . "items` as i,
-												`". $config['prefix'] . "itemattributes` as ia,
-												`". $config['prefix'] . "itemstatus` as its
-										WHERE ia.`itemId`=i.`itemId`
-											AND its.`itemId`=i.`itemId`
-											AND i.`itemId` = '{$values['itemId']}'",
+										FROM `". $config['prefix'] . "items` as i
+                                        JOIN `{$config['prefix']}itemattributes` AS ia USING (`itemId`)
+										JOIN `{$config['prefix']}itemstatus` AS its USING (`itemId`)
+										WHERE i.`itemId` = '{$values['itemId']}'",
 
         "selectlist"                => "SELECT `listId`, `title`, `description`, `categoryId`
 										FROM `". $config['prefix'] . "list` 

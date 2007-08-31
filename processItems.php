@@ -370,11 +370,10 @@ function nextPage() { // set up the forwarding to the next page
 		case "another" :
             $nextURL="item.php?type=$t";
             if (!empty($updateGlobals['parents'])) {
-                if (is_array($updateGlobals['parents'])) {
-                    $nextURL.='&amp;parentId='.implode(',',$updateGlobals['parents']);
-                } else {
-                    $nextURL.='&amp;parentId='.$updateGlobals['parents'];
-                }
+                $parentlist= (is_array($updateGlobals['parents']))
+                            ?implode(',',$updateGlobals['parents'])
+                            :$updateGlobals['parents'];
+                if ($parentlist!='') $nextURL.="&amp;parentId=$parentlist";
             }
             foreach ( array(
               'categoryId'=>'categoryId','contextId'=>'contextId',

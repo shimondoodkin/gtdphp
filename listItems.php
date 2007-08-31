@@ -1,8 +1,8 @@
 <?php
 //INCLUDES
+require_once('listItems.inc.php');
+include_once('headerHtml.inc.php');
 include_once('header.php');
-echo "<script type='text/javascript'>addEvent(window,'load', filtertoggle)</script>\n";
-require_once('listItems.inc.php')
 ?>
 <div id="filter">
     <form action="listItems.php" method="post">
@@ -98,9 +98,9 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
     </table>
     <div>
     <?php
-    if ($row['type']==='a')
+    if ($show['NA'])
         echo "<input type='hidden' name='wasNAonEntry' value='",implode(' ',$wasNAonEntry),"' />\n";
-    if (($show['NA'] || $show['checkbox']) && count($maintable))
+    if ($showsubmit)
         echo "<input type='submit' class='button' value='Update marked {$typename}s' name='submit' />";
     ?>
     <input type="hidden" name="referrer" value="<?php echo $referrer; ?>" />
@@ -109,11 +109,16 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
     <input type="hidden" name="action" value="complete" />
     </div>
     </form>
+
+
     <?php
 }
 if (isset($endmsg['header'])) echo "<h4>{$endmsg['header']}</h4>\n";
 if (isset($endmsg['link'])) echo "<a href='{$endmsg['link']}'>{$endmsg['prompt']}</a>\n";
-$_SESSION['lastfilter'.$values['type']]=$referrer;
-echo "<p class='noprint'>To bookmark this filtered list, bookmark <a href='$referrer'>this link</a></p>\n";
-include_once('footer.php');
 ?>
+<p class='noprint'>To bookmark this filtered list, bookmark <a href='<?php echo $referrer; ?>'>this link</a></p>
+<script type='text/javascript'>/* <![CDATA[ */
+filtertoggle();
+<?php if ($quickfind) echo "focusOnForm('needle');\n"; ?>
+/* ]]> */ </script>
+<?php include_once('footer.php'); ?>

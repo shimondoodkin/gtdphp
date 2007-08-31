@@ -14,15 +14,15 @@ function checkErrors($prefix) {
     $na=@mysql_fetch_row(send_query($q,false));
     
     $q="SELECT COUNT(*) FROM `{$prefix}items` AS `i`
-            JOIN `{$prefix}itemstatus` AS `its` USING (`itemId`)
+            JOIN `{$prefix}itemstatus`     AS `its` USING (`itemId`)
             WHERE `i`.`itemId` NOT IN (SELECT `itemId` FROM `{$prefix}lookup`)
-            AND `its`.`dateCompleted` IS NULL";
+                AND `its`.`dateCompleted` IS NULL";
     $orphans=@mysql_fetch_row(send_query($q,false));
 
     $totals=array(
                      'items'=>$items[0]
-                    ,'next actions (including ticklers)'=>$na[0]
-                    ,'orphans (including completed items)'=>$orphans[0]
+                    ,'next actions'=>$na[0]
+                    ,'orphans'=>$orphans[0]
                 );
 
 

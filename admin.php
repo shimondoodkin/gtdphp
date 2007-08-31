@@ -1,18 +1,15 @@
 <?php
 
-    /* _DEBUG = false | true -
-    show lots of debugging information during execution */
-define("_DEBUG",false);
-
-    /* _DRY_RUN = false | true - dry run won't change the database, but will
-    mime all the actions that would be done: use _DEBUG true to see these */
+/* _DRY_RUN = false | true - dry run won't change the database, but will
+  mime all the actions that would be done: use _DEBUG true to see these */
 define("_DRY_RUN",false);
-
 
 define("_ALLOWUNINSTALL",false); // NOT YET ACTIVE
 
 require_once("headerDB.inc.php");
 require_once('admin.inc.php');
+
+define("_DEBUG",true && ($config['debug'] & _GTD_DEBUG));
 
 /*
 TOFIX: scan for available installations
@@ -48,16 +45,20 @@ switch ($action) {
     case 'none':
         break;
     case 'repair':
+        $toterrs=0;
         $pre=checkErrors($prefix);
         fixData($prefix);
         $post=checkErrors($prefix);
         $repair="<h2>Results of repairs on installation with prefix '$prefix'</h2>\n";
-        $repair.="<p>Repair complete. Now check <a href='orphans.php'>orphans</a>. \n";
-        $repair.=" Also, check for <a href='listItems.php?type=p'>projects</a> that have no actions, or no next actions.</p>\n";
+        $repair.="<p>Repair complete.</p>";
+        if ($post['totals']['orphans'])
+            $repair.="<p>Now check <a href='orphans.php'>orphans</a>.</p>\n";
+        $repair.="<p>Check for <a href='listItems.php?type=p'>projects</a> that have no actions, or no next actions.</p>\n";
         $repair.="<table summary='result of repairs'><thead>\n<tr><th>Before</th><th>After</th><th>&nbsp;</th></tr></thead><tbody>";
         foreach($post['totals'] as $key=>$val)
             $repair .="<tr><td>{$pre['totals'][$key]}</td><td>$val</td><th>$key</th></tr>\n";
         foreach($post['errors'] as $key=>$val) {
+            $toterrs+=(int) $val;
             $preval=$pre['errors'][$key];
             $class1=($preval)?" class='warnresult' ":" class='goodresult' ";
             if ($val)
@@ -68,10 +69,10 @@ switch ($action) {
                 $class1='';
                 $class2='';
             }
-
             $repair .= "<tr><td $class1>{$preval}</td><td $class2>$val</td><td $class2>$key</td></tr>\n";
         }
         $repair .="</tbody></table>\n";
+        $action=($toterrs)?'repair':'backup';
         break;
     case 'validate':
         $result=checkErrors($prefix);
@@ -137,7 +138,13 @@ if (!empty($repair)) echo $repair;
 if (!empty($backup)) {
     ?><h2>Backup of installation with prefix '<?php echo $prefix; ?>'</h2>
     <textarea cols="120" rows="10"><?php echo $backup; ?></textarea>
-<?php
-}
-require_once('footer.php');
-?>
+<?php } ?>
+<h2>&nbsp;</h2>
+<p>Note that because this report counts all items (of all types) without parents
+ regardless of whether they'd normally appear in the orphans report, the
+ orphan count in the table will rarely match the total shown on the <a href='orphans.php'>orphans report</a>.</p>
+ <p>The count of next actions also includes items marked as next actions in the
+ <a href='listItems.php?type=a&amp;tickler=true'>tickler file</a>, and on the
+ <a href='listItems.php?type=w'>waiting-on list</a>, and so will rarely match the
+  total shown on the <a href='listItems.php?type=a&amp;nextonly=true'>next-actions report</a>.</p>
+<?php require_once('footer.php'); ?>

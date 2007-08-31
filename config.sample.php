@@ -45,8 +45,10 @@ $config["datemask"] = 'Y-m-d D'; // date format - required
 $config["theme"] = 'default'; //default | menu_sidebar
 $config["title_suffix"]	= false; // true | false - add filename to title tag
 $config["trimLength"] = 72;     // max visible length of descriptions when listing items
+$config["trimLengthInReport"] = 0;     // max visible length of descriptions when reporting children
 $config["firstDayOfWeek"] = 0; // 0=Sunday, 1=Monday, ... 6=Saturday
 $config['ReportMaxCompleteChildren']=0;  // maximum number of child items of any one type shown in itemReport
+$config['useLiveEnhancements']=false; // javascript productivity aids: tested on PC/IE7, PC/Firefox2, Linux/Firefox2, Linux/Epiphany, Linux/Konqueror3
 
 // These are the shortcut settings for menu options.  Add a key for any page or page view in the main menus.
 // Note IE only allows 26 access keys (a-z).
@@ -69,6 +71,7 @@ $acckey = array(
 	"item.php?type=w"						=> "", // add Waiting On
 	"leadership.php"						=> "", // Leadership
 	"listChecklist.php"						=> "c", // Checklists
+	"listItems.php?quickfind"				=> "q", // quick find
 	"listItems.php?type=a"					=> "a", // Actions
 	"listIitem.php?type=a&amp;nextonly=true"=> "n", // Next Actions
 	"listItems.php?type=a&tickler=true"		=> "", // Tickler File
@@ -114,7 +117,8 @@ $config["afterCreate"]	= array (  // parent | item | list | another - default vi
 			'g'		=>	'list' // goal preference
 	    );
 
-
+// uses initials as above; so o=role, m=value, etc., each in single quotes, separated by commas
+$config['suppressAsOrphans']="'i','m','v','o','g','p'"; 
 
 /*********  Customize Weekly Review  ************/
 $config['reviewProjectsWithoutOutcomes']=true; // false | true - list projects which have no outcome
@@ -164,7 +168,6 @@ $config['separator'] = '!£$€%'; // should be a string that you'll never use in t
 $config['forceAllFields'] = false; // false | true - all fields will always be displayed on item.php
 $config['allowChangingTypes'] = false; // false | true - allows the user to change the types of any item (false=change only inbox items)
 $config['showAdmin'] = true; // false | true - adds the Admin option to the menu items
-
 /*********  Developer Settings ************/
 
 /* The debug value is generally for the developers of the application.  You will probably want this to remain 0

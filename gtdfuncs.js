@@ -1,18 +1,3 @@
-function focusOnForm() {
-    if (document.forms.length) {
-        var tst;
-        for (i = 0; i < document.forms[0].length; i++) {
-            tst=document.forms[0].elements[i].type;
-            if ( (tst == "button") || (tst == "checkbox") || (tst == "radio") || (tst == "select") || (tst == "select-one") || (tst == "text") || (tst == "textarea") ) {
-                if (!document.forms[0].elements[i].disabled) {
-                  document.forms[0].elements[i].focus();
-                  break;
-                }
-            }
-        }
-    }
-}
-
 function validate(form) {
 
     // Ensure validate is being used correctly
@@ -380,6 +365,27 @@ function addEvent(elm, evType, fn, useCapture) {
     // don't know how to attach event
     ;
   }
+}
+
+var focusOn;
+function focusOnForm(id) {
+    if (typeof(id)=='string') {
+        document.getElementById(id).focus();
+        focusOn=id;
+    }
+    if(typeof(focusOn)=='string') return;
+    if (document.forms.length) {
+        var tst;
+        for (i = 0; i < document.forms[0].length; i++) {
+            tst=document.forms[0].elements[i].type;
+            if ( (tst == "button") || (tst == "checkbox") || (tst == "radio") || (tst == "select") || (tst == "select-one") || (tst == "text") || (tst == "textarea") ) {
+                if (!document.forms[0].elements[i].disabled) {
+                  document.forms[0].elements[i].focus();
+                  break;
+                }
+            }
+        }
+    }
 }
 
 addEvent(window,'load', focusOnForm);

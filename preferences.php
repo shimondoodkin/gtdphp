@@ -17,13 +17,21 @@ $html="";
 
 // ran into a strange PHP bug when using "foreach ($themes as $theme)", so just using $t
 foreach ($themes as $t) {
-	$html.= '<option value="'.$t;
-	$html.='"';
-	if($t == $_SESSION['theme']) $html.=" selected='selected' ";
-	$html.='>'.$t;
-	$html.="</option>";
-	$html.="\n";
+	$html.= "<option value='$t' ";
+	if($t === $config['theme']) $html.=" selected='selected' ";
+	$html.=">$t</option>\n";
 }
+
+if ($config['useLiveEnhancements']) {
+    $useLiveEnhancements="<div class='formrow'>"
+        ."<label for='useLiveEnhancements'>Use Live Enhancements</label>"
+        ."<input type='checkbox'name='useLiveEnhancements' id='useLiveEnhancements' "
+        .(($_SESSION['useLiveEnhancements'])?" checked='checked' ":'')
+        ." />\n"
+        ."<input type='hidden' name='checkboxes[]' value='useLiveEnhancements' />\n"
+        ."</div>\n";
+} else $useLiveEnhancements='';
+
 ?>
 
 <h2>Preference</h2>
@@ -33,7 +41,10 @@ foreach ($themes as $t) {
         <select id='theme' name="theme">
             <?php echo $html; ?>
         </select>
-        <input type="submit" class="button" value="Apply" name="submit" />
+    </div><?php
+        echo $useLiveEnhancements;
+    ?><div class='formbuttons'>
+        <input type="submit" class="button" value="Apply" name="submit" id='submit' />
     </div>
 </form>
 <?php include_once('footer.php'); ?>

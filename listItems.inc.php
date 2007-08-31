@@ -1,7 +1,8 @@
 <?php
 //INCLUDES
-include_once('header.php');
+include_once('headerDB.inc.php');
 if ($config['debug'] & _GTD_DEBUG) {
+    $include_once('header.php');
     echo '<pre>POST: ',var_dump($_POST),'</pre>';
 }
 //page display options array--- can put defaults in preferences table/config/session and load into $show array as defaults...
@@ -37,16 +38,23 @@ if ($filter['type']==='s') {
     $filter['someday']=true;
     $filter['type']='p';
 }
+
+$quickfind=isset($_GET['quickfind']);
+if ($quickfind) {
+    $filter['everything']='true';
+    $filter['type']='*';
+}
+
 /* end of setting $filter
  --------------------------------------*/
+if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
+
 $values['type']           =$filter['type'];
 $values['parentId']       =$filter['parentId'];
 $values['contextId']      =$filter['contextId'];
 $values['categoryId']     =$filter['categoryId'];
 $values['timeframeId']    =$filter['timeframeId'];
 $values['needle']         =$filter['needle'];
-
-if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
 
 //SQL CODE
 
@@ -125,7 +133,7 @@ switch ($values['type']) {
     case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; $show['desiredOutcome']=TRUE; $show['context']=FALSE; $checkchildren=TRUE; break;
     case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; $show['context']=FALSE; $show['timeframe']=FALSE; $checkchildren=TRUE; break;
     case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $show['category']=FALSE; $checkchildren=FALSE; break;
-    case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
+    case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['NA']=TRUE; $checkchildren=FALSE; break;
     case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=TRUE; $checkchildren=FALSE; break;
     case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=FALSE; $show['dateCreated']=TRUE; $show['repeat']=FALSE; $show['assignType']=TRUE; $checkchildren=FALSE; break;
     default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE; 
@@ -185,7 +193,7 @@ if ($filter['everything']=="true") {
     $show['dateCompleted']=TRUE;
     $show['checkbox']=FALSE;
 }
-    
+if (!$checkchildren) $show['flags']=FALSE;
 //set query fragments based on filters
 $values['childfilterquery'] = "WHERE TRUE";
 $values['parentfilterquery'] = "";
@@ -324,7 +332,11 @@ $sectiontitle .= $typename;
     main query: build array of items
     ===================================================================
 */
-$result=query("getitemsandparent",$config,$values,$options,$sort);
+if ($quickfind)
+    $result=-1;
+else
+    $result=query("getitemsandparent",$config,$values,$options,$sort);
+    
 $maintable=array();
 $thisrow=0;
 $allids=array();
@@ -339,7 +351,7 @@ if ($result!="-1") {
         $nonext=false;
         if ($checkchildren) {
             $nochildren=!$row['numChildren'];
-            $nonext=!$row['numNA'];
+            $nonext=($row['type']=='p' && !$row['numNA']);
         }
         if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
         
@@ -384,11 +396,13 @@ if ($result!="-1") {
         $maintable[$thisrow]['desiredOutcome'] = $row['desiredOutcome'];
 
         $maintable[$thisrow]['category'] =makeclean($row['category']);
-        $maintable[$thisrow]['categoryid'] =$row['categoryId'];
+        $maintable[$thisrow]['categoryId'] =$row['categoryId'];
 
         $maintable[$thisrow]['context'] = makeclean($row['cname']);
+        $maintable[$thisrow]['contextId'] = $row['contextId'];
+        
         $maintable[$thisrow]['timeframe'] = makeclean($row['timeframe']);
-        $maintable[$thisrow]['timeframeid'] = $row['timeframeId'];
+        $maintable[$thisrow]['timeframeId'] = $row['timeframeId'];
 
 
         $childType=array();
@@ -452,7 +466,9 @@ if ($filter['tickler']=="true" && $filter['everything']!="true") {
     $link .= '&amp;suppress=true';
 }
 
-if($filter['everything']=="true")
+if ($quickfind)
+    $sectiontitle='&nbsp;';
+elseif($filter['everything']=="true") {
     switch ($numrows) {
         case 0:
             $sectiontitle = 'There are no '.$sectiontitle;
@@ -464,10 +480,10 @@ if($filter['everything']=="true")
             $sectiontitle = "All $numrows $sectiontitle";
             break;
     }
-else
+} else
     $sectiontitle = $numrows.' '.$sectiontitle;
 
-if($numrows)
+if($numrows || $quickfind)
     $endmsg='';
 else {
     $endmsg=array('header'=>"You have no {$typename}s remaining.");
@@ -478,5 +494,8 @@ else {
 }
 if (($filter['completed']!="true" || $filter['everything']=="true") && $filter['type']!=='*')
     $sectiontitle = "<a title='Add new' href='$link'>$sectiontitle</a>";
+
+$_SESSION['lastfilter'.$values['type']]=$referrer;
+$showsubmit=($show['NA'] || $show['checkbox']) && count($maintable);
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

@@ -6,7 +6,6 @@ else{
     $_SESSION['views'] = 1;
     $_SESSION['categoryId'] = 0;
     $_SESSION['contextId'] = 0;
-    $_SESSION['theme'] = 'default';
     $_SESSION['message'] = '';
     $_SESSION['version'] = '';
     foreach ($_COOKIE as $key=>$val) $_SESSION[$key]=$val; // retrieve cookie values

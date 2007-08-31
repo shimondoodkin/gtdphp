@@ -258,7 +258,6 @@ function nextScreen($url) {
 }
 
 function getChildType($parentType) {
-$childtype=array();
 switch ($parentType) {
     case "m" : $childtype=array("v","o","g"); break;
     case "v" : $childtype=array("o","g"); break;
@@ -266,13 +265,32 @@ switch ($parentType) {
     case "g" : $childtype=array("p","s"); break;
     case "p" : $childtype=array("a","w","r","p","s"); break;
     case "s" : $childtype=array("a","w","r","s"); break;
-    case "a" : $childtype=NULL; break;
-    case "w" : $childtype=NULL; break;
-    case "r" : $childtype=NULL; break;
-    case "i" : $childtype=NULL; break;
-    default  : $childtype=NULL;
+    default  : $childtype=NULL; break; // all other items have no children
     }
 return $childtype;
+}
+
+function getParentType($childType) {
+$parentType=array();
+switch ($childType) {
+    case "a" : // deliberately flows through to "r"
+    case "w" : // deliberately flows through to "r"
+    case "r" : $parentType=array('p','s');
+        break;
+    case "i" : $parentType=array();
+        break;
+    case "p" :  // deliberately flows through to "s"
+    case "s" : $parentType=array('g','p','s','o');
+        break;
+    case "g" : $parentType[]='o'; // deliberately flows through to "v"
+    case "o" : $parentType[]='v'; // deliberately flows through to "v"
+    case "v" : $parentType[]='m';
+        break;
+    default  :
+        $parentType=array('p','s');
+        break;
+    }
+return $parentType;
 }
 
 function getTypes($type=false) {

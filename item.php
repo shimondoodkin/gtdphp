@@ -15,6 +15,8 @@ if ($values['itemId']) { // editing an item
         //Test to see if nextaction
         $result = query("testnextaction",$config,$values,$options,$sort);
         $nextaction= ($result!="-1" && $result[0]['nextaction']==$values['itemId']);
+        $parents = query("lookupparent",$config,$values);
+        // if any are somedays, turn type 'p' into type 's'
     } else {
         echo "<p class='error'>Failed to retrieve item {$values['itemId']}</p>";
         return;
@@ -35,45 +37,46 @@ if ($values['itemId']) { // editing an item
 $show=getShow($where,$values['type']);
 if (!$values['itemId']) {
     if ($_GET['someday']=='true') $values['isSomeday']='y';
-
     if ($show['suppress'] && ($_REQUEST['suppress']=='true' || $_REQUEST['suppress']==='y')) {
         $values['suppress']='y';
         $values['suppressUntil']=$_REQUEST['suppressUntil'];
     }
     if ($show['NA']       && ($_REQUEST['nextonly']=='true' || $_REQUEST['nextonly']==='y')) $nextaction=true;
     if ($show['deadline'] && !empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
-    if ($show['ptitle']   && !empty($_REQUEST['parentId'])) $values['parentId'] = explode(',',$_REQUEST['parentId']);
-
+    $parents=array();
+    if ($show['ptitle']   && !empty($_REQUEST['parentId'])) {
+        $values['parentId']=explode(',',$_REQUEST['parentId']);
+        foreach ($values['parentId'] as $parent) {
+            $result=query("selectitemshort",$config,array('itemId'=>$parent),$options,$sort);
+            if ($result!=-1) {
+                $newparent=array(
+                     'parentId'=>$result[0]['itemId']
+                    ,'ptitle'=>$result[0]['title']
+                    ,'isSomeday'=>$result[0]['isSomeday']
+                    ,'ptype'=>$result[0]['type']);
+                $parents[]=$newparent;
+            }
+        }
+    }
     foreach ( array('category','context','timeframe') as $cat)
         if ($show[$cat]) $values[$cat.'Id']= (int) $_REQUEST[$cat.'Id'];
 }
 
-//determine item and parent labels
-switch ($values['type']) {
-    case "m" : $typename="Value"; $parentname=""; $values['ptype']=""; break;
-    case "v" : $typename="Vision"; $parentname="Value"; $values['ptype']="m"; break;
-    case "o" : $typename="Role"; $parentname="Vision"; $values['ptype']="v"; break;
-    case "g" : $typename="Goal"; $parentname="Role"; $values['ptype']="o"; break;
-    case "p" : $typename="Project"; $parentname="Goal"; $values['ptype']="g"; break;
-    case "a" : $typename="Action"; $parentname="Project"; $values['ptype']="p"; break;
-    case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; break;
-    case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; break;
-    case "i" : $typename="Inbox Item"; $parentname="Project"; $values['ptype']="p"; break; //default to project as parent
-    default  : $typename="Item"; $parentname="Project"; $values['ptype']="p"; //default to project as parent
-}
+if (is_array($parents) && count($parents))
+    foreach ($parents as $row)
+        $values['parentId'][]=$row['parentId'];
 
-if ($values['isSomeday']==="y") $typename="Someday/Maybe";
-if ($nextaction) $typename="Next Action";
-
-$parents = query("lookupparent",$config,$values);
-
-if ($parents!="-1") foreach ($parents as $row) $values['parentId'][]=$row['parentId'];
+if ($values['isSomeday']==="y")
+    $typename="Someday/Maybe";
+elseif ($nextaction)
+    $typename="Next Action";
+else
+    $typename=getTypes($values['type']);
 
 //create filters for selectboxes
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='i')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create item, timecontext, and spacecontext selectboxes
-$pshtml = parentselectbox($config,$values,$options,$sort);
 $cashtml = categoryselectbox($config,$values,$options,$sort);
 $cshtml = contextselectbox($config,$values,$options,$sort);
 $tshtml = timecontextselectbox($config,$values,$options,$sort);
@@ -94,9 +97,21 @@ if ($values['itemId']) {
 } else
     $hiddenvars['action']='create';
 
-?>
+$ptypes=getParentType($values['type']);
+if ($_SESSION['useLiveEnhancements']) {
+    $alltypes=getTypes();
+    $allowedSearchTypes=array();
+    if (count($ptypes)>1) $allowedSearchTypes[0]='All';
+    foreach($ptypes as $ptype)
+        $allowedSearchTypes[$ptype]=$alltypes[$ptype].'s';
+    $values['ptypefilterquery']=" AND ia.`type` IN ('".implode("','",$ptypes)."') ";
+    $potentialparents = query("parentselectbox",$config,$values,$options,$sort);
+    if ($potentialparents==-1) $potentialparents=array();
+} elseif (count($ptypes))
+    $values['ptypefilterquery']=" AND ia.`type`='{$ptypes[0]}' ";
+if (count($ptypes)) $values['ptype']=$ptypes[0];
 
-<h2><?php echo $title; ?></h2>
+?><h2><?php echo $title; ?></h2>
 
 <?php if (!empty($_REQUEST['createnote'])) { ?>
     <p class='warning'>Notes have been superseded by tickler actions. These actions get
@@ -119,16 +134,19 @@ if ($values['itemId']) {
 
         if ($show['ptitle']) { ?>
             <div class='formrow'>
-                <label for='parent' class='left first'><?php echo $parentname; ?>:</label>
-                <select name="parentId[]" id='parent' multiple="multiple" size="6">
-                <?php echo $pshtml; ?>
-                </select>
+                <label for='parenttable' class='left first'>Parent(s):</label>
+                <?php if ($_SESSION['useLiveEnhancements']) {
+                    include_once('liveParents.inc.php');
+                } else { ?>
+                    <select name="parentId[]" id='parenttable' multiple="multiple" size="6">
+                        <?php echo parentselectbox($config,$values,$options,$sort); ?>
+                    </select>
+                <?php } ?>
             </div>
         <?php } elseif (is_array($values['parentId']))
             foreach ($values['parentId'] as $parent)
-                echo hidePostVar('parentId[]',$parent); ?>
-
-        <div class='formrow'>
+                echo hidePostVar('parentId[]',$parent);
+        ?><div class='formrow'>
             <?php if ($show['category']) { ?>
                 <label for='category' class='left first'>Category:</label>
                 <select name='categoryId' id='category'>
@@ -279,6 +297,40 @@ if ($values['itemId']) {
         echo "		<span class='detail'>Last Modified: ".$values['lastModified']."</span>\n";
         echo "	</div>\n";
 }
+if ($_SESSION['useLiveEnhancements']) {
+    include_once ('searcher.inc.php');
+    $partt= $ptitle= $pid ='new Array(';
+    $sep   ='';
+    foreach ($potentialparents as $oneparent) {
+        $pid   .=$sep.$oneparent['itemId'];
+        $ptitle.=$sep.'"'.rawurlencode($oneparent['title']).'"';
+        $partt .=$sep.'"'
+                .(($oneparent['isSomeday']==='y')?'s':$oneparent['type'])
+                .'"';
+        $sep    =',';
+    }
+    $pid   .=')';
+    $ptitle.=')';
+    $partt .=')';
+    if (count($allowedSearchTypes)===1) $partt='""';
+    // TOFIX - this javascript is very probably inefficient, but I don't have the resources to optimise it
+    ?><script type='text/javascript'>
+        /* <![CDATA[ */
+        addEvent(window,'load',function() {
+            var types=new Object();
+            <?php
+                foreach ($alltypes as $key=>$val)
+                    echo "types['$key']='$val';\n";
+            ?>
+            mapTypeToName(types);
+            gtd_searchdiv_init(
+                <?php echo "$pid\n,\n$ptitle\n,\n$partt\n,\"{$values['ptype']}\" \n"; ?>
+            );
+            gtd_refinesearch('<?php echo $values['ptype']; ?>');
+        });
+        /* ]]> */
+    </script><?php
+    }
 include_once('footer.php');
 function hidePostVar($name,$val) {
     $val=makeclean($val);

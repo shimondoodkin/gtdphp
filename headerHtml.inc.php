@@ -21,8 +21,10 @@ echo $title;
 
 if ($config['debug'] || defined('_DEBUG'))
 	echo '<style type="text/css">pre,.debug {}</style>';
-
-$config['theme']=$_SESSION['theme'];
+if (!empty($_SESSION['theme']))
+    $config['theme']=$_SESSION['theme'];
+if (!isset($_SESSION['useLiveEnhancements']))
+    $_SESSION['useLiveEnhancements']=$config['useLiveEnhancements'];
 ?>
 
 <!-- theme main stylesheet -->
@@ -52,8 +54,14 @@ $config['theme']=$_SESSION['theme'];
 	  adding a calendar a matter of 1 or 2 lines of code. -->
 <script type="text/javascript" src="calendar-setup.js"></script>
 
-<!-- sort tables -->
+<!-- sort tables, and other utilities -->
 <script type="text/javascript" src="gtdfuncs.js"></script>
 
-<?php if ($config['debug'] || defined('_DEBUG'))
+<?php if ($_SESSION['useLiveEnhancements']) { ?>
+<!-- enhancements for live feedback -->
+<script type="text/javascript" src="enhancers.js"></script>
+
+<?php
+}
+if ($config['debug'] || defined('_DEBUG'))
 	echo '<script type="text/javascript">aps_debugInit("',$config['debugKey'],'");</script>'; ?>
