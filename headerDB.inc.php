@@ -1,9 +1,9 @@
 <?php
 require_once("ses.php");
 require_once("config.php");
-if ($config['debug'])
+/*if ($config['debug'])
 		error_reporting(E_USER_ERROR);
-else/*if (version_compare(PHP_VERSION, "5.0.0", ">="))
+elseif (version_compare(PHP_VERSION, "5.0.0", ">="))
 		error_reporting( (E_STRICT | E_ALL) ^ E_NOTICE);
 else*/
 		error_reporting(E_ALL ^ E_NOTICE);

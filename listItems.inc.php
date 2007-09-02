@@ -2,7 +2,7 @@
 //INCLUDES
 include_once('headerDB.inc.php');
 if ($config['debug'] & _GTD_DEBUG) {
-    $include_once('header.php');
+    include_once('header.php');
     echo '<pre>POST: ',var_dump($_POST),'</pre>';
 }
 //page display options array--- can put defaults in preferences table/config/session and load into $show array as defaults...
@@ -47,7 +47,7 @@ if ($quickfind) {
 
 /* end of setting $filter
  --------------------------------------*/
-if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter),'</pre>';
+if ($config['debug'] & _GTD_DEBUG) echo '<pre>Filter:',print_r($filter,true),'</pre>';
 
 $values['type']           =$filter['type'];
 $values['parentId']       =$filter['parentId'];

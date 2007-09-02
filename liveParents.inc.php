@@ -10,8 +10,8 @@
                 echo "<tr id='parentrow{$parent['parentId']}'>"
                     ,"<td><a href='javascript:removeParent(\"{$parent['parentId']}\")'
                             title='remove as parent' class='remove'>X</a></td>"
-                    ,"<td><a href='itemReport.php?itemId={$row['parentId']}'
-                            title='view parent'>{$parent['ptitle']}</a></td>"
+                    ,"<td><a href='itemReport.php?itemId={$row['parentId']}' title='view parent'>"
+                    ,makeclean($parent['ptitle']),"</a></td>"
                     ,"<td>",getTypes($ptype)
                     ,"<input type='hidden' name='parentId[]' value='{$parent['parentId']}' /></td>"
                     ,"</tr>\n";
