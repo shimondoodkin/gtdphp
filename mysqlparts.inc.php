@@ -9,7 +9,7 @@ $sqlparts = array(
 
     "checkchildren"             =>  " LEFT JOIN (
                                         SELECT parentId as itemId,COUNT(DISTINCT nextaction) AS numNA
-                                            FROM {$config['prefix']}nextactions GROUP BY nextaction
+                                            FROM {$config['prefix']}nextactions GROUP BY itemId
                                         ) AS na ON(na.itemId=x.itemId)
                                       
                                       LEFT JOIN (
