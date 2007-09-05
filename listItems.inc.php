@@ -487,7 +487,7 @@ if($numrows || $quickfind)
     $endmsg='';
 else {
     $endmsg=array('header'=>"You have no {$typename}s remaining.");
-    if ($filter['completed']!="true" && $values['type']!="t") {
+    if ($filter['completed']!="true" && $values['type']!="t" && $values['type']!="*") {
         $endmsg['prompt']="Create a new {$typename}";
         $endmsg['link']=$link;
     }

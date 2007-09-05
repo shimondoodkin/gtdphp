@@ -192,7 +192,7 @@ function updateItem() { // update all the values for the current item
     	query("deletelookupparents",$config,$values);
 
 	if ($values['dateCompleted']==='NULL')
-		query("touchitem",$config,$values);
+		query('completeitem',$config,$values);
 	else
 		completeItem();
 	$title=$values['title'];
@@ -227,7 +227,7 @@ function makeNextAction() { // mark the current item as a next action
 function removeNextAction() { // remove the next action reference for the current item
 	global $config,$values;
 	query("deletenextaction",$config,$values);
-	query("touchitem",$config,$values);
+	query("touchitem",$config,$values); // TOFIX - doing this too often - probably move all occurrences into function doAction
 }
 
 function changeType() {
