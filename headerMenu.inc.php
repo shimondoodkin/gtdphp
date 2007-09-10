@@ -132,6 +132,11 @@ function makemenu($list) {
 				$thismenu[] = array('link'=>'http://www.gtd-php.com/Developers/Contrib','title'=>'User-contributed enhancements','label'=>'Themes and add-ons');
 				$thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp", 'title'=>"Bug tracking and project development", 'label' => "Developers' wiki");
 				$thismenu[] = array("link"=>"http://www.frappr.com/gtdphp", 'title'=>"Tell us where you are", 'label' => "Frappr Map");
+				if ($config['debug']) {
+				    $thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp/log?action=stop_on_copy&rev="
+                        ._GTD_REVISION."&stop_rev=411&mode=follow_copy&verbose=on"
+                        ,'title'=>'Changelog (requires trac login)', 'label'=>'Changelog');
+                }
 				$thismenu[] = 'separator';
 				$thismenu[] = array("link"=>"donate.php", 'title'=>"Help us defray our costs", 'label' => "Donate");
 				$thismenu[] = array("link"=>"credits.php", 'title'=>"The GTD-PHP development team", 'label' => "Credits");

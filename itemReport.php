@@ -78,7 +78,7 @@ echo "<h1>".$typename[$item['type']]."&nbsp;Report:&nbsp;".makeclean($item['titl
 
 //Edit, next, and previous buttons
 echo "<div class='editbar'>\n";
-if ($item['type']==='i') echo "[<a href='assignType.php?itemId={$values['itemId']}'>Assign Type</a>] \n";
+if ($item['type']==='i') echo "[<a href='assignType.php?itemId={$values['itemId']}'>Set type</a>] \n";
 echo " [<a href='item.php?itemId={$values['itemId']}' title='Edit "
     ,makeclean($item['title']),"'>Edit</a>] \n";
 if(isset($previousId)) echo " [<a href='itemReport.php?itemId=$previousId' title='",makeclean($previoustitle),"'>Previous</a>] \n";

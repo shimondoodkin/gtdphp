@@ -110,15 +110,19 @@ if ($_SESSION['useLiveEnhancements']) {
 } elseif (count($ptypes))
     $values['ptypefilterquery']=" AND ia.`type`='{$ptypes[0]}' ";
 if (count($ptypes)) $values['ptype']=$ptypes[0];
-
-?><h2><?php echo $title; ?></h2>
-
-<?php if (!empty($_REQUEST['createnote'])) { ?>
+?><h2><?php
+    if ($values['itemId'])
+        echo "\n<a href='itemReport.php?itemId={$values['itemId']}'>"
+            ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' "
+            ,"alt='Report' title='View Report' /></a>\n";
+    echo $title;
+?></h2><?php
+    if (!empty($_REQUEST['createnote'])) { ?>
     <p class='warning'>Notes have been superseded by tickler actions. These actions get
     suppressed until a specified number of days before their deadlines</p>
 <?php } if ($show['type']) {
     ?><p>
-        <a href='assignType.php?itemId=<?php echo $values['itemId']; ?>'>Assign Type</a>
+        <a href='assignType.php?itemId=<?php echo $values['itemId']; ?>'>Change item type</a>
         (Warning, changing an item's type will sever all relationships to its parent and child items)
     </p>
 <?php } ?>
@@ -272,7 +276,11 @@ echo "<input type='radio' name='afterCreate' id='itemNext' value='item' class='n
 	,"<input type='radio' name='afterCreate' id='anotherNext' value='another' class='notfirst'"
 	 	,($tst=='another')?" checked='checked' ":""
 		," /><label for='anotherNext' class='right'>Create another $typename</label>\n";
-		
+if (!$values['itemId'] && $values['type']==='p')
+    echo "<input type='radio' name='afterCreate' id='childNext' value='child' class='notfirst'"
+	 	,($tst=='child')?" checked='checked' ":""
+		," /><label for='childNext' class='right'>Create a child action</label>\n";
+
 if ($referrer!='' || $_SESSION[$key]!='') {
     echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
 	 	,($tst=='referrer')?" checked='checked' ":''

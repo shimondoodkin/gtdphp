@@ -383,7 +383,14 @@ function nextPage() { // set up the forwarding to the next page
               ) as $key=>$cat )
                   if (!empty($values[$key]) && $values[$key]!='NULL') $nextURL.="&amp;$cat=".str_replace("'","",$values[$key]);
             break;
-		case "item"    :
+		case 'child'   :
+            $child=getChildType($values['type']);
+            $nextURL="item.php?parentId=$id&amp;type={$child[0]}";
+            if ($child[0]==='a') $nextURL.='&amp;nextonly=true';
+            foreach (array('categoryId','contextId','timeframeId') as $field)
+                if ($values[$field]) $nextURL.="&amp;$field=".$values[$field];
+            break;
+        case "item"    :
             $nextURL="itemReport.php?itemId=$id";
             break;
 		case "list"	   :

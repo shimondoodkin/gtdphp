@@ -50,7 +50,10 @@ include_once('header.php');
             <a href="item.php?type=w" title="Add waitingOn">things you are waiting for</a>,
             <a href="item.php?type=r" title="Add reference">references</a>,
             and <a href="item.php?type=p&amp;someday=true" title="Add Someday/Maybe">someday/maybes</a> that are not yet in the system.</td></tr>
-	<tr>
+    <tr><td>Empty your <a href='listItems.php?type=i'>gtd-php inbox</a></td>
+        <td>Use the 'Set Type' button to convert each one into a project, action, reference or waiting-on</td>
+    </tr>
+    <tr>
         <td>Review <a href="listItems.php?type=p">Projects list</a></td>
         <td><?php
             if ($numNoNext) {
