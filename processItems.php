@@ -2,7 +2,13 @@
 //INCLUDES
 include_once('headerDB.inc.php');
 
+$updateGlobals=array();
 $html=false; // indicates if we are outputting html
+
+$updateGlobals['captureOutput']=($_POST['output']==='xml');
+if ($updateGlobals['captureOutput']) {
+    ob_start();
+}
 
 // get core variables first
 $values=array();  // ensures that this is a global variable
@@ -11,7 +17,6 @@ $values['type'] = $_POST['type'];
 
 $action = $_POST['action'];
 
-$updateGlobals=array();
 $updateGlobals['multi']    = (isset($_POST['multi']) && $_POST['multi']==='y');
 $updateGlobals['referrer'] = $_POST['referrer'];
 $updateGlobals['parents'] = $_POST['parentId'];
@@ -248,13 +253,9 @@ function retrieveFormVars() {
 	global $config,$values;
 
 	// key variables
-	if (isset($_POST['type']))           $values['type']           = $_POST['type'];
 	if (isset($_POST['oldtype']) && $_POST['oldtype']!='') $values['oldtype']        = $_POST['oldtype'];
-	if (isset($_POST['title']))          $values['title']          = $_POST['title'];
-	if (isset($_POST['description']))    $values['description']    = $_POST['description'];
-	if (isset($_POST['desiredOutcome'])) $values['desiredOutcome'] = $_POST['desiredOutcome'];
-	if (isset($_POST['categoryId']))     $values['categoryId']     = $_POST['categoryId'];
-	if (isset($_POST['contextId']))      $values['contextId']      = $_POST['contextId'];
+	foreach (array('type','title','description','desiredOutcome','categoryId','contextId','timeframeId') as $field)
+        $values[$field] = (isset($_POST[$field])) ? $_POST[$field] : '';
 
 	// binary yes/no
 	$values['nextAction'] = ($_POST['nextAction']==="y")?'y':'n';
@@ -263,13 +264,12 @@ function retrieveFormVars() {
 	$values['delete']     = ($_POST['delete']==='y')?'y':NULL;
 
 	// integers
-	if (isset($_POST['suppressUntil'])) $values['suppressUntil']  = (int) $_POST['suppressUntil']; // ($values['suppress']==='n')?0:(int) $_POST['suppressUntil'];
-	if (isset($_POST['repeat']))        $values['repeat']         = (int) $_POST['repeat'];
-	if (isset($_POST['timeframeId']))   $values['timeframeId']    = $_POST['timeframeId'];
+	$values['suppressUntil']  = (int) $_POST['suppressUntil'];
+	$values['repeat']         = (int) $_POST['repeat'];
 
 	// dates
-	if (isset($_POST['dateCompleted'])) $values['dateCompleted'] = ($_POST['dateCompleted'] ==='')?"NULL":"'{$_POST['dateCompleted']}'";
-	if (isset($_POST['deadline']))      $values['deadline']      = ($_POST['deadline']      ==='')?"NULL":"'{$_POST['deadline']}'";
+	$values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
+	$values['deadline']      = (empty($_POST['deadline']))      ? "NULL" : "'{$_POST['deadline']}'";
 
 	// crude error checking
 	if (!isset($values['title'])) die ("No title. Item NOT added."); // TOFIX
@@ -415,7 +415,20 @@ function nextPage() { // set up the forwarding to the next page
     if ($nextURL=='') $nextURL="listItems.php?type=$t";
     $_SESSION[$key]=$tst;
     $nextURL=html_entity_decode($nextURL);
-	nextScreen($nextURL);
+	
+	if ($updateGlobals['captureOutput']) {
+        $logtext=ob_get_contents();
+        ob_end_clean();
+        echo '<?xml version="1.0" ?',"><gtdphp><result>\n";
+        $outtext=$_SESSION['message'];
+        $_SESSION['message']=array();
+        foreach ($outtext as $line)
+            echo "<line><![CDATA[$line]]></line>\n";
+        echo "</result><nextURL><![CDATA[$nextURL]]></nextURL>\n";
+        if (!empty($outtext)) echo "<log><![CDATA[$logtext]]></log>\n";
+        echo "</gtdphp>";
+        exit;
+    } else nextScreen($nextURL);
 }
 
 function literaldump($varname) { // dump a variable name, and its contents
