@@ -252,6 +252,8 @@ function changeType() {
 function retrieveFormVars() {
 	global $config,$values;
 
+    // TOFIX - what we should really do here is retrieve the item, and then over-write with $_POST variables if and only if they are available
+    // although we'd need to check that unticked checkboxes came through ok - that could be tricky
 	// key variables
 	if (isset($_POST['oldtype']) && $_POST['oldtype']!='') $values['oldtype']        = $_POST['oldtype'];
 	foreach (array('type','title','description','desiredOutcome','categoryId','contextId','timeframeId') as $field)

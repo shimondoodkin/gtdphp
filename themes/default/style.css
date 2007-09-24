@@ -237,7 +237,7 @@ a img {
 img {
         border: 0;
         margin-right: 2px;
-};
+}
 
 select, input, textarea,button {
 	color: #665;
@@ -262,7 +262,6 @@ table {
 
 thead td, th {
 	border: 1px solid #777;
-	border-bottom: 1px solid #777;
 	background: #bba;
 	color: #eed;
 	font-weight: bold;
@@ -342,7 +341,7 @@ input.warning,th.warning {
 }
 
 input.warning {
-    font-size:-1;
+    font-size:0.9em;
 }
 #container {
 	background: none;
@@ -417,23 +416,11 @@ span.detail {
 
 .error {
 	color:red;
-	font-size:+1;
+	font-size:1.1em;
 }
 /*------------------------------
   live javascript effects CSS
   ----------------------------*/
-div#freezer {
-	top:0;
-	left:0;
-    right:0;
-    bottom:0;
-	position:fixed;
-	z-Index:900;
-	-Moz-Opacity:0.20;
-	opacity:0.20;
-	filter:alpha(opacity=20);
-	background-color:#000;
-}
 #searcher {
 	top:6em;
 	left:30em;
@@ -477,4 +464,16 @@ div#freezer {
 }
 .togglehidden {
     display:none;
+}
+div#freezer {
+	top:0;
+	left:0;
+    right:0;
+    bottom:0;
+	position:fixed;
+	z-Index:900;
+	background-color:#000;
+	opacity:0.20;
+	filter:alpha(opacity=20);
+	-Moz-Opacity:0.20;
 }

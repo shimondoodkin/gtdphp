@@ -10,10 +10,10 @@ $values['checklistId'] = (int) $_POST['checklistId'];
 $values['newchecked'] = $_POST['completed']{0};
 if($values['newchecked']!="y") $values['newchecked']='n';
 $values['checklistItemId'] = (int) $_GET['checklistItemId'];
-$values['delete']=$_POST['delete']{0};
+$values['delete']=!empty($_POST['delete']);
 
 //SQL CODE AREA
-if($values['delete']=="y")
+if($values['delete'])
     query("deletechecklistitem",$config,$values);
 else
     query("updatechecklistitem",$config,$values);

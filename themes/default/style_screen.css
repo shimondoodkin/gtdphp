@@ -22,7 +22,6 @@
 	padding: 0;
 	margin: 0;
 	list-style: none;
-	list-style-type: none;
 }
 #menudiv li { /* all menu list items */
 	float: left;
