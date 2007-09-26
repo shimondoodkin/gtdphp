@@ -12,13 +12,13 @@ if ($updateGlobals['captureOutput']) {
 
 // get core variables first
 $values=array();  // ensures that this is a global variable
-$values['itemId'] = (int) $_POST['itemId'];
-$values['type'] = $_POST['type'];
+$values['itemId'] = (int) $_REQUEST['itemId'];
+$values['type'] = $_REQUEST['type'];
 
-$action = $_POST['action'];
+$action = $_REQUEST['action'];
+$updateGlobals['referrer'] = $_REQUEST['referrer'];
 
 $updateGlobals['multi']    = (isset($_POST['multi']) && $_POST['multi']==='y');
-$updateGlobals['referrer'] = $_POST['referrer'];
 $updateGlobals['parents'] = $_POST['parentId'];
 if (!is_array($updateGlobals['parents'])) $updateGlobals['parents']=array($updateGlobals['parents']);
 
@@ -237,13 +237,14 @@ function removeNextAction() { // remove the next action reference for the curren
 
 function changeType() {
 	global $config,$values;
-    $values['type'] = $_POST['type'];
-    $values['isSomeday']='n';
     query("updateitemtype",$config,$values);
-	query("deletelookup",$config,$values);
-	query("deletelookupparents",$config,$values);
-	removeNextAction();
-	query("deletenextactionparents",$config,$values);
+    if ($_REQUEST['safe']!=='y') {
+        $values['isSomeday']='n';
+    	query("deletelookup",$config,$values);
+    	query("deletelookupparents",$config,$values);
+    	removeNextAction();
+    	query("deletenextactionparents",$config,$values);
+    }
 }
 /* ===========================================================================================
 	utility functions for the primary actions

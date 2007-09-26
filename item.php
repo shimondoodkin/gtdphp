@@ -68,11 +68,9 @@ if (is_array($parents) && count($parents))
 
 if ($values['isSomeday']==="y")
     $typename="Someday/Maybe";
-elseif ($nextaction)
-    $typename="Next Action";
 else
     $typename=getTypes($values['type']);
-
+if ($nextaction) $typename="Next ".$typename;
 //create filters for selectboxes
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='i')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
@@ -117,16 +115,29 @@ if (count($ptypes)) $values['ptype']=$ptypes[0];
             ,"alt='Report' title='View Report' /></a>\n";
     echo $title;
 ?></h2><?php
-    if (!empty($_REQUEST['createnote'])) { ?>
+if (!empty($_REQUEST['createnote'])) { ?>
     <p class='warning'>Notes have been superseded by tickler actions. These actions get
     suppressed until a specified number of days before their deadlines</p>
-<?php } if ($show['type']) {
-    ?><p>
-        <a href='assignType.php?itemId=<?php echo $values['itemId']; ?>'>Change item type</a>
-        (Warning, changing an item's type will sever all relationships to its parent and child items)
-    </p>
-<?php } ?>
-
+<?php }
+$canchangetypesafely=array('a','r','w');
+$sep='<p>';
+if (in_array($values['type'],$canchangetypesafely))
+    foreach ($canchangetypesafely as $totype)
+        if ($totype!==$values['type']) {
+            echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
+                ,$values['itemId'],"&amp;referrer=item.php?itemId=",$values['itemId']
+                ,"&amp;safe=y&amp;type=$totype'>Convert to ",getTypes($totype),"</a>\n";
+            $sep=' , ';
+        }
+if ($show['type']) {
+    echo $sep; ?>
+    <a href='assignType.php?itemId=<?php echo $values['itemId']; ?>'>Convert to another type</a>
+    (Warning, changing to another type will sever all relationships to its parent and child items)
+    <?php
+    $sep=' , ';
+}
+if ($sep!=='<p>') echo "</p>\n";
+?>
 <form action="processItems.php" method="post" onsubmit="return validate(this);"><div class='form'>
     <div class='formrow'><span class="error" id='errorMessage'></span></div>
         <?php if($show['title']) { ?>
