@@ -256,9 +256,14 @@ function retrieveFormVars() {
     // TOFIX - what we should really do here is retrieve the item, and then over-write with $_POST variables if and only if they are available
     // although we'd need to check that unticked checkboxes came through ok - that could be tricky
 	// key variables
-	if (isset($_POST['oldtype']) && $_POST['oldtype']!='') $values['oldtype']        = $_POST['oldtype'];
-	foreach (array('type','title','description','desiredOutcome','categoryId','contextId','timeframeId') as $field)
-        $values[$field] = (isset($_POST[$field])) ? $_POST[$field] : '';
+	if (!empty($_POST['oldtype'])) $values['oldtype'] = $_POST['oldtype'];
+
+	foreach (
+        array('type'=>'i','title'=>'untitled','description'=>''
+            ,'desiredOutcome'=>'','categoryId'=>0,'contextId'=>0
+            ,'timeframeId'=>0)
+        as $field=>$default)
+            $values[$field] = (empty($_POST[$field])) ? $default : $_POST[$field];
 
 	// binary yes/no
 	$values['nextAction'] = ($_POST['nextAction']==="y")?'y':'n';
@@ -273,9 +278,6 @@ function retrieveFormVars() {
 	// dates
 	$values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
 	$values['deadline']      = (empty($_POST['deadline']))      ? "NULL" : "'{$_POST['deadline']}'";
-
-	// crude error checking
-	if (!isset($values['title'])) die ("No title. Item NOT added."); // TOFIX
 
 	if ($config['debug'] & _GTD_DEBUG) {
 		echo '<hr /><pre><b>retrieved form vars</b><br />';
