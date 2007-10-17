@@ -321,7 +321,7 @@ if ($_SESSION['useLiveEnhancements']) {
     $partt= $ptitle= $pid ='new Array(';
     $sep   ='';
     foreach ($potentialparents as $oneparent) {
-        $pid   .=$sep.$oneparent['itemId'];
+        $pid   .=$sep.'"'.$oneparent['itemId'].'"';
         $ptitle.=$sep.'"'.rawurlencode($oneparent['title']).'"';
         $partt .=$sep.'"'
                 .(($oneparent['isSomeday']==='y')?'s':$oneparent['type'])
