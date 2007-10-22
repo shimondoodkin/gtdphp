@@ -1,8 +1,8 @@
 <table summary='parents selected' class='datatable' id='parenttable' style='display:inline'>
     <tbody id='parentlist'>
         <tr>
-            <td><a class='add' href='javascript:gtd_search();' title='Click here to add a parent'>+</a></td>
-            <td><a href='javascript:gtd_search();' title='Click here to add a parent'>Add a parent</a></td>
+            <td><a class='add' href='javascript:gtd_search();' title='Click here to select parent(s)'>+</a></td>
+            <td><a href='javascript:gtd_search();' title='Click here to select parent(s)'>Select parent(s)</a></td>
             <td>&nbsp;</td>
         </tr><?php
             if (is_array($parents) && count($parents)) foreach ($parents as $parent) {

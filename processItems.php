@@ -400,6 +400,13 @@ function nextPage() { // set up the forwarding to the next page
             break;
 		case "list"	   :
             $nextURL="listItems.php?type=$t";
+            if ($values['isSomeday']==='y') {
+                $nextURL.='&someday=true';
+            } else if ($values['suppress']==='y' and
+                time() < getTickleDate(str_replace("'",'',$values['deadline']),$values['suppressUntil'])
+                ) {
+                $nextURL.='&tickler=true';
+            }
             break;
 		case "parent"  :
             $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php');

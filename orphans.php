@@ -4,7 +4,7 @@ include_once('header.php');
 
 //RETRIEVE URL VARIABLES
 $values=array();
-$values['notOrphansfilterquery']=$config['suppressAsOrphans'];
+$values['notOrphansfilterquery']=(empty($config['suppressAsOrphans']))?"'i','m'":$config['suppressAsOrphans'];
 $maintable = query("getorphaneditems",$config,$values,$options,$sort);
 
 $cnt=($maintable==-1)?0:count($maintable);

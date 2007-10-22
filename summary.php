@@ -12,7 +12,7 @@ $reminderresult = query("getnotes",$config,$values,$options,$sort);
 
 //get # space contexts
 $res = query("countspacecontexts",$config,$values,$options,$sort);
-$numbercontexts=(int) $res[0]['COUNT(*)'];
+$numbercontexts=(is_array($res[0]))?(int) $res[0]['COUNT(*)']:0;
 
 //count active items
 $values['type'] = "a";
@@ -24,11 +24,11 @@ $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
 
 //get # nextactions
 $res = query("countnextactions",$config,$values,$options,$sort);
-$numbernextactions=(int) $res[0]['nnextactions'];
+$numbernextactions=(is_array($res[0]))?(int) $res[0]['nnextactions']:0;
 
 // get # actions
 $res =query("countitems",$config,$values,$options,$sort);
-$numberitems =(int) $res[0]['COUNT(*)'];
+$numberitems =(is_array($res[0]))?(int) $res[0]['COUNT(*)']:0;
 
 // get and count active projects
 $values['type']= "p";
