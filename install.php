@@ -423,12 +423,12 @@ function doInstall($installType,$fromPrefix) {
 There are some preliminary steps you should take to set up your\n
 installation for use and familiarize yourself with the system.</p>\n
 <ol>\n
-  <li>You need to set up <a href='editCat.php?field=context&amp;id=0'>spatial</a> and\n
+  <li>You need to set up <a href='editCat.php?field=category&amp;id=0'>categories</a>,
+  and <a href='editCat.php?field=context&amp;id=0'>spatial</a> and\n
   <a href='editCat.php?field=time-context&amp;id=0'>time contexts</a> that suit your situation.</li>\n
-   <li>You need to enter ....</li>\n
-   <li></li>\n
-   <li></li>\n
-</ol>\n";  // TOFIX - add documentation for after a successful installation.
+   <li>Then go to the <a href='weekly.php'>weekly review</a>, and follow it,
+   transferring the contents of your inboxes into gtd-php</li>\n
+</ol>\n";
        // end new install
 	   break;
 	 case '1': // new install with sample data
@@ -437,12 +437,9 @@ installation for use and familiarize yourself with the system.</p>\n
 		create_data();
     	$install_success = true;
        // give some direction about what happens next for the user.
-       $endMsg="<h2>Welcome to GTD-PHP</h2>\n
-<p>You have just successfully installed GTD-PHP. Sample data has been created as part of the installation.</p>\n
-<ol>\n
-  <li>Check that the <a href='editCat.php?field=context'>spatial</a> and\n
-  <a href='editCat.php?field=time-context'>time contexts</a> suit your situation.</li>\n
-</ol>\n";
+       $endMsg="<h2>Welcome to GTD-PHP</h2>\n"
+               ."<p>You have just successfully installed GTD-PHP. "
+               ."Sample data has been created as part of the installation.</p>\n";
 		break;
 	 case 'copy': // already at latest release ============================================================
     	if ($fromPrefix!==$config['prefix']){
@@ -985,8 +982,19 @@ $maxnum = "+(
    ======================================================================================
 */
 function create_data() {
-	global $config;
+    global $config;
 	// a load of inserts here to create the sample data
+	$sample=fopen('gtdsample.inc.sql','r');
+    if ($sample) {
+        while (!feof($sample)) {
+            $insert = fgets($sample, 8192);
+            if (!empty($insert) && $insert[0]!=='-') {
+                $insert=str_replace('gtdsample_',$config['prefix'],$insert);
+                send_query($insert);
+            }
+        }
+        fclose($sample);
+    }
 }
 /*
    ======================================================================================

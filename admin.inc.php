@@ -100,7 +100,8 @@ function backupData($prefix) {
             $data .= "INSERT INTO `$table` VALUES ($thisdata);\n";
         }
     }
-    $data=htmlspecialchars($creators.$sep.$header.$sep.$data,ENT_NOQUOTES);
+    //$data=htmlspecialchars($creators.$sep.$header.$sep.$data,ENT_NOQUOTES);
+    $data=htmlspecialchars($header.$sep.$data,ENT_NOQUOTES);
     return $data;
 }
 /*
