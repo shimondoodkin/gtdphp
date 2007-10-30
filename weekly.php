@@ -105,18 +105,8 @@ include_once('header.php');
 ?>
 </tbody>
 </table>
-<?php if ($config['show7']==TRUE) { ?>
-<h3>Seven Habits of Highly Effective People</h3>
-<ol>
-    <li>Be Proactive
-    <li>Begin with the End in Mind
-    <li>Put First Things First
-    <li>Think Win/Win
-    <li>Seek First to Understand, Then to Be Understood
-    <li>Synergize
-    <li>Sharpen the Saw
-    </ol>
-<?php
-    }
+
+<?php if ($config['show7']==TRUE) include_once('sevenhabits.php'); 
+
 	include_once('footer.php');
 ?>

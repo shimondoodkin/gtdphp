@@ -122,7 +122,7 @@ $config['suppressAsOrphans']="'i','m','v','o','g','p'";
 
 /*********  Customize Weekly Review  ************/
 $config['reviewProjectsWithoutOutcomes']=true; // false | true - list projects which have no outcome
-$config['show7']=false; // false | true - show the Seven Habits of Highly Effective People in Weekly Review
+$config['show7']=false; // false | true - show the Seven Habits of Highly Effective People and Sharpening the Saw in Weekly Review
 
 // Entirely optional: add custom items to the weekly review.  
 // Uncomment to use, add more fields to the array for more lines.

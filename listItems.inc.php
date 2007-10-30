@@ -448,8 +448,8 @@ if ($result!="-1") {
         ,'dateCreated'=>'Date Created'
         ,'lastModified'=>'Last Modified'
         ,'dateCompleted'=>'Date Completed'
-        ,'checkbox'=>'Complete'
         ,'assignType'=>'Assign'
+        ,'checkbox'=>'Complete'
         );
     if ($config['debug'] & _GTD_DEBUG) echo '<pre>values to print:',print_r($maintable,true),'</pre>';
 } // end of: if($result!="-1")
