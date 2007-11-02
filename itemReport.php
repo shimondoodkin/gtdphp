@@ -203,6 +203,7 @@ if (!empty($childtype)) {
             case 'r': // deliberately flows through to 'w'
             case 'w':
                 $dispArray['context']='context';
+                $dispArray['timeframe']='time';
                 break;
             case 'm': // deliberately flows through to 'p;
             case 'v': // deliberately flows through to 'p;
@@ -251,6 +252,10 @@ if (!empty($childtype)) {
 			$maintable[$i]['contextId']=$row['contextId'];
 			$maintable[$i]['context']=makeclean($row['cname']);
 			$maintable[$i]['context.title']='Go to '.$maintable[$i]['context'].' context report';
+
+			$maintable[$i]['timeframeId']=$row['timeframeId'];
+			$maintable[$i]['timeframe']=makeclean($row['timeframe']);
+			$maintable[$i]['timeframe.title']='Go to '.$maintable[$i]['timeframe'].' time-context report';
 
 			if ($comp==='n') {
                 //Calculate reminder date as # suppress days prior to deadline
