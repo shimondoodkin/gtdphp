@@ -30,19 +30,18 @@ include_once('header.php');
 //PAGE DISPLAY CODE
 ?>
 <h2>The Weekly Review</h2>
-<table class='weeklytable' summary='table of weekly actions'>
+<table class='weeklytable' summary='Table of weekly actions'>
 	<thead><tr><td>Step</td><td>Description</td></tr></thead>
 	<tbody>
-	<tr><td>Gather all loose papers</td><td></td></tr>
+	<tr><td>Gather all loose papers</td><td>Empty your paper inbox into your processing pile.</td></tr>
 	<tr><td>Process all notes</td><td></td></tr>
-	<tr><td>Check all voice mail</td><td></td></tr>
+	<tr><td>Check all voice mail</td><td>Note relevant information in GTD and delete.</td></tr>
 	<tr><td>Review Email Inbox </td><td>Move each item to an action, waiting, or reference folder.</td></tr>
-	<tr><td>Review Email action box </td><td>Put next action reminder into system for each one, delete completed emails or move to waiting on or reference boxes as approriate.</td></tr>
-	<tr><td>Review Email waiting on box </td><td>Put waiting on reminder into system for each one, delete completed emails or move to reference box as approriate.</td></tr>
-	<tr><td>Review previous calendar</td><td>Transfer any missed actions to system</td></tr>
-	<tr><td>Purge agendas</td><td></td></tr>
-	<tr><td>Review upcoming calendar</td>
-        <td>Capture actions about arrangements and preparations for any upcoming events</td></tr>
+	<tr><td>Review Email action box </td><td>Put next action reminder into system for each one, delete completed emails, or move to waiting on or reference boxes as appropriate.</td></tr>
+	<tr><td>Review Email waiting on box </td><td>Put waiting on reminder into system for each one, delete completed emails or move to reference box as appropriate.</td></tr>
+	<tr><td>Review previous calendar</td><td>Transfer any missed actions into system</td></tr>
+	<tr><td>Purge agendas</td><td>Review this week's meeting agendas and notes.  Capture any projects, actions, waiting ons, or references.  Ensure deadlines and deliverables are defined.</td></tr>
+	<tr><td>Review upcoming calendar</td><td>Capture actions about arrangements and preparations for any upcoming events</td></tr>
 	<tr><td>Empty your head</td>
         <td>Put in writing any new
             <a href="item.php?type=p" title="Add project">projects</a>,
@@ -74,7 +73,7 @@ include_once('header.php');
         <td>Review Projects with no outcomes</td>
         <td>All of your projects should have a clear statement of the desired outcome.
             The following <?php echo count($noOutcomes); ?> projects currently have no desired outcome specified:
-            For each one, ask yourself: "what would wild success look like?".  What would
+            For each one, ask yourself: "What would wild success look like?".  What would
             the situation look like, in order for you to be able to mark this project as
             complete?  
         <table summary='projects with no outcome defined'>
