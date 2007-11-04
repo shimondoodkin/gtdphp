@@ -19,7 +19,6 @@ function makemenu($list) {
 		echo "<li $class>\n"
             ,"<a href='{$info['link']}' title='{$info['title']}' $accesskey>\n"
             ,"{$info['label']}$key</a></li>\r\n";
-		echo $output;
 		$class='';
 	}
 }
@@ -133,8 +132,8 @@ function makemenu($list) {
 				$thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp", 'title'=>"Bug tracking and project development", 'label' => "Developers' wiki");
 				$thismenu[] = array("link"=>"http://www.frappr.com/gtdphp", 'title'=>"Tell us where you are", 'label' => "Frappr Map");
 				if ($config['debug']) {
-				    $thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp/log?action=stop_on_copy&rev="
-                        ._GTD_REVISION."&stop_rev=411&mode=follow_copy&verbose=on"
+				    $thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp/log?action=stop_on_copy&amp;rev="
+                        ._GTD_REVISION."&amp;stop_rev=411&amp;mode=follow_copy&amp;verbose=on"
                         ,'title'=>'Changelog (requires trac login)', 'label'=>'Changelog');
                 }
 				$thismenu[] = 'separator';

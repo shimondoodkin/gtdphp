@@ -247,7 +247,7 @@ function nextScreen($url) {
             ,"</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
     }else{
         $header="Location: http"
-                .(($_SERVER['HTTPS']!='')?'s':'')
+                .((empty($_SERVER['HTTPS']))?'':'s')
                 ."://"
                 .$_SERVER['HTTP_HOST']
                 .rtrim(dirname($_SERVER['PHP_SELF']), '/\\')

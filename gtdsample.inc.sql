@@ -69,8 +69,6 @@ INSERT INTO `gtdsample_nextactions` VALUES ('1','9');
 INSERT INTO `gtdsample_timeitems` VALUES ('1','Short','< 10 Minutes','a');
 INSERT INTO `gtdsample_timeitems` VALUES ('2','Medium','10-30 Minutes','a');
 INSERT INTO `gtdsample_timeitems` VALUES ('3','Long','> 30 Minutes','a');
-INSERT INTO `gtdsample_timeitems` VALUES ('4','Weekly',NULL,'g');
-INSERT INTO `gtdsample_timeitems` VALUES ('5','Quarterly',NULL,'g');
 -- *******************************
 INSERT INTO `gtdsample_version` VALUES ('0.8rc-4','2007-10-17 17:45:27');
 -- *******************************

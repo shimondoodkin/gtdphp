@@ -61,7 +61,7 @@ require_once('editCat.inc.php');
             <td><?php echo $row['description']; ?></td>
             <?php if ($showTypes) { ?><td><?php echo getTypes($row['type']); ?></td><?php } ?>
             <?php if ($canDelete) { ?>
-                <td><?php if ($row['type']===$thiscat['type']) { ?>
+                <td><?php if (!$showTypes || $row['type']===$thiscat['type']) { ?>
                     <input type='radio' name='replacewith' value='<?php echo $row['id']; ?>'  />
                     <?php } else echo '&nbsp;' ?>
                 </td>
