@@ -4,7 +4,7 @@ include_once('header.php');
 $values = array();
 $values['listId'] = (int) $_GET['listId'];
 
-$result = query("selectlist",$config,$values,$options,$sort);
+$result = query("selectlist",$config,$values,$sort);
 
 if ($result!="-1") {
     $row=$result[0];
@@ -18,7 +18,7 @@ if ($result!="-1") {
     echo '<h2><a href = "newListItem.php?listId='.$row['listId'].'" style="text-decoration:none">List Items</a></h2>'."\n";
 
     $values['filterquery']= " AND ".sqlparts("activelistitems",$config,$values);
-    $result=query("getlistitems",$config,$values,$options,$sort);
+    $result=query("getlistitems",$config,$values,$sort);
     if ($result!="-1") {
         $counter=0;
 
@@ -46,7 +46,7 @@ if ($result!="-1") {
     else echo "<p>None</p>";
 
     $values['filterquery']= " AND ".sqlparts("completedlistitems",$config,$sort);
-    $result = query("getlistitems",$config,$values,$options,$sort);
+    $result = query("getlistitems",$config,$values,$sort);
 
     echo "<h2>Completed List Items</h2>\n";
     if ($result!="-1"){

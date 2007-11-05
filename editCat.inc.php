@@ -5,10 +5,13 @@ $field=$_GET['field'];
 
 if (isset($_GET['id'])) {
     $id=(int) $_GET['id'];
+    $thiscat['id']=$id;
     if ($id===0) {
-        $thiscat['id']=0;
         $title="Create $field";
         $canDelete=false;
+        $thiscat['name']='';
+        $thiscat['description']='';
+        $thiscat['type']='a';
     } else {
         $title="Edit $field";
         $canDelete=true;
@@ -33,22 +36,17 @@ switch ($field) {
     case 'time-context':
         $query='timecontextselectbox' ;
         $values['timefilterquery'] = '';
-        if ($config['useTypesForTimeContexts']) {
-            $showTypes=true;
-            $keys[]='type';
-        } else {
-            $showTypes=false;
-        }
+        $keys[]='type';
+        $showTypes=$config['useTypesForTimeContexts'];
         break;
     default:
         $query='';
         $showTypes=false;
         break;
 }
-$result = query($query,$config,$values,$options,$sort);
+$result = query($query,$config,$values,$sort);
 $catlist=array();
 $count=0;
-$thiscat=array();
 
 if (is_array($result)) {
  	$firstcat=0;

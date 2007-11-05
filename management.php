@@ -74,14 +74,14 @@ else $values['categoryId']=$_SESSION['categoryId'];
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create filter selectboxes
-$cashtml=categoryselectbox($config,$values,$options,$sort);
-$cshtml=contextselectbox($config,$values,$options,$sort);
-$tshtml=timecontextselectbox($config,$values,$options,$sort);
+$cashtml=categoryselectbox($config,$values,$sort);
+$cshtml=contextselectbox($config,$values,$sort);
+$tshtml=timecontextselectbox($config,$values,$sort);
 
 //Select notes
 if ($filter['tickler']=="true") {
     $values['filterquery'] = "";
-    $reminderresult = query("getnotes",$config,$values,$options,$sort);
+    $reminderresult = query("getnotes",$config,$values,$sort);
     }
 
 //Select items
@@ -205,7 +205,7 @@ $values['filterquery'] .= $categoryfilter.$contextfilter.$timefilter.$completedf
 $childfilter = $completedfilter.$somedayfilter.$ticklerfilter.$repeatfilter.$duefilter;
 
 //Get items for display
-$result = query("getitems",$config,$values,$options,$sort);
+$result = query("getitems",$config,$values,$sort);
 
 //PAGE DISPLAY CODE
 ?>
@@ -301,35 +301,35 @@ if ($filter['tickler']=="true") {
                 $html .= '<h3><a href = "itemReport.php?itemId='.$item['itemId'].'"><img src="themes/'.$config['theme'].'/report.gif" alt="Go to '.htmlspecialchars(stripslashes($item['title'])).' report" /></a><a href = "item.php?itemId='.$item['itemId'].'"><img src="themes/'.$config['theme'].'/edit.gif" alt="Edit '.htmlspecialchars(stripslashes($item['title'])).'" /></a>'.$item['title']."</h3>\n";
                 $values['filterquery'] = $childfilter;
                 $values['parentId']=$item['itemId'];
-                $level2 = query("getchildren",$config,$values,$options,$sort);
+                $level2 = query("getchildren",$config,$values,$sort);
                 if ($level2!="-1") {
                     $html .= '<ul>'."\n";
                     foreach ($level2 as $child2) {
                         $html .= '<li><a href = "itemReport.php?itemId='.$child2['itemId'].'"><img src="themes/'.$config['theme'].'/report.gif" alt="Go to '.htmlspecialchars(stripslashes($child2['title'])).' report" /></a><a href = "item.php?itemId='.$child2['itemId'].'"><img src="themes/'.$config['theme'].'/edit.gif" alt="Edit '.htmlspecialchars(stripslashes($child2['title'])).'" /></a>'.$child2['title']."\n";
                         $values['filterquery'] = $childfilter;
                         $values['parentId']=$child2['itemId'];
-                        $level3 = query("getchildren",$config,$values,$options,$sort);
+                        $level3 = query("getchildren",$config,$values,$sort);
                         if ($level3!="-1") {
                             $html .= '<ul>'."\n";
                             foreach ($level3 as $child3) {
                                 $html .= '<li><a href = "itemReport.php?itemId='.$child3['itemId'].'"><img src="themes/'.$config['theme'].'/report.gif" alt="Go to '.htmlspecialchars(stripslashes($child3['title'])).' report" /></a><a href = "item.php?itemId='.$child3['itemId'].'"><img src="themes/'.$config['theme'].'/edit.gif" alt="Edit '.htmlspecialchars(stripslashes($child3['title'])).'" /></a>'.$child3['title']."\n";
                                 $values['filterquery'] = $childfilter;
                                 $values['parentId']=$child3['itemId'];
-                                $level4 = query("getchildren",$config,$values,$options,$sort);
+                                $level4 = query("getchildren",$config,$values,$sort);
                                 if ($level4!="-1") {
                                     $html .= '<ul>'."\n";
                                     foreach ($level4 as $child4) {
                                         $html .= '<li><a href = "itemReport.php?itemId='.$child4['itemId'].'"><img src="themes/'.$config['theme'].'/report.gif" alt="Go to '.htmlspecialchars(stripslashes($child4['title'])).' report" /></a><a href = "item.php?itemId='.$child4['itemId'].'"><img src="themes/'.$config['theme'].'/edit.gif" alt="Edit '.htmlspecialchars(stripslashes($child4['title'])).'" /></a>'.$child4['title']."\n";
                                         $values['filterquery'] = $childfilter;
                                         $values['parentId']=$child4['itemId'];
-                                        $level5 = query("getchildren",$config,$values,$options,$sort);
+                                        $level5 = query("getchildren",$config,$values,$sort);
                                         if ($level5!="-1") {
                                             $html .= '<ul>'."\n";
                                             foreach ($level5 as $child5) {
                                                 $html .= '<li><a href = "itemReport.php?itemId='.$child5['itemId'].'"><img src="themes/'.$config['theme'].'/report.gif" alt="Go to '.htmlspecialchars(stripslashes($child5['title'])).' report" /></a><a href = "item.php?itemId='.$child5['itemId'].'"><img src="themes/'.$config['theme'].'/edit.gif" alt="Edit '.htmlspecialchars(stripslashes($child5['title'])).'" /></a>'.$child5['title']."\n";
                                                 $values['filterquery'] = $childfilter;
                                                 $values['parentId']=$child5['itemId'];
-                                                $level6 = query("getchildren",$config,$values,$options,$sort);
+                                                $level6 = query("getchildren",$config,$values,$sort);
                                                 if ($level6!="-1") {
                                                     $html .= '<ul>'."\n";
                                                     foreach ($level6 as $child6) {

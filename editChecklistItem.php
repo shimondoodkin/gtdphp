@@ -7,9 +7,9 @@ $values = array();
 $values['checklistItemId'] = (int) $_GET["checklistItemId"];
 
 //SQL CODE
-$result = query("selectchecklistitem",$config,$values,$options,$sort);
+$result = query("selectchecklistitem",$config,$values,$sort);
 $currentrow = $result[0];
-$cshtml = checklistselectbox($config,$currentrow,$options,$sort);
+$cshtml = checklistselectbox($config,$currentrow,$sort);
 ?>
 
 <h2>Edit Checklist Item</h2>

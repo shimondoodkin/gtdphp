@@ -8,12 +8,12 @@ $values['checklistId'] =(int) $_GET["checklistId"];
 $values['checklistTitle'] =(string) $_GET['checklistTitle'];
 
 //SQL CODE
-$result = query("selectchecklist",$config,$values,$options,$sort);
+$result = query("selectchecklist",$config,$values,$sort);
 $row = $result[0];
 
     //select all categories for dropdown list
 $values['categoryId'] = $row['categoryId'];
-$cshtml=categoryselectbox($config,$values,$options,$sort);
+$cshtml=categoryselectbox($config,$values,$sort);
 
 //PAGE DISPLAY CODE
 echo "<h2>Edit Checklist: {$values['checklistTitle']}</h2>";

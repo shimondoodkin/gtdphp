@@ -8,10 +8,10 @@ $values=array();
 
 //Select notes
 $values['filterquery'] = " WHERE ".sqlparts("notefilter",$config,$values);
-$reminderresult = query("getnotes",$config,$values,$options,$sort);
+$reminderresult = query("getnotes",$config,$values,$sort);
 
 //get # space contexts
-$res = query("countspacecontexts",$config,$values,$options,$sort);
+$res = query("countspacecontexts",$config,$values,$sort);
 $numbercontexts=(is_array($res[0]))?(int) $res[0]['COUNT(*)']:0;
 
 //count active items
@@ -23,11 +23,11 @@ $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
 
 //get # nextactions
-$res = query("countnextactions",$config,$values,$options,$sort);
+$res = query("countnextactions",$config,$values,$sort);
 $numbernextactions=(is_array($res[0]))?(int) $res[0]['nnextactions']:0;
 
 // get # actions
-$res =query("countitems",$config,$values,$options,$sort);
+$res =query("countitems",$config,$values,$sort);
 $numberitems =(is_array($res[0]))?(int) $res[0]['COUNT(*)']:0;
 
 // get and count active projects
@@ -39,13 +39,13 @@ $stem  = " WHERE ".sqlparts("typefilter",$config,$values)
         ." AND ".sqlparts("pendingitems",$config,$values);
 
 $values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
-$pres = query("getitems",$config,$values,$options,$sort);
+$pres = query("getitems",$config,$values,$sort);
 $numberprojects=($pres==-1)?0:count($pres);
 
 //get and count someday projects
 $values['isSomeday'] = "y";
 $values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
-$sm = query("getitems",$config,$values,$options,$sort);
+$sm = query("getitems",$config,$values,$sort);
 $numbersomeday=($sm==-1)?0:count($sm);
 
 

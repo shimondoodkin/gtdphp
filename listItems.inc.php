@@ -62,9 +62,9 @@ $values['needle']         =$filter['needle'];
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='*')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create filter selectboxes
-$cashtml=str_replace('--','(any)',categoryselectbox   ($config,$values,$options,$sort));
-$cshtml =str_replace('--','(any)',contextselectbox    ($config,$values,$options,$sort));
-$tshtml =str_replace('--','(any)',timecontextselectbox($config,$values,$options,$sort));
+$cashtml=str_replace('--','(any)',categoryselectbox   ($config,$values,$sort));
+$cshtml =str_replace('--','(any)',contextselectbox    ($config,$values,$sort));
+$tshtml =str_replace('--','(any)',timecontextselectbox($config,$values,$sort));
 
 /*
     ===================================================================
@@ -76,7 +76,7 @@ $remindertable=array();
 
 if ($filter['tickler']=="true") {
     $values['filterquery'] = '';
-    $result = query("getnotes",$config,$values,$options,$sort);
+    $result = query("getnotes",$config,$values,$sort);
     if ($result!="-1") {
         foreach ($result as $row) {
             $remindertable[]=array(
@@ -335,7 +335,7 @@ $sectiontitle .= $typename;
 if ($quickfind)
     $result=-1;
 else
-    $result=query("getitemsandparent",$config,$values,$options,$sort);
+    $result=query("getitemsandparent",$config,$values,$sort);
     
 $maintable=array();
 $thisrow=0;
@@ -353,7 +353,9 @@ if ($result!="-1") {
             $nochildren=!$row['numChildren'];
             $nonext=($row['type']=='p' && !$row['numNA']);
         }
-        if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
+        if (isset($row['NA'])) {
+            if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
+        } else $row['NA']=false;
         
         $maintable[$thisrow]=array();
         $maintable[$thisrow]['itemId']=$row['itemId'];
@@ -382,7 +384,8 @@ if ($result!="-1") {
             $maintable[$thisrow]['flags'] = '';
 
         //item title
-        $maintable[$thisrow]['doreport']=!($row['type']=="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i");
+        if (!($row['type']=="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i"))
+            $maintable[$thisrow]['doreport']=true;
         
         $cleantitle=makeclean($row['title']);
         $maintable[$thisrow]['title.class'] = 'maincolumn';

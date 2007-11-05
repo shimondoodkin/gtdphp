@@ -7,7 +7,7 @@ $values = array();
 $values['listId'] = (int) $_GET['listId'];
 
 //SQL CODE AREA
-$lshtml = listselectbox($config,$values,$options,$sort);
+$lshtml = listselectbox($config,$values,$sort);
 
 //PAGE DISPLAY AREA
 ?>

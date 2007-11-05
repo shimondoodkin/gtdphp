@@ -9,11 +9,11 @@ $values['parentId']=array();
 //SQL CODE
 if ($values['itemId']) { // editing an item
     $where='edit';
-    $result = query("selectitem",$config,$values,$options,$sort);
+    $result = query("selectitem",$config,$values,$sort);
     if ($GLOBALS['ecode']==0) {
         $values = $result[0];
         //Test to see if nextaction
-        $result = query("testnextaction",$config,$values,$options,$sort);
+        $result = query("testnextaction",$config,$values,$sort);
         $nextaction= ($result!="-1" && $result[0]['nextaction']==$values['itemId']);
         $parents = query("lookupparent",$config,$values);
         // if any are somedays, turn type 'p' into type 's'
@@ -47,7 +47,7 @@ if (!$values['itemId']) {
     if ($show['ptitle']   && !empty($_REQUEST['parentId'])) {
         $values['parentId']=explode(',',$_REQUEST['parentId']);
         foreach ($values['parentId'] as $parent) {
-            $result=query("selectitemshort",$config,array('itemId'=>$parent),$options,$sort);
+            $result=query("selectitemshort",$config,array('itemId'=>$parent),$sort);
             if ($result!=-1) {
                 $newparent=array(
                      'parentId'=>$result[0]['itemId']
@@ -75,9 +75,9 @@ if ($nextaction) $typename="Next ".$typename;
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='i')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create item, timecontext, and spacecontext selectboxes
-$cashtml = categoryselectbox($config,$values,$options,$sort);
-$cshtml = contextselectbox($config,$values,$options,$sort);
-$tshtml = timecontextselectbox($config,$values,$options,$sort);
+$cashtml = categoryselectbox($config,$values,$sort);
+$cshtml = contextselectbox($config,$values,$sort);
+$tshtml = timecontextselectbox($config,$values,$sort);
 
 $oldtype=$values['type'];
 
@@ -85,7 +85,7 @@ $oldtype=$values['type'];
 $title=(($values['itemId']>0)?'Edit ':'New ').$typename;
 
 $hiddenvars=array(
-            'referrer'=>$referrer,
+            'referrer'=>(isset($_REQUEST['referrer']))?$_REQUEST['referrer']:'',
             'type'=>$values['type']
             );
             
@@ -103,7 +103,7 @@ if ($_SESSION['useLiveEnhancements']) {
     foreach($ptypes as $ptype)
         $allowedSearchTypes[$ptype]=$alltypes[$ptype].'s';
     $values['ptypefilterquery']=" AND ia.`type` IN ('".implode("','",$ptypes)."') ";
-    $potentialparents = query("parentselectbox",$config,$values,$options,$sort);
+    $potentialparents = query("parentselectbox",$config,$values,$sort);
     if ($potentialparents==-1) $potentialparents=array();
 } elseif (count($ptypes))
     $values['ptypefilterquery']=" AND ia.`type`='{$ptypes[0]}' ";
@@ -154,7 +154,7 @@ if ($sep!=='<p>') echo "</p>\n";
                     include_once('liveParents.inc.php');
                 } else { ?>
                     <select name="parentId[]" id='parenttable' multiple="multiple" size="6">
-                        <?php echo parentselectbox($config,$values,$options,$sort); ?>
+                        <?php echo parentselectbox($config,$values,$sort); ?>
                     </select>
                 <?php } ?>
             </div>
@@ -258,7 +258,6 @@ if ($sep!=='<p>') echo "</p>\n";
 <?php
 if (!$values['itemId']) $hiddenvars['lastcreate']=$_SERVER['QUERY_STRING'];
 foreach ($hiddenvars as $key=>$val) echo hidePostVar($key,$val);
-echo "<input type='hidden' name='referrer' value='{$_REQUEST['referrer']}' />\n";
 $key='afterCreate'.$values['type'];
 // always use config value when creating
 if (isset($config['afterCreate'][$values['type']]) && !isset($_SESSION[$key]))
@@ -292,7 +291,7 @@ if (!$values['itemId'] && $values['type']==='p')
 	 	,($tst=='child')?" checked='checked' ":""
 		," /><label for='childNext' class='right'>Create a child action</label>\n";
 
-if ($referrer!='' || $_SESSION[$key]!='') {
+if (!empty($hiddenvars['referrer']) || !empty($_SESSION[$key])) {
     echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
 	 	,($tst=='referrer')?" checked='checked' ":''
 		," /><label for='referrer' class='right'>Return to previous list</label>\n";

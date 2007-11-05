@@ -23,11 +23,11 @@ foreach ($maintable as $row) {
                     ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report' title='View Report' /></a>"
                     ,"<a href='item.php?itemId={$row['itemId']}'>"
                     ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' title='Edit' /></a>"
-                    ,"<a ",($row['NA'])?"class='nextactionlink'":''
+                    ,"<a ",(empty($row['NA']))?'':"class='nextactionlink'"
                     ," title='"
-                    ,($row['doreport'])?'View Report':'Edit'
+                    ,(empty($row['doreport']))?'Edit':'View Report'
                     ,"' href='item"
-                    ,($row['doreport'])?'Report':''
+                    ,(empty($row['doreport']))?'':'Report'
                     ,".php?itemId={$row['itemId']}'>$cleaned</a>";
                 break;
             case 'assignType':
@@ -38,7 +38,7 @@ foreach ($maintable as $row) {
                 break;
             case 'NA':
                 echo "<input name='isNAs[]' value='{$row['itemId']}'"
-                    ,"type='",($dispArray[$key.'.type']==='radio')?'radio':'checkbox',"'"
+                    ,"type='",(empty($dispArray[$key.'.type']))?'checkbox':'radio',"'"
                     ,($row[$key])?" checked='checked' ":''
                     ,' />';
                 break;
@@ -61,7 +61,7 @@ foreach ($maintable as $row) {
                     echo '&nbsp;';
                 break;
             case 'parent':
-                if ($row[$key.'id']==='')
+                if (empty($row[$key.'id']))
                     echo '&nbsp;';
                 else {
                     $out='';

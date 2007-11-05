@@ -288,10 +288,10 @@ function retrieveFormVars() {
 
 function getItemCopy() { // retrieve all the values for the current item, and store in the $values array
 	global $config,$values,$updateGlobals;
-	$copyresult = query("selectitem",$config,$values,$options,$sort);
+	$copyresult = query("selectitem",$config,$values,$sort);
 	foreach ($copyresult[0] as $key=>$thisvalue) $values[$key]=$thisvalue;
 	// now get parents
-	$result=query("lookupparent",$config,$values,$options,$sort);
+	$result=query("lookupparent",$config,$values,$sort);
 	$updateGlobals['parents']=array();
 	if (is_array($result))
 		foreach ($result as $parent)

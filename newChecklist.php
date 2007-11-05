@@ -2,7 +2,7 @@
 if (!isset($_POST['submit'])) {
 	//form not submitted
     include_once('header.php');
-    $cashtml=categoryselectbox($config,$values,$options,$sort);
+    $cashtml=categoryselectbox($config,$values,$sort);
 ?>
 <h1>New Checklist</h1>
 
@@ -38,7 +38,7 @@ if (!isset($_POST['submit'])) {
     $values['description'] = empty($_POST['description']) ? die("Error: Enter a checklist description") : $_POST['description'];
     $values['categoryId'] = (int) $_POST['categoryId'];
 
-    $result= query("newchecklist",$config,$values,$options,$sort);
+    $result= query("newchecklist",$config,$values,$sort);
 
     $_SESSION['message'][]=($GLOBALS['ecode']=="0")?("Checklist: ".$values['title']." inserted."):"Checklist NOT inserted.";
     if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0")

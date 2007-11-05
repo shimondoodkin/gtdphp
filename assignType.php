@@ -3,7 +3,7 @@
     include_once('header.php');
     $values=array('itemId' => (int) $_GET['itemId']);
     $types=getTypes();
-    $result = query("selectitemshort",$config,$values,$options,$sort);
+    $result = query("selectitemshort",$config,$values,$sort);
     $type=$result[0]['type'];
     $typename=getTypes($type);
     $title=makeclean($result[0]['title']);

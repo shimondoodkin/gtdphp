@@ -7,9 +7,9 @@ $values = array();
 $values['listId'] =(int) $_GET["listId"];
 
 //SQL CODE
-$row = query("selectlist",$config,$values,$options,$sort);
+$row = query("selectlist",$config,$values,$sort);
 $values['categoryId']=$row[0]['categoryId'];
-$cashtml = categoryselectbox($config,$values,$options,$sort);
+$cashtml = categoryselectbox($config,$values,$sort);
 
 
 //PAGE DISPLAY CODE

@@ -8,9 +8,9 @@ $values = array();
 $values['listItemId'] =(int) $_GET["listItemId"];
 
 //SQL CODE
-$result = query("selectlistitem",$config,$values,$options,$sort);
+$result = query("selectlistitem",$config,$values,$sort);
 $values['listId']=$result[0]['listId'];
-$lshtml = listselectbox($config,$values,$options,$sort);
+$lshtml = listselectbox($config,$values,$sort);
 
 //PAGE DISPLAY CODE
 echo "<h1>Edit List Item</h1>\n";

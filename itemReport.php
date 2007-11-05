@@ -10,7 +10,8 @@ $values['itemId'] = (int) $_GET['itemId'];
 $values['childfilterquery']=' WHERE '.sqlparts('singleitem',$config,$values);
 $values['filterquery']=sqlparts('isNA',$config,$values);
 $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
-$result = query("getitemsandparent",$config,$values,$options,$sort);
+$values['parentfilterquery'] = '';
+$result = query("getitemsandparent",$config,$values,$sort);
 $item = ($result==-1)?array():$result[0];
 
 $values['isSomeday']=($item['isSomeday']=="y")?'y':'n';
@@ -25,7 +26,7 @@ if (isset($_SESSION['idlist-'.$item['type']])) {
     $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
     $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
     $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-    $result = query("getitems",$config,$values,$options,$sort);
+    $result = query("getitems",$config,$values,$sort);
     $c=0;
     $ndx=array();
     if ($result!="-1") {
@@ -57,9 +58,9 @@ if($cnt>1) {
         $previoustitle=$result[$prev]['title'];
         $nexttitle    =$result[$next]['title'];
     } else {
-        $previtem = query("selectitem",$config,array('itemId'=>$previousId),$options,$sort);
+        $previtem = query("selectitem",$config,array('itemId'=>$previousId),$sort);
         $previoustitle=$previtem[0]['title'];
-        $nextitem = query("selectitem",$config,array('itemId'=>$nextId),    $options,$sort);
+        $nextitem = query("selectitem",$config,array('itemId'=>$nextId),    $sort);
         $nexttitle    =$nextitem[0]['title'];
     }
 }
@@ -87,7 +88,7 @@ echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
 if ($item['description']) echo "<tr><th>Description:</th><td>",nl2br(escapeChars($item['description'])),"</td></tr>\n";
 if ($item['desiredOutcome']) echo "<tr><th>Desired Outcome:</th><td>",nl2br(escapeChars($item['desiredOutcome'])),"</td></tr>\n";
-if ($parents!=-1) {
+if (!empty($item['parentId'])) {
     echo "<tr><th>Parents:&nbsp;</th><td>";
     $brk='';
     $pids=explode(',',$item['parentId']);
@@ -149,7 +150,7 @@ if (!empty($childtype)) {
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
 		$values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
 		
-        $result = query("getchildren",$config,$values,$options,$sort);
+        $result = query("getchildren",$config,$values,$sort);
         if ($comp==='y' && $config['ReportMaxCompleteChildren'] && count($result) > $config['ReportMaxCompleteChildren']) {
             $limit=$config['ReportMaxCompleteChildren'];
             $url=   ($_SESSION['useLiveEnhancements'])
@@ -224,7 +225,7 @@ if (!empty($childtype)) {
 			$dispArray['completed']='Date Completed';
 		}
         foreach ($dispArray as $key=>$val) $show[$key]=true;
-        $dispArray['NA.type']=($config['nextaction']==='single')?'radio':'checkbox';
+        if ($config['nextaction']==='single') $dispArray['NA.type']='radio';
 		$i=0;
 		$maintable=array();
 

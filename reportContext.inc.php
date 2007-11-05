@@ -13,7 +13,7 @@ if ($contextResults!=-1)
 //obtain all timeframes
 $values['type']='a';
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlparts("timetype",$config,$values):'';
-$timeframeResults = query("gettimecontexts",$config,$values,$options,$sort);
+$timeframeResults = query("gettimecontexts",$config,$values,$sort);
 $timeframeNames=array(0=>'none');
 $timeframeDesc=array(0=>'none');
 if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
@@ -49,7 +49,8 @@ foreach ($contextNames as $values['contextId'] => $contextname) {
         $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
         $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 		$values['childfilterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
-        $result = query("getitemsandparent",$config,$values,$options,$sort);
+        $values['parentfilterquery'] = '';
+        $result = query("getitemsandparent",$config,$values,$sort);
 
         $maintable=array();
         $i=0;

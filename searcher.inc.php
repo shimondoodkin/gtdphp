@@ -2,7 +2,7 @@
     <div id='donebox'>
         <a href='javascript:gtd_closesearch();' id='closesearch' title='click, or press escape, to close'>X</a>
     </div>
-    <form method='get' action='<?php echo $action; ?>'>
+    <form method='get' action='javascript:gtd_closesearch();'>
         <p>
             <label for="searcherneedle">Search for</label>
             <input type='text' name='searcherneedle' id='searcherneedle' onkeyup='javascript:gtd_refinesearch(this);' />

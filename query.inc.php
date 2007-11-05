@@ -3,7 +3,7 @@
 //query function
 //SQL abstraction layer
 
-function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
+function query($querylabel,$config,$values=NULL,$sort=NULL) {
 
     //for developer testing only--- testing data handling
     //testing passed variables
@@ -13,8 +13,6 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
         print_r($config);
         echo "<br />Values: ";
         print_r($values);
-        echo "<br />Options: ";
-        print_r($options);
         echo "<br />Sort: ";
         print_r($sort);
         echo "</pre>";
@@ -31,7 +29,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
 			if (is_array($values)) foreach ($values as $key=>$value) $values[$key] = safeIntoDB($value, $key);
 		    if ($config['debug'] & _GTD_DEBUG)
 		        echo '<pre>Sanitised values: ',print_r($values,true),'</pre>';
-			require("mysql.inc.php");
+			require_once("mysql.inc.php");
 	        break;
         case "mssql":require("mssql.inc.php");
         break;
@@ -43,7 +41,7 @@ function query($querylabel,$config,$values=NULL,$options=NULL,$sort=NULL) {
 
     //grab correct query string from query library array
     //values automatically inserted into array
-    $query = $sql[$querylabel];
+    $query=getsql($config,$values,$sort,$querylabel);
 
     // for testing only: display fully-formed query
     if ($config['debug'] & _GTD_DEBUG) echo "<p class='debug'>Query: ".$query."</p>";

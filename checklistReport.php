@@ -7,10 +7,10 @@ $values=array();
 $values['checklistId'] = (int) $_GET['checklistId'];
 
 //SQL CODE
-$result = query("selectchecklist",$config,$values,$options,$sort);
+$result = query("selectchecklist",$config,$values,$sort);
 if ($result!="-1") $row=$result[0];
 
-$result= query("getchecklistitems",$config,$values,$options,$sort);
+$result= query("getchecklistitems",$config,$values,$sort);
 
 //PAGE DISPLAY CODE
 echo "<h1>Checklist Report: {$row['title']}</h1>\n";

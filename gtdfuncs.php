@@ -23,7 +23,7 @@ function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the vis
 	$outStr='';
 	$visibleLength=0;
 	$thisChar=0;
-	$keepGoing=TRUE;
+	$keepGoing=!empty($inStr);
 	$tagsOpen=array();
 	// main processing here
 	while ($keepGoing) {
@@ -34,7 +34,7 @@ function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the vis
 			$thisChar+=strlen($tagToClose);
 			if ($keepTags) $outStr.=array_pop($tagsOpen);
 		} else foreach ($permittedTags as $thisTag) {
-			if ($stillHere && ($inStr[$thisChar]==='<') && (preg_match($thisTag[0],substr($inStr,$thisChar),$matches)>0)) {
+			if ($stillHere && ($inStr{$thisChar}==='<') && (preg_match($thisTag[0],substr($inStr,$thisChar),$matches)>0)) {
 				$thisChar+=strlen($matches[0]);
 				$stillHere=FALSE;
 				if ($keepTags) {
@@ -44,7 +44,7 @@ function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the vis
 			} // end of if
 		} // end of else foreach
 		// now check for & ... control characters
-		if ($stillHere && ($inStr[$thisChar]==='&') && (preg_match($ampStrings,substr($inStr,$thisChar),$matches)>0)) {
+		if ($stillHere && ($inStr{$thisChar}==='&') && (preg_match($ampStrings,substr($inStr,$thisChar),$matches)>0)) {
 			if (strlen(html_entity_decode($matches[0]))==1) {
 				$visibleLength++;
 				$outStr.=$matches[0];
@@ -55,7 +55,7 @@ function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the vis
 		// just a normal character, so add it to the string
 		if ($stillHere) {
 			$visibleLength++;
-			$outStr.=$inStr[$thisChar];
+			$outStr.=$inStr{$thisChar};
 			$thisChar++;
 		} // end of if
 		$keepGoing= (($thisChar<strlen($inStr)) && ($visibleLength<$inLength));
@@ -97,7 +97,7 @@ function sqlparts($part,$config,$values)  {
 			if (is_array($values)) foreach ($values as $key=>$value) $values[$key] = safeIntoDB($value, $key);
 		    if ($config['debug'] & _GTD_DEBUG)
 		        echo '<pre>Sanitised values in sqlparts: ',print_r($values,true),'</pre>';
-			require("mysqlparts.inc.php");
+			require_once("mysqlparts.inc.php");
         	break;
         case "mssql":require("mssqlparts.inc.php");
         break;
@@ -106,12 +106,12 @@ function sqlparts($part,$config,$values)  {
         case "sqlite":require("sqliteparts.inc.php");
         break;
         }
-    $queryfragment = $sqlparts[$part];
+    $queryfragment = getsqlparts($part,$config,$values);
     return $queryfragment;
     }
 
-function categoryselectbox($config,$values,$options,$sort) {
-    $result = query("categoryselectbox",$config,$values,$options,$sort);
+function categoryselectbox($config,$values,$sort) {
+    $result = query("categoryselectbox",$config,$values,$sort);
     $cashtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
@@ -123,8 +123,8 @@ function categoryselectbox($config,$values,$options,$sort) {
     return $cashtml;
     }
 
-function contextselectbox($config,$values,$options,$sort) {
-    $result = query("spacecontextselectbox",$config,$values,$options,$sort);
+function contextselectbox($config,$values,$sort) {
+    $result = query("spacecontextselectbox",$config,$values,$sort);
     $cshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
             foreach($result as $row) {
@@ -136,8 +136,8 @@ function contextselectbox($config,$values,$options,$sort) {
     return $cshtml;
     }
 
-function timecontextselectbox($config,$values,$options,$sort) {
-    $result = query("timecontextselectbox",$config,$values,$options,$sort);
+function timecontextselectbox($config,$values,$sort) {
+    $result = query("timecontextselectbox",$config,$values,$sort);
     $tshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
@@ -161,8 +161,8 @@ function makeOption($row,$selected) {
     return $out;
 }
 
-function parentselectbox($config,$values,$options,$sort) {
-    $result = query("parentselectbox",$config,$values,$options,$sort);
+function parentselectbox($config,$values,$sort) {
+    $result = query("parentselectbox",$config,$values,$sort);
     $pshtml='';
     $parents=array();
     if (is_array($values['parentId']))
@@ -182,15 +182,15 @@ function parentselectbox($config,$values,$options,$sort) {
     foreach ($parents as $key=>$val) if ($val) {
         // $key is a parentId which wasn't found for the drop-down box, so need to add it in
         $values['itemId']=$key;
-        $row=query('selectitemshort',$config,$values,$options,$sort);
+        $row=query('selectitemshort',$config,$values,$sort);
         if ($row!='-1') $pshtml = makeOption($row[0],$parents)."\n".$pshtml;
     }
     $pshtml="<option value='0'>--</option>\n".$pshtml;
     return $pshtml;
 }
 
-function checklistselectbox($config,$values,$options,$sort) {
-    $result = query("checklistselectbox",$config,$values,$options,$sort);
+function checklistselectbox($config,$values,$sort) {
+    $result = query("checklistselectbox",$config,$values,$sort);
     $cshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
@@ -202,8 +202,8 @@ function checklistselectbox($config,$values,$options,$sort) {
     return $cshtml;
     }
 
-function listselectbox($config,$values,$options,$sort) {
-    $result = query("listselectbox",$config,$values,$options,$sort);
+function listselectbox($config,$values,$sort) {
+    $result = query("listselectbox",$config,$values,$sort);
     $lshtml='<option value="0">--</option>'."\n";
     if ($result!="-1") {
         foreach($result as $row) {
@@ -216,7 +216,7 @@ function listselectbox($config,$values,$options,$sort) {
     }
 
 function prettyDueDate($dateToShow,$thismask) {
-	$retval=array();
+	$retval=array('class'=>'','title'=>'');
     if(trim($dateToShow)!='') {
         $retval['date'] = date($thismask,strtotime($dateToShow) );
         if ($dateToShow<date("Y-m-d")) {

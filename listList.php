@@ -7,11 +7,11 @@ $values = array();
 $values['categoryId']=(int)$_POST['categoryId'];
 
 //SQL Code
-$cashtml=categoryselectbox($config,$values,$options,$sort);
+$cashtml=categoryselectbox($config,$values,$sort);
 
 $values['filterquery']="";
 if ($values['categoryId']!=0) $values['filterquery']= " AND ".sqlparts("listcategoryfilter",$config,$values);
-$result = query("getlists",$config,$values,$options,$sort);
+$result = query("getlists",$config,$values,$sort);
 
 //PAGE DISPLAY CODE
 echo '<h2><a href="newList.php" title="Add new list" >Lists</a></h2>'."\n";

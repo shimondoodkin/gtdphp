@@ -7,11 +7,11 @@ $values = array();
 $values['categoryId']=(int) $_POST['categoryId'];
 
 //SQL CODE
-$cashtml = categoryselectbox($config,$values,$options,$sort);
+$cashtml = categoryselectbox($config,$values,$sort);
 
 $values['filterquery']="";
 if ($values['categoryId']!=0) $values['filterquery']=" AND ".sqlparts("checklistcategoryfilter",$config,$values);
-$result = query("getchecklists",$config,$values,$options,$sort);
+$result = query("getchecklists",$config,$values,$sort);
 
 //PAGE DISPLAY CODE
 echo '<h2><a href="newChecklist.php" title="Add new checklist" >Checklists</a></h2>'."\n";
