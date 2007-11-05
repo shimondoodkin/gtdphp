@@ -3,7 +3,7 @@
 include_once('header.php');
 
 $values = array();
-$values['itemId']= (int) $_REQUEST['itemId'];
+$values['itemId']= (isset($_REQUEST['itemId']))?(int) $_REQUEST['itemId']:0;
 $values['parentId']=array();
 
 //SQL CODE
@@ -23,9 +23,21 @@ if ($values['itemId']) { // editing an item
     }
 } else { // creating an item
     $where='create';
+    //set defaults
     $nextaction=false;
-    //RETRIEVE URL VARIABLES
+    $values['title']='';
+    $values['description']='';
+    $values['desiredOutcome']='';
+    $values['deadline']=null;
+    $values['dateCompleted']=null;
+    $values['repeat']=null;
+    $values['suppressUntil']=null;
     $values['type']=$_REQUEST['type'];
+    $values['isSomeday']=(isset($_GET['someday']) &&  $_GET['someday']=='true')?'y':'n';
+    $nextaction=isset($_REQUEST['nextonly']) && ($_REQUEST['nextonly']=='true' || $_REQUEST['nextonly']==='y');
+    foreach ( array('category','context','timeframe') as $cat)
+        $values[$cat.'Id']= (isset($_REQUEST[$cat.'Id']))?(int) $_REQUEST[$cat.'Id']:0;
+
     if ($values['type']==='s') {
         $values['isSomeday']='y';
         $values['type']='p';
@@ -36,12 +48,10 @@ if ($values['itemId']) { // editing an item
 }
 $show=getShow($where,$values['type']);
 if (!$values['itemId']) {
-    if ($_GET['someday']=='true') $values['isSomeday']='y';
-    if ($show['suppress'] && ($_REQUEST['suppress']=='true' || $_REQUEST['suppress']==='y')) {
+    if ($show['suppress'] && isset($_REQUEST['suppress']) && ($_REQUEST['suppress']=='true' || $_REQUEST['suppress']==='y')) {
         $values['suppress']='y';
         $values['suppressUntil']=$_REQUEST['suppressUntil'];
-    }
-    if ($show['NA']       && ($_REQUEST['nextonly']=='true' || $_REQUEST['nextonly']==='y')) $nextaction=true;
+    } else $values['suppress']='n';
     if ($show['deadline'] && !empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
     $parents=array();
     if ($show['ptitle']   && !empty($_REQUEST['parentId'])) {
@@ -58,8 +68,6 @@ if (!$values['itemId']) {
             }
         }
     }
-    foreach ( array('category','context','timeframe') as $cat)
-        if ($show[$cat]) $values[$cat.'Id']= (int) $_REQUEST[$cat.'Id'];
 }
 
 if (is_array($parents) && count($parents))
@@ -85,12 +93,13 @@ $oldtype=$values['type'];
 $title=(($values['itemId']>0)?'Edit ':'New ').$typename;
 
 $hiddenvars=array(
-            'referrer'=>(isset($_REQUEST['referrer']))?$_REQUEST['referrer']:'',
-            'type'=>$values['type']
+            'referrer'=>(isset($_REQUEST['referrer']))?$_REQUEST['referrer']:''
+            ,'type'   =>$values['type']
+            ,'itemId' =>$values['itemId']
             );
             
 if ($values['itemId']) {
-    $hiddenvars['itemId']=$values['itemId'];
+    
     $hiddenvars['action']='fullUpdate';
 } else
     $hiddenvars['action']='create';
@@ -158,7 +167,7 @@ if ($sep!=='<p>') echo "</p>\n";
                     </select>
                 <?php } ?>
             </div>
-        <?php } elseif (is_array($values['parentId']))
+        <?php } elseif (is_array($parents))
             foreach ($values['parentId'] as $parent)
                 echo hidePostVar('parentId[]',$parent);
         ?><div class='formrow'>
@@ -315,7 +324,7 @@ if ($values['itemId']) {
         echo "		<span class='detail'>Last Modified: ".$values['lastModified']."</span>\n";
         echo "	</div>\n";
 }
-if ($_SESSION['useLiveEnhancements']) {
+if ($_SESSION['useLiveEnhancements'] && !empty($values['ptype'])) {
     include_once ('searcher.inc.php');
     $partt= $ptitle= $pid ='new Array(';
     $sep   ='';

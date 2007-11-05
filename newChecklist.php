@@ -2,7 +2,7 @@
 if (!isset($_POST['submit'])) {
 	//form not submitted
     include_once('header.php');
-    $cashtml=categoryselectbox($config,$values,$sort);
+    $cashtml=categoryselectbox($config,array('categoryId'=>0),$sort);
 ?>
 <h1>New Checklist</h1>
 

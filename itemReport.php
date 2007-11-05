@@ -167,13 +167,13 @@ if (!empty($childtype)) {
         <?php
         $title=$typename[$thistype].'s';
         if ($comp==="y") {
-            $title="Completed $title";
+            $title="Completed ".$title;
         } else {
             $createURL="item.php?parentId={$values['itemId']}&amp;action=create&amp;type=$thistype";
             // inherit some defaults from parent:
             foreach (array('categoryId','contextId','deadline') as $field)
                 if ($item[$field]) $createURL.="&amp;$field={$item[$field]}";
-            $title="<a href='$createURL' title='Add new {$typename[$value]}'>$title</a>";
+            $title="<a href='$createURL' title='Add new ".$typename[$thistype]."'>".$title."</a>";
         }
         if ($result=="-1") {
             echo "<h3>No $title</h3></div>";
@@ -275,7 +275,9 @@ if (!empty($childtype)) {
 				} else
 					$maintable[$i]['suppress']='&nbsp;';
 
-                if (!empty($row['deadline'])) {
+                if (empty($row['deadline']))
+                    $maintable[$i]['deadline']=null;
+                else {
                     $deadline=prettyDueDate($row['deadline'],$config['datemask']);
                     $maintable[$i]['deadline']      =$deadline['date'];
                     $maintable[$i]['deadline.class']=$deadline['class'];

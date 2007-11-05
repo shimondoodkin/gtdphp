@@ -4,7 +4,7 @@ include_once('header.php');
 
 //RETRIEVE URL AND FORM VARIABLES
 $values = array();
-$values['categoryId']=(int) $_POST['categoryId'];
+$values['categoryId']=isset($_REQUEST['categoryId'])?(int)$_REQUEST['categoryId']:0;
 
 //SQL CODE
 $cashtml = categoryselectbox($config,$values,$sort);

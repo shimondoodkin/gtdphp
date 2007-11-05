@@ -61,7 +61,7 @@ foreach ($maintable as $row) {
                     echo '&nbsp;';
                 break;
             case 'parent':
-                if (empty($row[$key.'id']))
+                if (empty($row[$key.'Id']))
                     echo '&nbsp;';
                 else {
                     $out='';

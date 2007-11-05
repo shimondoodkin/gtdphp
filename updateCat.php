@@ -14,7 +14,6 @@ if (isset($_POST['id'])) {
     $values['id']=(int) $_POST['id'];
     $values['name']=$_POST['name'];
     $values['description']=$_POST['description'];
-    $values['newId']=(int) $_POST['replacewith'];
     switch ($field) {
         case 'category':
             $query='category';
@@ -42,7 +41,8 @@ if (isset($_POST['id'])) {
             // just created an item, without selecting another item for editing, so offer to create another one
             $msg='Created';
         }
-    } elseif ($_POST['delete']==="y") {
+    } elseif (isset($_POST['delete']) && $_POST['delete']==="y") {
+        $values['newId']=(int) $_POST['replacewith'];
         query("reassign$query",$config,$values);
         query("delete$query",$config,$values);
         $msg='Deleted';

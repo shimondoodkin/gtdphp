@@ -1,5 +1,5 @@
 <?php
-define('_GTD_REVISION',430);
+define('_GTD_REVISION',431);
 define('_GTD_VERSION','0.8rc-4'); // defines the DATABASE version
 
 // binary debug flags, to combine with a logical "or": "|"

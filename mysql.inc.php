@@ -201,9 +201,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 			
 		case "getchildren":
-			$sql="SELECT "
-				.(($values['limitfilterquery']=='')?'':' SQL_CALC_FOUND_ROWS ').
-				"i.`itemId`, i.`title`, i.`description`,
+			$sql="SELECT i.`itemId`, i.`title`, i.`description`,
 					i.`desiredOutcome`, ia.`type`,
 					ia.`isSomeday`, ia.`deadline`, ia.`repeat`,
 					ia.`suppress`, ia.`suppressUntil`,
@@ -226,7 +224,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						SELECT DISTINCT nextaction FROM {$config['prefix']}nextactions
 					) AS na ON(na.nextaction=i.itemId)
 				WHERE lu.`parentId`= '{$values['parentId']}' {$values['filterquery']}
-				ORDER BY {$sort['getchildren']} {$values['limitfilterquery']}";
+				ORDER BY {$sort['getchildren']}";
 			break;
 
 		case "getgtdphpversion":

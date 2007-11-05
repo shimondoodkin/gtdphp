@@ -2,7 +2,7 @@
 if (!isset($_POST['submit'])) {
     //form not submitted
     include_once('header.php');
-    $cashtml=categoryselectbox($config,$values,$options,$sort);
+    $cashtml=categoryselectbox($config,array('categoryId'=>0),$sort);
 ?>
 <h1>New List</h1>
 

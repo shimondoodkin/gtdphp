@@ -5,21 +5,21 @@ include_once('headerDB.inc.php');
 $updateGlobals=array();
 $html=false; // indicates if we are outputting html
 
-$updateGlobals['captureOutput']=($_POST['output']==='xml');
+$updateGlobals['captureOutput']=(isset($_POST['output']) && $_POST['output']==='xml');
 if ($updateGlobals['captureOutput']) {
     ob_start();
 }
 
 // get core variables first
 $values=array();  // ensures that this is a global variable
-$values['itemId'] = (int) $_REQUEST['itemId'];
-$values['type'] = $_REQUEST['type'];
+$values['itemId'] = isset($_REQUEST['itemId'])?(int) $_REQUEST['itemId']:null;
+$values['type'] = (isset($_REQUEST['type']))?$_REQUEST['type']:null;
 
 $action = $_REQUEST['action'];
 $updateGlobals['referrer'] = $_REQUEST['referrer'];
 
 $updateGlobals['multi']    = (isset($_POST['multi']) && $_POST['multi']==='y');
-$updateGlobals['parents'] = $_POST['parentId'];
+$updateGlobals['parents'] = (isset($_POST['parentId']))?$_POST['parentId']:array();
 if (!is_array($updateGlobals['parents'])) $updateGlobals['parents']=array($updateGlobals['parents']);
 
 if (isset($_POST['wasNAonEntry'])) {  // toggling next action status on several items
@@ -71,7 +71,7 @@ if ($updateGlobals['multi']) {
 		}
 	}
 } else {
-	if ($_POST['delete']==='y') $action='delete'; // override item-update if we are simply deleting
+	if (isset($_POST['delete']) && $_POST['delete']==='y') $action='delete'; // override item-update if we are simply deleting
 	doAction($action);
 }
 
@@ -266,14 +266,14 @@ function retrieveFormVars() {
             $values[$field] = (empty($_POST[$field])) ? $default : $_POST[$field];
 
 	// binary yes/no
-	$values['nextAction'] = ($_POST['nextAction']==="y")?'y':'n';
-	$values['isSomeday']  = ($_POST['isSomeday']==='y')?'y':'n';
-	$values['suppress']   = ($_POST['suppress']==='y')?'y':'n';
-	$values['delete']     = ($_POST['delete']==='y')?'y':NULL;
+	$values['nextAction'] = (isset($_POST['nextAction']) && $_POST['nextAction']==="y")?'y':'n';
+	$values['isSomeday']  = (isset($_POST['isSomeday']) && $_POST['isSomeday']==='y')?'y':'n';
+	$values['suppress']   = (isset($_POST['suppress']) && $_POST['suppress']==='y')?'y':'n';
+	$values['delete']     = (isset($_POST['delete']) && $_POST['delete']==='y')?'y':NULL;
 
 	// integers
-	$values['suppressUntil']  = (int) $_POST['suppressUntil'];
-	$values['repeat']         = (int) $_POST['repeat'];
+	$values['suppressUntil']  = empty($_POST['suppressUntil'])?0:(int) $_POST['suppressUntil'];
+	$values['repeat']         = empty($_POST['repeat'])?0:(int) $_POST['repeat'];
 
 	// dates
 	$values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
@@ -356,10 +356,10 @@ function makeComplete() { // mark an action as completed, and removes next actio
    ========================================================= */
 
 function nextPage() { // set up the forwarding to the next page
-	global $config,$values,$updateGlobals;
-	$t = (array_key_exists('oldtype',$values))? $values['oldtype']:$values['type'];
+	global $config,$values,$updateGlobals,$action;
+	$t = (isset($values['oldtype']))?$values['oldtype']:((isset($values['type']))?$values['type']:null);
 	$key='afterCreate'.$t;
-    $id=($values['newitemId'])?$values['newitemId']:$values['itemId'];
+    $id=(empty($values['newitemId']))?$values['itemId']:$values['newitemId'];
     $nextURL='';
     if (isset($_POST['afterCreate'])) {
         $tst=$_POST['afterCreate'];

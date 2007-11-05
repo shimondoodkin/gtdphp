@@ -77,9 +77,9 @@ foreach ($contextNames as $cid => $cname) {
                     <?php echo $matrixout[$cid][$tid]; ?>
                 </table>
                 <div>
-                	<input type="hidden" name="referrer" value="<?php echo basename($thisurl['path']),'#',$thisAnchor; ?>" />
+                	<input type="hidden" name="referrer" value="<?php echo basename($thisurl['path']),"#c{$cid}t{$tid}"; ?>" />
                     <input type="hidden" name="multi" value="y" />
-        		    <input type="hidden" name="wasNAonEntry" value="<?php echo implode(' ',$wasNAonEntry); ?> " />
+        		    <input type="hidden" name="wasNAonEntry" value="<?php echo implode(' ',$wasNAonEntry[$cid][$tid]); ?> " />
                     <input type="hidden" name="action" value="complete" />
                     <input type="submit" class="button" value="Update Actions" name="submit" />
                 </div>

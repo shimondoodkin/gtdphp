@@ -4,11 +4,11 @@ $values=array();
 
 //SQL CODE AREA
 //obtain all contexts
-$contextResults = query("getspacecontexts",$config,$values,$option,$sort);
+$contextResults = query("getspacecontexts",$config,$values,$sort);
 $contextNames=array(0=>'none');
 if ($contextResults!=-1)
     foreach ($contextResults as $row)
-	   $contextNames[$row['contextId']]=makeclean($row[name]);
+	   $contextNames[$row['contextId']]=makeclean($row['name']);
 
 //obtain all timeframes
 $values['type']='a';
@@ -37,6 +37,8 @@ $dispArray=array('parent'=>'Project'
 $show=array();
 foreach ($dispArray as $key=>$val) $show[$key]=true;
 
+$wasNAonEntry=array();
+
 //Item listings by context and timeframe
 foreach ($contextNames as $values['contextId'] => $contextname) {
     foreach ($timeframeNames as $values['timeframeId'] => $timeframename) {
@@ -54,7 +56,7 @@ foreach ($contextNames as $values['contextId'] => $contextname) {
 
         $maintable=array();
         $i=0;
-        $wasNAonEntry=array();
+        $wasNAonEntry[$values['contextId']][$values['timeframeId']]=array();
 		if (is_array($result)) foreach ($result as $row) {
             $maintable[$i]=array();
             $maintable[$i]['itemId']=$row['itemId'];
@@ -69,18 +71,18 @@ foreach ($contextNames as $values['contextId'] => $contextname) {
             } else $maintable[$i]['deadline']='';
         
             $maintable[$i]['title']=$row['title'];
-            $maintable[$i]['title.title']='Edit '.$maintable['title'];
+            $maintable[$i]['title.title']='Edit';
 
 			$maintable[$i]['ptitle']=$row['ptitle'];
 			$maintable[$i]['parentId']=$row['parentId'];
 			if ($row['parentId']=='') $maintable[$i]['parent.class']='noparent';
 
 			$maintable[$i]['checkboxname']='isMarked[]';
-			$maintable[$i]['checkbox.title']='Complete '.$maintable['title'];
+			$maintable[$i]['checkbox.title']='Mark as complete';
 			$maintable[$i]['checkboxvalue']=$row['itemId'];
 
             $maintable[$i]['NA'] = $row['NA'];
-            if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
+            if ($row['NA']) array_push($wasNAonEntry[$values['contextId']][$values['timeframeId']],$row['itemId']);
 
 			$i++;
 		}
