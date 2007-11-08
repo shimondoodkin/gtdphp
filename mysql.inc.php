@@ -61,6 +61,17 @@ function getsql($config,$values,$sort,$querylabel) {
 				ON DUPLICATE KEY UPDATE `nextaction`='{$values['newitemId']}'";
 			break;
 
+        case 'countactionsbycontext':
+            $sql="SELECT cn.`name` AS cname,cn.`contextId`,COUNT(x.`itemId`) AS count
+                    FROM `{$config['prefix']}itemattributes` as x
+                    JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
+                    JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
+					LEFT OUTER JOIN `{$config['prefix']}context` AS cn
+						ON (ia.`contextId` = cn.`contextId`)
+                     {$values['filterquery']}
+                     GROUP BY ia.`contextId` ORDER BY cn.`name`";
+            break;
+            
 		case "countchildren":
 			$sql="SELECT il.`itemId`
 				FROM `". $config['prefix'] ."lookup` as il,
@@ -86,33 +97,6 @@ function getsql($config,$values,$sort,$querylabel) {
 						ON (ia.`itemId` = its.`itemId`) ".
 				$values['filterquery'];
 			break;
-
-		case "countcontextreport_naonly":
-			$sql="SELECT ia.`contextId`, ia.`timeframeId`,
-				COUNT(*) AS count
-				FROM `". $config['prefix'] ."itemattributes` as ia,
-						`". $config['prefix'] ."itemstatus` as its,
-						`". $config['prefix'] ."nextactions` as na
-				WHERE its.`itemId`=ia.`itemId`
-					AND  na.`nextaction` = its.`itemId`
-					AND ia.`isSomeday`='n'
-					AND (its.`dateCompleted` IS NULL)
-					AND {$values['filterquery']}
-				GROUP BY ia.`contextId`, ia.`timeframeId`";
-			break;
-
-		case "countcontextreport_all":
-			$sql="SELECT ia.`contextId`, ia.`timeframeId`,
-						COUNT(*) AS count
-				FROM `". $config['prefix'] ."itemattributes` as ia,
-						`". $config['prefix'] ."itemstatus` as its
-				WHERE its.`itemId`=ia.`itemId`
-					AND ia.`type`='a'
-					AND ia.`isSomeday`='n'
-					AND (its.`dateCompleted` IS NULL)
-					AND {$values['filterquery']}
-				GROUP BY ia.`contextId`, ia.`timeframeId`";
-
 		case "countselected":
 			$sql="SELECT FOUND_ROWS()";
 			break;
