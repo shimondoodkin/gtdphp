@@ -237,9 +237,9 @@ function removeNextAction() { // remove the next action reference for the curren
 
 function changeType() {
 	global $config,$values;
+    $values['isSomeday']=isset($_REQUEST['isSomeday'])?$_REQUEST['isSomeday']:'n';
     query("updateitemtype",$config,$values);
     if ($_REQUEST['safe']!=='y') {
-        $values['isSomeday']='n';
     	query("deletelookup",$config,$values);
     	query("deletelookupparents",$config,$values);
     	removeNextAction();
@@ -288,10 +288,10 @@ function retrieveFormVars() {
 
 function getItemCopy() { // retrieve all the values for the current item, and store in the $values array
 	global $config,$values,$updateGlobals;
-	$copyresult = query("selectitem",$config,$values,$sort);
+	$copyresult = query("selectitem",$config,$values,array());
 	foreach ($copyresult[0] as $key=>$thisvalue) $values[$key]=$thisvalue;
 	// now get parents
-	$result=query("lookupparent",$config,$values,$sort);
+	$result=query("lookupparent",$config,$values,array());
 	$updateGlobals['parents']=array();
 	if (is_array($result))
 		foreach ($result as $parent)
@@ -409,7 +409,9 @@ function nextPage() { // set up the forwarding to the next page
             }
             break;
 		case "parent"  :
-            $nextURL=($updateGlobals['parents'][0])?('itemReport.php?itemId='.$updateGlobals['parents'][0]):('orphans.php');
+            $nextURL=(count($updateGlobals['parents']))
+                        ?('itemReport.php?itemId='.$updateGlobals['parents'][0])
+                        :'orphans.php';
             break;
 		case "referrer":
             $nextURL=$_SESSION["lastfilter$t"];

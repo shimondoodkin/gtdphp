@@ -106,7 +106,7 @@ include_once('header.php');
 </tbody>
 </table>
 
-<?php if ($config['show7']==TRUE) include_once('sevenhabits.php'); 
-
+<?php
+    if (!empty($config['show7'])) include_once('sevenhabits.php');
 	include_once('footer.php');
 ?>

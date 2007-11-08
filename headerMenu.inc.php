@@ -60,7 +60,7 @@ function makemenu($list) {
 				$thismenu[] = array("link"=>"listItems.php?type=p&amp;someday=true", 'title'=>"Someday projects", 'label' => "Someday/Maybes");
 				$thismenu[] = 'separator';
 				$thismenu[] = array("link"=>"reportContext.php", 'title'=>"Active items sorted by space context", 'label' => "Actions in context");
-				if ($config['debug']) {
+				if ($config['debug'] & _GTD_DEBUG) {
                     $thismenu[] = array("link"=>"reportTimeContext.php", 'title'=>"Active items sorted by time context", 'label' => "Time Contexts");
     				$thismenu[] = array("link"=>"reportCategory.php", 'title'=>"Active items sorted by category", 'label' => "Categories");
 				}
@@ -82,7 +82,7 @@ function makemenu($list) {
 				$thismenu[] = array("link"=>"listItems.php?type=o", 'title'=>"Roles / Areas of Responsibility", 'label' => "Roles");
 				$thismenu[] = array("link"=>"listItems.php?type=v", 'title'=>"Visions", 'label' => "Visions");
 				$thismenu[] = array("link"=>"listItems.php?type=m", 'title'=>"Values / Mission", 'label' => "Values");
-				if ($config['debug']) {
+				if ($config['debug'] & _GTD_DEBUG) {
     				$thismenu[] = 'separator';
                     $thismenu[] = array("link"=>"leadership.php", 'title'=>"Leadership view", 'label' => "Leadership");
 				    $thismenu[] = array("link"=>"management.php", 'title'=>"Management view", 'label' => "Management");

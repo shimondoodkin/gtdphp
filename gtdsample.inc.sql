@@ -1,11 +1,28 @@
 INSERT INTO `gtdsample_categories` VALUES ('1','Professional','Work related.');
 INSERT INTO `gtdsample_categories` VALUES ('2','Personal','Outside of work.');
 -- *******************************
-INSERT INTO `gtdsample_checklist` VALUES ('1','gtd-php startup checklist','2','A list of things you should check out in the new sample data generated for you');
+INSERT INTO `gtdsample_checklist` VALUES ('2','Weekly Review Checklist','2','Use this checklist every week to make sure that you have done everything you need to do to keep GTD-PHP up-to-date.\r\n\r\nChecklists are re-usable lists.  Use them for processes you need to repeat over and over again.  When you need to do the list over from the beginning use the clear checklist option and all the checkmarks will go away.');
 -- *******************************
-INSERT INTO `gtdsample_checklistitems` VALUES ('1','space contexts','Check the <a href=\'editCat.php?field=context\'>space contexts</a> meet your needs','1','n');
-INSERT INTO `gtdsample_checklistitems` VALUES ('2','time contexts','Check the <a href=\'editCat.php?field=time-context\'>time contexts</a> meet your needs','1','n');
-INSERT INTO `gtdsample_checklistitems` VALUES ('3','categories','Check the <a href=\'editCat.php?field=category\'>categories</a> meet your needs','1','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('8','Review Email action box','Put next action reminder into system for each one, delete completed emails or move to waiting on or reference boxes as approriate.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('6','Check all voice mail','','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('7','Review Email Inbox','Move each item to an action, waiting, or reference folder.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('4','Gather all loose papers','','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('5','Process all notes','','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('9','Review Email waiting on box','Put waiting on reminder into system for each one, delete completed emails or move to reference box as approriate.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('10','Review previous calendar','Transfer any missed actions to system','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('11','Purge agendas','','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('12','Review upcoming calendar','Capture actions about arrangements and preparations for any upcoming events','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('13','Empty your head','Put in writing any <a href=\"item.php?type=p\" target=\"_blank\">new projects</a>, <a href=\"item.php?type=a\" target=\"_blank\">actions</a>, <a href=\"item.php?type=w\" target=\"_blank\">things you are waiting for</a>, <a href=\"item.php?type=r\" target=\"_blank\">references</a>, and <a href=\"item.php?type=p&someday=true\" target=\"_blank\">someday/maybes</a> that are not yet in the system.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('14','Empty your gtd-php inbox','See your <a href=\"listItems.php?type=i\" target=\"_blank\">gtd-php inbox</a>.  Use the \'Set Type\' button to convert each one into a project, action, reference or waiting-on','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('15','Review Projects list','See <a href=\"listItems.php?type=p\" target=\"_blank\">your projects list.</a> Make sure that all projects have next actions defined.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('16','Review Actions list','See <a href=\"listItems.php?type=a\" target=\"_blank\">your actions list.</a>  Mark off any completed actions, review for reminders of further actions to capture.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('17','Review WaitingOn list','See <a href=\"listItems.php?type=w\" target=\"_blank\">your waiting on list.</a>  Mark off any items which have now happened; for each such item\'s parent project, decide what the new next action is.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('18','Review Lists','See <a href=\"listList.php\" target=\"_blank\">your lists</a>.  Review relevant lists for actionable items or projects.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('19','Review Checklists','See <a href=\"listChecklist.php\" target=\"_blank\">your checklists.</a> Review relevant Checklists for actionable items or projects.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('20','Review Someday/Maybe List','See <a href=\"listItems.php?type=p&someday=true\" target=\"_blank\">your someday/maybe list.</a>  Add new fun things, move any existing items into Projects if they are ready to go.','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('21','Review support files','','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('22','Review Goals','See <a href=\"listItems.php?type=g\" target=\"_blank\">your goals.</a>  Check off goals from this week. Define goals for upcoming week','2','n');
+INSERT INTO `gtdsample_checklistitems` VALUES ('23','Brainstorm','Get creative with any new <a href=\"item.php?type=p\" target=\"_blank\">projects</a> or <a href=\"item.php?type=p&someday=true\" target=\"_blank\">someday/maybes</a> that may further your values, visions, goals, or areas of responsibility.','2','n');
 -- *******************************
 INSERT INTO `gtdsample_context` VALUES ('1','Computer','Sitting at a keyboard.');
 INSERT INTO `gtdsample_context` VALUES ('2','Office','At the office');
@@ -51,7 +68,11 @@ INSERT INTO `gtdsample_itemstatus` VALUES ('12','2007-10-22','2007-10-22 13:12:4
 INSERT INTO `gtdsample_itemstatus` VALUES ('13','2007-10-22','2007-10-22 13:23:06',NULL);
 INSERT INTO `gtdsample_itemstatus` VALUES ('14','2007-10-22','2007-10-22 13:22:49',NULL);
 -- *******************************
+INSERT INTO `gtdsample_list` VALUES ('1','gtd-php startup things-to-do','2','A list of things you should check out in the new sample data generated for you.\r\n\r\nLists are for one-time simple lists that once done you\'ll no longer need.  For reusable lists see checklists.');
 -- *******************************
+INSERT INTO `gtdsample_listitems` VALUES ('1','categories','Check the <a href=\'editCat.php?field=category\'>categories</a> meet your needs','1',NULL);
+INSERT INTO `gtdsample_listitems` VALUES ('2','space contexts','Check the <a href=\'editCat.php?field=context\'>space contexts</a> meet your needs','1',NULL);
+INSERT INTO `gtdsample_listitems` VALUES ('3','time contexts','Check the <a href=\'editCat.php?field=time-context\'>time contexts</a> meet your needs','1',NULL);
 -- *******************************
 INSERT INTO `gtdsample_lookup` VALUES ('1','3');
 INSERT INTO `gtdsample_lookup` VALUES ('1','4');

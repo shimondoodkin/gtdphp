@@ -22,8 +22,8 @@ if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
 	}
 
 //obtain all active item timeframes and count instances of each
-$values['filterquery']=sqlparts("activeitems",$config,$values);
-$values['filterquery']=sqlparts('isNA',$config,$values);
+$NAfilter='isNA'.(($config["contextsummary"] === 'nextaction')?'only':'');
+$values['filterquery'] = sqlparts($NAfilter,$config,$values);
 $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
 
 $thisurl=parse_url($_SERVER['PHP_SELF']);

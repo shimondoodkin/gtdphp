@@ -59,9 +59,12 @@ switch ($part) {
 		$sqlpart = " y.`parentId` = '{$values['parentId']}' ";
 		break;
 	case "isNA":
-		$sqlpart = " LEFT JOIN (
-                                        SELECT nextaction FROM {$config['prefix']}nextactions
-                                        ) AS na ON(na.nextaction=x.itemId) ";
+		$sqlpart = " LEFT JOIN ( SELECT nextaction FROM {$config['prefix']}nextactions
+                               ) AS na ON(na.nextaction=x.itemId) ";
+		break;
+	case "isNAonly":
+		$sqlpart = " JOIN ( SELECT nextaction FROM {$config['prefix']}nextactions
+                          ) AS na ON(na.nextaction=x.itemId) ";
 		break;
 	case "issomeday":
 		$sqlpart = " ia.`isSomeday` = '{$values['isSomeday']}' ";
@@ -127,6 +130,9 @@ switch ($part) {
 		$sqlpart = " ia.`type` = '{$values['ptype']}' ";
 		break;
 */
+    default:
+        if ($config['debug'] & _GTD_DEBUG) echo "<p class='error'>Failed to find sql component '$part'</p>'";
+        break;
     }
     return $sqlpart;
 }

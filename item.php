@@ -99,7 +99,6 @@ $hiddenvars=array(
             );
             
 if ($values['itemId']) {
-    
     $hiddenvars['action']='fullUpdate';
 } else
     $hiddenvars['action']='create';
@@ -135,7 +134,9 @@ if (in_array($values['type'],$canchangetypesafely))
         if ($totype!==$values['type']) {
             echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
                 ,$values['itemId'],"&amp;referrer=item.php?itemId=",$values['itemId']
-                ,"&amp;safe=y&amp;type=$totype'>Convert to ",getTypes($totype),"</a>\n";
+                ,"&amp;safe=y&amp;type=$totype&amp;isSomeday="
+                ,$values['isSomeday']
+                ,"'>Convert to ",getTypes($totype),"</a>\n";
             $sep=' , ';
         }
 if ($show['type']) {
