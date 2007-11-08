@@ -164,7 +164,7 @@ $sort = array(
 
 $config["storeRecurrences"] = true; // false | true - when recurring items are completed, store each occurrence as a completed item
 $config['useTypesForTimeContexts'] = false; // false | true - Time Contexts will be bound to a particular type
-$config['separator'] = '!£$€%'; // should be an arbitrary string that you'll never use in titles of items; used to separate titles in mysql queries
+$config['separator'] = '^&*#@#%&*%^@$^*$$&%#@#@^^'; // should be an arbitrary string that you'll never use in titles of items; used to separate titles in mysql queries
 $config['forceAllFields'] = false; // false | true - all fields will always be displayed on item.php
 $config['allowChangingTypes'] = false; // false | true - allows the user to change the types of any item (false=change only inbox items)
 $config['showAdmin'] = true; // false | true - adds the Admin option to the menu items
