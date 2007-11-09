@@ -341,9 +341,9 @@ function getShow($where,$type) {
         'deadline'      =>($type==='p' || $type==='a' || $type==='w' || $type==='i'),
         'suppress'      =>($type==='p' || $type==='a' || $type==='w'),
         'suppressUntil' =>($type==='p' || $type==='a' || $type==='w'),
-        'repeat'        =>($type==='p' || $type==='a'),
+        'repeat'        =>($type==='p' || $type==='a' || $type==='g'),
         'NA'            =>($type==='a' || $type==='w'),
-        'isSomeday'     =>($type==='p'),
+        'isSomeday'     =>($type==='p' || $type==='g'),
 
         // fields never shown on item.php
         'checkbox'      => false,
