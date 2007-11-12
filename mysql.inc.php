@@ -596,8 +596,9 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "testitemrepeat":
-			$sql="SELECT ia.`repeat`
-				FROM `". $config['prefix'] . "itemattributes` as ia
+			$sql="SELECT ia.`repeat`,its.`dateCompleted`
+				FROM `{$config['prefix']}itemattributes` as ia
+                JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
 				WHERE ia.`itemId`='{$values['itemId']}'";
 			break;
 
@@ -642,6 +643,12 @@ function getsql($config,$values,$sort,$querylabel) {
 				WHERE `checklistItemId` ='{$values['checklistItemId']}'";
 			break;
 
+		case "updatedeadline":
+			$sql="UPDATE `{$config['prefix']}itemattributes`
+				SET `deadline` ={$values['deadline']}
+				WHERE `itemId` = '{$values['itemId']}'";
+			break;
+			
 		case "updatespacecontext":
 			$sql="UPDATE `". $config['prefix'] . "context`
 				SET `name` ='{$values['name']}',

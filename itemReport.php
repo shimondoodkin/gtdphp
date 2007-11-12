@@ -245,7 +245,10 @@ if (!empty($childtype)) {
             $maintable[$i]['title']=$row['title'];
             $maintable[$i][$descriptionField]=$row['description'];
             $maintable[$i][$outcomeField]=$row['desiredOutcome'];
-            $maintable[$i]['created']=date($config['datemask'],strtotime($row['dateCreated']));
+            $maintable[$i]['created']=date($config['datemask'],
+                    (empty($row['dateCreated']))
+                        ? null
+                        : strtotime($row['dateCreated']));
 
 			$maintable[$i]['categoryId']=$row['categoryId'];
 			$maintable[$i]['category']=makeclean($row['category']);

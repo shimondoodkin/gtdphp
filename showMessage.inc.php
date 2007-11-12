@@ -7,6 +7,6 @@ if (count($_SESSION['message'])) {
             echo stripslashes(escapeChars($msg)),"<br />\n";
         echo "</div>";
     }
-    $_SESSION['message']='';
+    $_SESSION['message']=array();
 }
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

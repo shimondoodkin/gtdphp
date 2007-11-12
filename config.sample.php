@@ -177,6 +177,7 @@ _GTD_ERRORS   - display errors
 _GTD_DEBUG    - display debugging text (there will be lots of it - use debugKey to toggle its display)
 _GTD_FREEZEDB - do not execute commands which would otherwise update the items table: use in conjunction with _GTD_DEBUG to display sql commands without running them
 _GTD_NOTICE   - force the display of PHP notices
+_GTD_WAIT     - pause after updating an item, to allow user to view processing screen
 */
 $config["debug"] = 0;  // integer (actually a set of boolean flags)
 $config["debugKey"] = 'H'; // the key that will toggle the display of debug text - a letter here must typed in upper case.

@@ -208,11 +208,13 @@ function completeItem() { // mark an item as completed, and recur if required
 
 	if (!isset($values['dateCompleted'])) $values['dateCompleted']="'".date('Y-m-d')."'";
 	
-	if (!isset($values['repeat'])) {
+	if (!isset($values['repeat']) || !isset($values['old']['dateCompleted'])) {
 		$testrow = query("testitemrepeat",$config,$values);
-		$values['repeat']=$testrow[0]['repeat'];
+		if (!isset($values['repeat'])) $values['repeat']=$testrow[0]['repeat'];
+        if (!isset($values['old'])) $values['old']=array();
+		$values['old']['dateCompleted']=$testrow[0]['dateCompleted'];
 	}
-	if ($values['repeat']) recurItem(); else makeComplete();
+	if ($values['repeat'] && empty($values['old']['dateCompleted'])) recurItem(); else makeComplete();
 }
 
 function makeNextAction() { // mark the current item as a next action
@@ -309,12 +311,12 @@ function setParents($new) {
     $markedna=false;
     foreach ($updateGlobals['parents'] as $values['parentId']) if ($values['parentId']) {
     	$result = query($new."parent",$config,$values);
-    	if($values['nextAction']==='y') {
+    	if(!empty($values['nextAction']) && $values['nextAction']==='y') {
             $result = query($new."nextaction",$config,$values);
             $markedna=true;
         }
    	}
-    if ($values['nextAction']==='y' && !$markedna) {
+    if (!$markedna && $values['nextAction']==='y') {
         $values['parentId']=0;
         $result = query($new."nextaction",$config,$values);
     }
@@ -435,12 +437,12 @@ function nextPage() { // set up the forwarding to the next page
         ob_end_clean();
         echo '<?xml version="1.0" ?',"><gtdphp><result>\n";
         $outtext=$_SESSION['message'];
-        $_SESSION['message']=array();
         foreach ($outtext as $line)
             echo "<line><![CDATA[$line]]></line>\n";
         echo "</result><nextURL><![CDATA[$nextURL]]></nextURL>\n";
         if (!empty($outtext)) echo "<log><![CDATA[$logtext]]></log>\n";
         echo "</gtdphp>";
+        $_SESSION['message']=array();
         exit;
     } else nextScreen($nextURL);
 }

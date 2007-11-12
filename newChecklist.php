@@ -41,7 +41,7 @@ if (!isset($_POST['submit'])) {
     $result= query("newchecklist",$config,$values,$sort);
 
     $_SESSION['message'][]=($GLOBALS['ecode']=="0")?("Checklist: ".$values['title']." inserted."):"Checklist NOT inserted.";
-    if (($config['debug'] & _GTD_ERRORS)  && $GLOBALS['ecode']!="0")
+    if ($GLOBALS['ecode']!="0")
         $_SESSION['message'][]="Error Code: ".$GLOBALS['ecode']."=> ".$GLOBALS['etext'];
 
 	$url='checklistReport.php?checklistId='.mysql_insert_id();

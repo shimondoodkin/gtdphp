@@ -239,7 +239,7 @@ function getVarFromGetPost($varName,$default='') {
 function nextScreen($url) {
     global $config;
     $cleanurl=htmlspecialchars($url);
-    if ($config['debug']) {
+    if ($config['debug'] & _GTD_WAIT) {
         echo "<p>Next screen is <a href='$cleanurl'>$cleanurl</a> - would be auto-refresh in non-debug mode</p>";
     }elseif (headers_sent()) {
         echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$cleanurl' />\n"
