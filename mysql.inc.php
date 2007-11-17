@@ -1,4 +1,4 @@
-q<?php
+<?php
 
 //query listing for MySQL database
 //API Documentation available in __________
