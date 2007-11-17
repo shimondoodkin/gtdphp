@@ -1,4 +1,4 @@
-<?php
+q<?php
 
 //query listing for MySQL database
 //API Documentation available in __________
@@ -32,7 +32,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			$sql="SELECT cl.`checklistId`, cl.`title`,
 						cl.`description`, cl.`categoryId`, c.`category`
 				FROM `". $config['prefix'] ."checklist` as cl
-				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
+				LEFT OUTER JOIN `". $config['prefix'] ."categories` as c USING (`categoryId`)
 				ORDER BY {$sort['checklistselectbox']}";
 			break;
 
