@@ -13,7 +13,9 @@ $values = array();
 $filter = array();
 
 // I've used getVarFromGetPost instead of $_REQUEST, because I want $_GET to have higher priority than $_POST.
+$filter['needle']         =getVarFromGetPost('needle');            //search string (plain text)
 $filter['type']           =getVarFromGetPost('type','a');
+$filter['everything']     =getVarFromGetPost('everything');        //overrides filter:true/empty
 $filter['contextId']      =getVarFromGetPost('contextId',NULL);
 if ($filter['contextId']==='0') $filter['contextId']=NULL;
 $filter['categoryId']     =getVarFromGetPost('categoryId',NULL);
@@ -30,9 +32,7 @@ $filter['completed']      =getVarFromGetPost('completed');         //status:true
 $filter['dueonly']        =getVarFromGetPost('dueonly');           //has due date:true/empty
 $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeating:true/empty
 $filter['parentId']       =getVarFromGetPost('parentId');
-$filter['everything']     =getVarFromGetPost('everything');        //overrides filter:true/empty
 $filter['parentcompleted']=getVarFromGetPost('parentcompleted');
-$filter['needle']         =getVarFromGetPost('needle');            //search string (plain text)
 
 if ($filter['type']==='s') {
     $filter['someday']=true;

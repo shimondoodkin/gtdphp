@@ -82,19 +82,12 @@ echo "<p>There $verb $numbernextactions"
     ," <a href='listItems.php?type=a&amp;nextonly=true'>Next Action$plural</a> pending"
     ," out of a total of $numberitems <a href='listItems.php?type=a'>Action"
     ,($numberitems==1)?'':'s'
+    ,"</a> in $numbercontexts <a href='reportContext.php'>Spatial Context"
+    ,($numbercontexts==1)?'':'s'
     ,"</a>.</p>\n</div>\n";
 
-echo "<div class='reportsection'>\n";
-    echo "<h3>Contexts</h3>\n";
-if($numbercontexts==1) {
-    echo "<p>There is $numbercontexts <a href='reportContext.php'>Spatial Context</a>.</p>\n";
-} else {
-    echo "<p>There are $numbercontexts <a href='reportContext.php'>Spatial Contexts</a>.</p>\n";
-}
-    echo "</div>\n";
-
     echo "<div class='reportsection'>\n";
-	echo "<h3>Project</h3>\n";
+	echo "<h3>Projects</h3>\n";
 
     if($numberprojects==1){
         echo '<p>There is 1 active <a href="listItems.php?type=p">Project</a>.</p>'."\n";
