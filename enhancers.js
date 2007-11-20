@@ -46,7 +46,7 @@ function gtd_searchdiv_init(ids,titles,types,onetype) {
     if (!useTypes) qtype=thistype=mapTypeToName(onetype);
 
     for (var i=0;i<titles.length;i++) {
-        ptitles[i]=decodeURIComponent(titles[i]);
+        ptitles[i]=unescape(titles[i]);
         ptitleslc[i]=ptitles[i].toLowerCase();
         if (useTypes) thistype=mapTypeToName(types[i]);
         

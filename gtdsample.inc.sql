@@ -43,8 +43,8 @@ INSERT INTO `gtdsample_itemattributes` VALUES ('13','r','n','2','4','0',NULL,'0'
 INSERT INTO `gtdsample_itemattributes` VALUES ('14','r','n','2','1','0',NULL,'0','n','0');
 -- *******************************
 INSERT INTO `gtdsample_items` VALUES ('1','Set up your new gtd-php system','Getting Things Done','Mind like water.');
-INSERT INTO `gtdsample_items` VALUES ('8','review the checklist of things to do to start','We\'ve created a <a href=\'checklistReport.php?checklistId=2\'>checklist</a> for you to start with.  Once you\'ve done these things, then you\'re ready to start adding your own actions: which means you can now make the <b>\"Do a weekly review to help populate this system\"</b> action into a <i>Next</i> Action.  To do that, in the <a href=\'itemReport.php?itemId=1\'>project</a> screen, check the \"Next Action\" box and then press the \"update\" button immediately below it.','');
-INSERT INTO `gtdsample_items` VALUES ('3','Do a weekly review to help populate this system','Click on <a href=\'weekly.php\'>this link</a> to see the Weekly Review: you can use this as a guide to help set up the system','');
+INSERT INTO `gtdsample_items` VALUES ('8','review the checklist of things to do to start','We\'ve created a <a href=\'listList.php\'>\"gtd-php startup things-to-do\" list</a> for you to start with.  Once you\'ve done these things, then you\'re ready to start adding your own actions: which means you can now make the <b>\"Do a weekly review to help populate this system\"</b> action into a <i>Next</i> Action.  To do that, in the <a href=\'itemReport.php?itemId=1\'>project</a> screen, check the \"Next Action\" box and then press the \"update\" button immediately below it.','');
+INSERT INTO `gtdsample_items` VALUES ('3','Do a weekly review to help populate this system','Click on <a href=\'weekly.php\'>this link</a> to see the Weekly Review: you can use this as a guide to help set up the system - there\'s an accompanying <a href=\'listChecklist.php\'>Weekly Review checklist</a> for you to tick off the tasks, each week.','');
 INSERT INTO `gtdsample_items` VALUES ('4','gtd-php user forums','the gtd-php <a href=\'http://toae.org/boards/\'>user forums</a> are the place to go to ask questions and meet others  in the gtd-php community','');
 INSERT INTO `gtdsample_items` VALUES ('5','delete this action, which is deliberately an orphan','and can safely be deleted, by editing this item, then checking the \"delete\" box below, and then pressing the \"update\" button','');
 INSERT INTO `gtdsample_items` VALUES ('6','Stay on top of things, and don\'t lose track of what needs doing','','Having one place where you trust yourself to list all of the things you need to do, which means you can keep your mind clear for whatever it is you\'re doing at any one moment, without being distracted by all the things you\'re not doing at that moment ');
@@ -56,8 +56,8 @@ INSERT INTO `gtdsample_items` VALUES ('13','The 7 Habits of Highly Effective Peo
 INSERT INTO `gtdsample_items` VALUES ('14','43 Folders Website','You may want to look into the resources at <a href=\"http://www.43folders.com/\">43 Folders</a> which are usually based on David Allen\'s work. There are many resources there that are helpful for time management and project management.','');
 -- *******************************
 INSERT INTO `gtdsample_itemstatus` VALUES ('1','2007-10-17','2007-10-17 20:09:19',NULL);
-INSERT INTO `gtdsample_itemstatus` VALUES ('8','2007-10-19','2007-11-19 12:54:53',NULL);
-INSERT INTO `gtdsample_itemstatus` VALUES ('3','2007-10-17','2007-10-19 09:54:02',NULL);
+INSERT INTO `gtdsample_itemstatus` VALUES ('8','2007-10-19','2007-11-19 14:19:45',NULL);
+INSERT INTO `gtdsample_itemstatus` VALUES ('3','2007-10-17','2007-11-19 14:20:25',NULL);
 INSERT INTO `gtdsample_itemstatus` VALUES ('4','2007-10-17','2007-10-17 21:03:00',NULL);
 INSERT INTO `gtdsample_itemstatus` VALUES ('5','2007-10-17','2007-10-20 08:18:50',NULL);
 INSERT INTO `gtdsample_itemstatus` VALUES ('6','2007-10-17','2007-10-17 20:31:49',NULL);
