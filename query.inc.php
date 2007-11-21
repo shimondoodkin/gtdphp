@@ -1,8 +1,18 @@
 <?php
+/*
+    query function -  SQL abstraction layer
 
-//query function
-//SQL abstraction layer
+Return values:
 
+    (boolean FALSE): indicates the query failed
+
+    (integer 0):     query affected no rows, and returned no rows - e.g. an empty(SELECT)
+    
+    (integer >0):    indicates the number of rows affected by an INSERT, UPDATE or DELETE
+
+    (array):         SELECT was successful, and has returned a number-indexed array of records,
+                       each record is an associative array of field names=>field values.
+*/
 function query($querylabel,$config,$values=NULL,$sort=NULL) {
 
     //for developer testing only--- testing data handling
@@ -50,8 +60,14 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
 	//parse result into multitdimensional array $result[row#][field name] = field value
     if($config['dbtype']=="mysql") {
         $reply = mysql_query($query);
-
-        if ($reply && @mysql_num_rows($reply)>0) {
+        if ($reply===false) {                       // failed query - return FALSE
+            $result=false;
+        } elseif ($reply===true) {                  // query was not a SELECT OR SHOW, so return number of rows affected
+            $result=@mysql_affected_rows();
+        } else if (@mysql_num_rows($reply)===0) {   // empty SELECT/SHOW - return zero
+            $result=0;
+        } else {                                    // successful SELECT/SHOW - return array of results
+            $result=array();
             $i = 0;
            while ($field = mysql_fetch_field($reply)) {
                 /* Create an array $fields which contains all of the column names */
@@ -66,40 +82,38 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
                     }
                 $ii++;
                 }
-            }
-        else $result="-1";
+        }
 
         //get last autoincrement insert id--only valid for insert statements using autoincrement values; not updated when explicit value given for autoincrement field (MySQL "feature")
         $GLOBALS['lastinsertid'] = mysql_insert_id();
 
-        //always included; text/codes shown in errors on individual pages as warranted...
-        $GLOBALS['ecode'] = mysql_errno();
-        $GLOBALS['etext'] = mysql_error();
-        if ($GLOBALS['ecode']!=0) $_SESSION['message'][]="Error {$GLOBALS['ecode']} in query '$querylabel': '{$GLOBALS['etext']}'";
+        $error = mysql_errno();
+        if ($error) $_SESSION['message'][]=
+                    "Error $error in query '$querylabel': '".mysql_error()."'";
     }
 
     elseif($config['dbtype']=="postgres") {
-        $reply = pg_query($query) or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".pg_error():"Error in query");
+        $reply = pg_query($query) or die (($config['debug']) ? "Error in query: ". $querylabel."<br />".pg_error():"Error in query");
         echo ("Database not yet supported.");
          }
 
     elseif($config['dbtype']=="sqlite") {
-        $reply = sqllite_query($query)  or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".sqllite_error():"Error in query");
+        $reply = sqllite_query($query)  or die (($config['debug']) ? "Error in query: ". $querylabel."<br />".sqllite_error():"Error in query");
         echo ("Database not yet supported.");
         }
 
     elseif($config['dbtype']=="msql") {
-        $reply = msql_query($query) or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".msql_error():"Error in query");
+        $reply = msql_query($query) or die (($config['debug']) ? "Error in query: ". $querylabel."<br />".msql_error():"Error in query");
         echo ("Database not yet supported.");
         }
 
     elseif($config['dbtype']=="mssql") {
-        $reply = mssql_query($query) or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".mssql_error():"Error in query");
+        $reply = mssql_query($query) or die (($config['debug']) ? "Error in query: ". $querylabel."<br />".mssql_error():"Error in query");
         echo ("Database not yet supported.");
         }
 
     elseif($config['dbtype']=="frontbase") {
-        $reply = fbsql_query($query) or die (($config['debug'] & _GTD_ERRORS) ? "Error in query: ". $querylabel."<br />".fbsql_error():"Error in query");
+        $reply = fbsql_query($query) or die (($config['debug']) ? "Error in query: ". $querylabel."<br />".fbsql_error():"Error in query");
         echo ("Database not yet supported.");
         }
 

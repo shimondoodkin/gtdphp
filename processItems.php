@@ -90,7 +90,7 @@ function doAction($localAction) { // do the current action on the current item; 
 	global $config,$values,$updateGlobals,$title;
 	if ($values['itemId']) {
         $result=query('getitembrief',$config,$values);
-    	if ($result!=-1) $title=$result[0]['title'];
+    	$title=($result)?$result[0]['title']:'title unknown';
     } else
         $title=$_POST['title'];
 
@@ -221,11 +221,13 @@ function makeNextAction() { // mark the current item as a next action
 	global $config,$values;
 	$thisquery='updatenextaction';
     $parentresult = query("lookupparent",$config,$values);
-    if ($parentresult=="-1") {
+    if ($parentresult) {
+        foreach ($parentresult as $parent) {
+    		$values['parentId']=$parent['parentId'];
+    		query($thisquery,$config,$values);
+        }
+    } else {
         $values['parentId']=0;
-		query($thisquery,$config,$values);
-    } else foreach ($parentresult as $parent) {
-		$values['parentId']=$parent['parentId'];
 		query($thisquery,$config,$values);
 	}
 	query("touchitem",$config,$values);

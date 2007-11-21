@@ -1,5 +1,4 @@
 <?php
-
 /*---------------------------------------------------------------------------------
                             user-configurable options
 ---------------------------------------------------------------------------------*/
@@ -101,7 +100,7 @@ $areDeleting=false;
 
 require_once('headerHtml.inc.php');
 echo "</head><body><div id='container'>";
-
+include('showMessage.inc.php');
 //temporary warning - remove at release - TOFIX
 echo "<h2 class='warning'>This installer is in beta: back up your data before using it!</h2>\n";
 
@@ -182,16 +181,6 @@ function checkInstall() {
 		$included_files = get_included_files();
 		echo '<pre>Included files:',print_r($included_files,true),'</pre>';
 	}
-
-    if (isset($_GET['warn'])) {
-        switch ($_GET['warn']) {
-            case 'upgradeneeded':
-                echo "<p class='warning'>Your version of the database needs upgrading before we can continue.</p>\n";
-                break;
-            default:
-                break;
-        }
-    }
     // check the config file
 	$checkState='config';
 	if (_DEBUG) echo '<p class="debug">Got config.php:</p><pre>',print_r($config,true),'</pre>';

@@ -17,18 +17,18 @@ $numbercontexts=(is_array($res[0]))?(int) $res[0]['COUNT(*)']:0;
 //count active items
 $values['type'] = "a";
 $values['isSomeday'] = "n";
-$values['filterquery']  = " AND ".sqlparts("typefilter",$config,$values);
+$values['filterquery']  = " WHERE ".sqlparts("typefilter",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
 $values['filterquery'] .= " AND ".sqlparts("pendingitems",$config,$values);
 
 //get # nextactions
 $res = query("countnextactions",$config,$values,$sort);
-$numbernextactions=(is_array($res[0]))?(int) $res[0]['nnextactions']:0;
+$numbernextactions=($res)?(int) $res[0]['nnextactions']:0;
 
 // get # actions
 $res =query("countitems",$config,$values,$sort);
-$numberitems =(is_array($res[0]))?(int) $res[0]['COUNT(*)']:0;
+$numberitems =($res[0])?(int) $res[0]['COUNT(*)']:0;
 
 // get and count active projects
 $values['type']= "p";
@@ -40,13 +40,13 @@ $stem  = " WHERE ".sqlparts("typefilter",$config,$values)
 
 $values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
 $pres = query("getitems",$config,$values,$sort);
-$numberprojects=($pres==-1)?0:count($pres);
+$numberprojects=($pres)?count($pres):0;
 
 //get and count someday projects
 $values['isSomeday'] = "y";
 $values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
 $sm = query("getitems",$config,$values,$sort);
-$numbersomeday=($sm==-1)?0:count($sm);
+$numbersomeday=($sm)?count($sm):0;
 
 
 //PAGE DISPLAY CODE
@@ -54,7 +54,7 @@ echo "<h2>GTD Summary</h2>\n";
 echo '<h4>Today is '.date($config['datemask']).'. (Week '.date("W").'/52 &amp; Day '.date("z").'/'.(365+date("L")).')</h4>'."\n";
 
 echo "<div class='reportsection'>\n";
-if ($reminderresult!="-1") {
+if ($reminderresult) {
         echo "<br /><h3>Reminder Notes</h3>";
         $tablehtml="";
         foreach ($reminderresult as $row) {

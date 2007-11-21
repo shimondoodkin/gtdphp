@@ -18,15 +18,14 @@ include_once('header.php');
     $result = query("getitemsandparent",$config,$values,array('getitemsandparent'=>'title ASC'));
     $maintable=array();
     $noOutcomes=array();
-    if ($result==-1)
-        $numProjects=0;
-    else {
+    if ($result) {
         $numProjects=count($result);
         foreach ($result as $row) {
             if (empty($row['numNA'])) $maintable[]=$row;
             if (empty($row['desiredOutcome'])) $noOutcomes[]=$row;
         }
-    }
+    } else
+        $numProjects=0;
     $numNoNext=count($maintable);
 //PAGE DISPLAY CODE
 ?>

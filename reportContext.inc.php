@@ -6,7 +6,7 @@ $values=array();
 //obtain all contexts
 $contextResults = query("getspacecontexts",$config,$values,$sort);
 $contextNames=array(0=>'none');
-if ($contextResults!=-1)
+if ($contextResults)
     foreach ($contextResults as $row)
 	   $contextNames[$row['contextId']]=makeclean($row['name']);
 
@@ -16,7 +16,7 @@ $values['timefilterquery'] = ($config['useTypesForTimeContexts'])?" WHERE ".sqlp
 $timeframeResults = query("gettimecontexts",$config,$values,$sort);
 $timeframeNames=array(0=>'none');
 $timeframeDesc=array(0=>'none');
-if ($timeframeResults != -1 ) foreach($timeframeResults as $row) {
+if ($timeframeResults) foreach($timeframeResults as $row) {
 	$timeframeNames[$row['timeframeId']]=makeclean($row['timeframe']);
 	$timeframeDesc[$row['timeframeId']]=makeclean($row['description']);
 	}

@@ -66,7 +66,7 @@ if (is_array($result)) {
     }
     if (!$nextcat)
         $nextcat=$firstcat;
-    else if ($nextcat==-1)
+    else if ($nextcat===-1)
         $nextcat=0;
 }
 if ($config['debug'] & _GTD_DEBUG) echo "<pre>catlist:",print_r($catlist,true),'</pre>';

@@ -3,7 +3,8 @@ require_once('header.php');
 require_once('editCat.inc.php');
 ?>
 <h2><?php echo $title; ?></h2>
-<form action="updateCat.php" method="post">
+<form action="updateCat.php" method="post" onsubmit="return validate(this);">
+<div class='formrow'><span class="error" id='errorMessage'></span></div>
 <div>
 <input type='hidden' name='field' value='<?php echo $field; ?>' />
 <?php if ($thiscat['id']!==false) { ?>
@@ -27,7 +28,10 @@ require_once('editCat.inc.php');
     if ($thiscat['id']!==false) { ?>
         <tr>
             <td><input type="text" name="name" value="<?php echo $thiscat['name']; ?>" />
-                <input type='hidden' name='next' value="<?php echo $nextcat; ?>" /></td>
+                <input type='hidden' name='next' value="<?php echo $nextcat; ?>" />
+                <input type='hidden' name='required' value='name:notnull:Name cannot be blank' />
+                <input type='hidden' name='dateformat' value='ccyy-mm-dd' />
+            </td>
             <td><textarea rows="2" cols="50" name="description"><?php echo $thiscat['description']; ?></textarea></td>
             <?php
             if ($showTypes) {

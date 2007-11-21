@@ -12,7 +12,7 @@ $values['filterquery']=sqlparts('isNA',$config,$values);
 $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
 $values['parentfilterquery'] = '';
 $result = query("getitemsandparent",$config,$values,$sort);
-$item = ($result==-1)?array():$result[0];
+$item = ($result)?$result[0]:array();
 
 $values['isSomeday']=($item['isSomeday']=="y")?'y':'n';
 $values['type']=$item['type'];
@@ -29,7 +29,7 @@ if (isset($_SESSION['idlist-'.$item['type']])) {
     $result = query("getitems",$config,$values,$sort);
     $c=0;
     $ndx=array();
-    if ($result!="-1") {
+    if ($result) {
         foreach ($result as $row) $ndx[]=$row['itemId'];
         $_SESSION['idlist-'.$item['type']]=$ndx;
     }
@@ -175,7 +175,7 @@ if (!empty($childtype)) {
                 if ($item[$field]) $createURL.="&amp;$field={$item[$field]}";
             $title="<a href='$createURL' title='Add new ".$typename[$thistype]."'>".$title."</a>";
         }
-        if ($result=="-1") {
+        if (!$result) {
             echo "<h3>No $title</h3></div>";
             continue;
         }

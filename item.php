@@ -10,11 +10,11 @@ $values['parentId']=array();
 if ($values['itemId']) { // editing an item
     $where='edit';
     $result = query("selectitem",$config,$values,$sort);
-    if ($GLOBALS['ecode']==0) {
+    if ($result) {
         $values = $result[0];
         //Test to see if nextaction
         $result = query("testnextaction",$config,$values,$sort);
-        $nextaction= ($result!="-1" && $result[0]['nextaction']==$values['itemId']);
+        $nextaction= ($result && $result[0]['nextaction']==$values['itemId']);
         $parents = query("lookupparent",$config,$values);
         // if any are somedays, turn type 'p' into type 's'
     } else {
@@ -58,7 +58,7 @@ if (!$values['itemId']) {
         $values['parentId']=explode(',',$_REQUEST['parentId']);
         foreach ($values['parentId'] as $parent) {
             $result=query("selectitemshort",$config,array('itemId'=>$parent),$sort);
-            if ($result!=-1) {
+            if ($result) {
                 $newparent=array(
                      'parentId'=>$result[0]['itemId']
                     ,'ptitle'=>$result[0]['title']
@@ -112,7 +112,7 @@ if ($_SESSION['useLiveEnhancements']) {
         $allowedSearchTypes[$ptype]=$alltypes[$ptype].'s';
     $values['ptypefilterquery']=" AND ia.`type` IN ('".implode("','",$ptypes)."') ";
     $potentialparents = query("parentselectbox",$config,$values,$sort);
-    if ($potentialparents==-1) $potentialparents=array();
+    if (!$potentialparents) $potentialparents=array();
 } elseif (count($ptypes))
     $values['ptypefilterquery']=" AND ia.`type`='{$ptypes[0]}' ";
 if (count($ptypes)) $values['ptype']=$ptypes[0];

@@ -1,5 +1,7 @@
 <?php
 
+include_once('gtd_constants.inc.php');
+
 function makeClean($textIn) {
 	$cleaned=htmlspecialchars(stripslashes($textIn),ENT_QUOTES);
 	return $cleaned;
@@ -113,7 +115,7 @@ function sqlparts($part,$config,$values)  {
 function categoryselectbox($config,$values,$sort) {
     $result = query("categoryselectbox",$config,$values,$sort);
     $cashtml='<option value="0">--</option>'."\n";
-    if ($result!="-1") {
+    if ($result) {
         foreach($result as $row) {
             $cashtml .= '   <option value="'.$row['categoryId'].'" title="'.makeclean($row['description']).'"';
             if($row['categoryId']==$values['categoryId']) $cashtml .= ' selected="selected"';
@@ -126,7 +128,7 @@ function categoryselectbox($config,$values,$sort) {
 function contextselectbox($config,$values,$sort) {
     $result = query("spacecontextselectbox",$config,$values,$sort);
     $cshtml='<option value="0">--</option>'."\n";
-    if ($result!="-1") {
+    if ($result) {
             foreach($result as $row) {
             $cshtml .= '                    <option value="'.$row['contextId'].'" title="'.makeclean($row['description']).'"';
             if($row['contextId']==$values['contextId']) $cshtml .= ' selected="selected"';
@@ -139,7 +141,7 @@ function contextselectbox($config,$values,$sort) {
 function timecontextselectbox($config,$values,$sort) {
     $result = query("timecontextselectbox",$config,$values,$sort);
     $tshtml='<option value="0">--</option>'."\n";
-    if ($result!="-1") {
+    if ($result) {
         foreach($result as $row) {
             $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.makeclean($row['description']).'"';
             if($row['timeframeId']==$values['timeframeId']) $tshtml .= ' selected="selected"';
@@ -170,7 +172,7 @@ function parentselectbox($config,$values,$sort) {
     else
         $parents[$values['parentId']]=true;
     if ($config['debug'] & _GTD_DEBUG) echo '<pre>parents:',print_r($parents,true),'</pre>';
-    if ($result!="-1")
+    if ($result)
         foreach($result as $row) {
             $thisOpt= makeOption($row,$parents)."\n";
             if($parents[$row['itemId']]) {
@@ -183,32 +185,22 @@ function parentselectbox($config,$values,$sort) {
         // $key is a parentId which wasn't found for the drop-down box, so need to add it in
         $values['itemId']=$key;
         $row=query('selectitemshort',$config,$values,$sort);
-        if ($row!='-1') $pshtml = makeOption($row[0],$parents)."\n".$pshtml;
+        if ($row) $pshtml = makeOption($row[0],$parents)."\n".$pshtml;
     }
     $pshtml="<option value='0'>--</option>\n".$pshtml;
     return $pshtml;
 }
 
-function checklistselectbox($config,$values,$sort) {
-    $result = query("checklistselectbox",$config,$values,$sort);
-    $cshtml='<option value="0">--</option>'."\n";
-    if ($result!="-1") {
+function listselectbox($config,&$values,$sort,$check=NULL) { // NB $values is passed by reference
+    $result = query("get{$check}lists",$config,array('filterquery'=>''),$sort);
+    $lshtml='';
+    if ($result) {
         foreach($result as $row) {
-            $cshtml .= '                    <option value="'.$row['checklistId'].'" title="'.makeclean($row['description']).'"';
-            if($row['checklistId']==$values['checklistId']) $cshtml .= ' selected="selected"';
-            $cshtml .= '>'.makeclean($row['title'])."</option>\n";
+            $lshtml .= "<option value='{$row['id']}' title='".makeclean($row['description'])."'";
+            if($row['id']==$values['id']) {
+                $lshtml .= " selected='selected' ";
+                $values['listTitle']=$row['title'];
             }
-        }
-    return $cshtml;
-    }
-
-function listselectbox($config,$values,$sort) {
-    $result = query("listselectbox",$config,$values,$sort);
-    $lshtml='<option value="0">--</option>'."\n";
-    if ($result!="-1") {
-        foreach($result as $row) {
-            $lshtml .= '                    <option value="'.$row['listId'].'" title="'.makeclean($row['description']).'"';
-            if($row['listId']==$values['listId']) $lshtml .= ' selected="selected"';
             $lshtml .= '>'.makeclean($row['title'])."</option>\n";
             }
         }

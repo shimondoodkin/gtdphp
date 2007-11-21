@@ -97,11 +97,11 @@ function makemenu($list) {
         <li>Lists
 			<ul>
 				<?php
-				$thismenu[] = array("link"=>"newList.php", 'title'=>"Create a general purpose list", 'label' => "New List");
-				$thismenu[] = array("link"=>"listList.php", 'title'=>"General-purpose lists", 'label' => "Show Lists");
+				$thismenu[] = array("link"=>"editLists.php?type=L", 'title'=>"Create a general purpose list", 'label' => "New List");
+				$thismenu[] = array("link"=>"listLists.php?type=L", 'title'=>"General-purpose lists", 'label' => "Show Lists");
 				$thismenu[] = 'separator';
-				$thismenu[] = array("link"=>"newChecklist.php", 'title'=>"Create a reusable list", 'label' => "New Checklist");
-				$thismenu[] = array("link"=>"listChecklist.php", 'title'=>"Reusable checklists", 'label' => "Show Checklists");
+				$thismenu[] = array("link"=>"editLists.php?type=C", 'title'=>"Create a reusable list", 'label' => "New Checklist");
+				$thismenu[] = array("link"=>"listLists.php?type=C", 'title'=>"Reusable checklists", 'label' => "Show Checklists");
 				makemenu($thismenu);
 				unset($thismenu);
 				?>

@@ -7,7 +7,7 @@ $values=array();
 $values['notOrphansfilterquery']=(empty($config['suppressAsOrphans']))?"'i','m'":$config['suppressAsOrphans'];
 $maintable = query("getorphaneditems",$config,$values,$sort);
 
-$cnt=($maintable==-1)?0:count($maintable);
+$cnt=($maintable)?count($maintable):0;
 $dispArray=array();
 $thisrow=0;
 $dispArray=array(

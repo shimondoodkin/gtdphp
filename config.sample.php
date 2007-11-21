@@ -71,7 +71,7 @@ $acckey = array(
 	"item.php?type=w"						=> "", // add Waiting On
 	"leadership.php"						=> "", // Leadership
 	"listChecklist.php"						=> "c", // Checklists
-	"listItems.php?quickfind"				=> "q", // quick find
+	"listItems.php?quickfind"				=> "f", // quick find
 	"listItems.php?type=a"					=> "a", // Actions
 	"listIitem.php?type=a&amp;nextonly=true"=> "n", // Next Actions
 	"listItems.php?type=a&tickler=true"		=> "", // Tickler File
@@ -173,7 +173,6 @@ $config['showAdmin'] = true; // false | true - adds the Admin option to the menu
 /* The debug value is generally for the developers of the application.  You will probably want this to remain 0
 Values: (use "|" to combine, "&" to test)
             0 - no debugging output
-_GTD_ERRORS   - display errors
 _GTD_DEBUG    - display debugging text (there will be lots of it - use debugKey to toggle its display)
 _GTD_FREEZEDB - do not execute commands which would otherwise update the items table: use in conjunction with _GTD_DEBUG to display sql commands without running them
 _GTD_NOTICE   - force the display of PHP notices

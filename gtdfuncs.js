@@ -150,7 +150,7 @@ function aps_debugInit(keyToCatch) {
 sortTable amended for GTD-PHP
 
 Based on code from: http://kryogenix.org/code/browser/sorttable/
-Copyright (c) 1997-date Stuart Langridge
+Copyright (c) 1997-2007 Stuart Langridge
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

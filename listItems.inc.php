@@ -77,7 +77,7 @@ $remindertable=array();
 if ($filter['tickler']=="true") {
     $values['filterquery'] = '';
     $result = query("getnotes",$config,$values,$sort);
-    if ($result!="-1") {
+    if ($result) {
         foreach ($result as $row) {
             $remindertable[]=array(
                 'id'=>$row['ticklerId']
@@ -333,14 +333,14 @@ $sectiontitle .= $typename;
     ===================================================================
 */
 if ($quickfind)
-    $result=-1;
+    $result=0;
 else
     $result=query("getitemsandparent",$config,$values,$sort);
     
 $maintable=array();
 $thisrow=0;
 $allids=array();
-if ($result!="-1") {
+if ($result) {
     $nonext=FALSE;
     $nochildren=FALSE;
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
@@ -455,7 +455,7 @@ if ($result!="-1") {
         ,'checkbox'=>'Complete'
         );
     if ($config['debug'] & _GTD_DEBUG) echo '<pre>values to print:',print_r($maintable,true),'</pre>';
-} // end of: if($result!="-1")
+} // end of: if($result)
 /*
     ===================================================================
     end of main query: finished building array of items

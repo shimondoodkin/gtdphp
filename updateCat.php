@@ -35,23 +35,19 @@ if (isset($_POST['id'])) {
             break;
     }
     if ($values['id']==0) {
-        // create an item - first need to check for non-blank names
-        if ($values['name']!='') {
-            $result = query("new$query",$config,$values);
-            // just created an item, without selecting another item for editing, so offer to create another one
-            $msg='Created';
-        }
+        $result = query("new$query",$config,$values);
+        $msg='Created';
     } elseif (isset($_POST['delete']) && $_POST['delete']==="y") {
         $values['newId']=(int) $_POST['replacewith'];
-        query("reassign$query",$config,$values);
-        query("delete$query",$config,$values);
+        $result=query("reassign$query",$config,$values);
+        if ($result!==false) $result=query("delete$query",$config,$values); // don't delete if reassign fails
         $msg='Deleted';
     } else {
-        query("update$query",$config,$values);
+        $result=query("update$query",$config,$values);
         $msg='Updated';
     }
 } // end of: if (isset($_POST['id']))
-if ($GLOBALS['ecode']=="0") $_SESSION['message'][]="$msg $field '{$values['name']}'";
+if ($result) $_SESSION['message'][]="$msg $field '{$values['name']}'";
 
 $nexturl="editCat.php?field=$field";
 if (isset($_POST['next']))
