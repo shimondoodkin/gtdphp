@@ -70,7 +70,6 @@ $acckey = array(
 	"item.php?type=v"						=> "", // add Vision
 	"item.php?type=w"						=> "", // add Waiting On
 	"leadership.php"						=> "", // Leadership
-	"listChecklist.php"						=> "c", // Checklists
 	"listItems.php?quickfind"				=> "f", // quick find
 	"listItems.php?type=a"					=> "a", // Actions
 	"listIitem.php?type=a&amp;nextonly=true"=> "n", // Next Actions
@@ -84,16 +83,17 @@ $acckey = array(
 	"listItems.php?type=r"					=> "", // References
 	"listItems.php?type=v"					=> "", // Visions
 	"listItems.php?type=w"					=> "w", // Waiting On
-	"listList.php"							=> "l", // Lists
+	"listLists.php?type=C"					=> "c", // Checklists
+	"listLists.php?type=L"					=> "l", // Lists
 	"management.php"						=> "", // Management
-	"newChecklist.php"						=> "", // new Checklist
-	"newList.php"							=> "", // new List
+	"editLists.php?type=C"					=> "", // new Checklist
+	"editLists.php?type=L"					=> "", // new List
 	"orphans.php"							=> "", // Orphaned Items
 	"preferences.php"						=> "", // User Preferences
 	"reportCategory.php"					=> "", // Categories
 	"reportContext.php"						=> "x", // Space Contexts
 	"reportTimeContext.php"					=> "", // Time Contexts
-	"summaryAlone.php"						=> "s", // Summary
+	"index.php"        						=> "s", // Summary
 	"weekly.php"							=> "r" // Weekly Review
 );
 
@@ -168,6 +168,7 @@ $config['separator'] = '^&*#@#%&*%^@$^*$$&%#@#@^^'; // should be an arbitrary st
 $config['forceAllFields'] = false; // false | true - all fields will always be displayed on item.php
 $config['allowChangingTypes'] = false; // false | true - allows the user to change the types of any item (false=change only inbox items)
 $config['showAdmin'] = true; // false | true - adds the Admin option to the menu items
+$config['charset'] = 'ISO8859-15'; // the character-encoding for pages
 /*********  Developer Settings ************/
 
 /* The debug value is generally for the developers of the application.  You will probably want this to remain 0

@@ -24,7 +24,7 @@ else
 $result=query($q,$config,$values);
 
 if ($referrer=="s")
-    nextScreen('summaryAlone.php');
+    nextScreen('index.php');
 else
     nextScreen("listItems.php?type=a&tickler=true");
 

@@ -3,7 +3,8 @@
 include_once('gtd_constants.inc.php');
 
 function makeClean($textIn) {
-	$cleaned=htmlspecialchars(stripslashes($textIn),ENT_QUOTES);
+    global $config;
+	$cleaned=htmlentities(stripslashes($textIn),ENT_QUOTES,$config['charset']);
 	return $cleaned;
 }
 
@@ -303,7 +304,7 @@ else
     return $types[$type];
 }
 
-function escapeChars($str) {
+function escapeChars($str) {  // TOFIX consider internationalization issues with charset coding
     $outStr=str_replace(array('&','…'),array('&amp;','&hellip'),$str);
     $outStr=str_replace(array('&amp;amp;','&amp;hellip;'),array('&amp;','&hellip;'),$outStr);
 	return $outStr;

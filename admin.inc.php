@@ -79,6 +79,7 @@ function checkErrors($prefix) {
    ======================================================================================
 */
 function backupData($prefix) {
+    global $config;
     require_once('mysql.funcs.inc.php');
     $sep="-- *******************************\n";
     $tables=array('categories','checklist','checklistitems','context','itemattributes','items','itemstatus','list','listitems','lookup','nextactions','tickler','timeitems','version','preferences');
@@ -101,7 +102,7 @@ function backupData($prefix) {
         }
     }
     //$data=htmlspecialchars($creators.$sep.$header.$sep.$data,ENT_NOQUOTES);
-    $data=htmlspecialchars($header.$sep.$data,ENT_NOQUOTES);
+    $data=htmlspecialchars($header.$sep.$data,ENT_NOQUOTES,$config['charset']);
     return $data;
 }
 /*

@@ -96,13 +96,13 @@ switch ($action) {
         $result= query("new{$check}list",$config,$values,$sort);
         if ($result) {
             $values['id']=$GLOBALS['lastinsertid'];
-            $msg='Created';
+            $msg='You can now create items for your newly created';
             $nextURL="editListItems.php?id={$values['id']}&$urlSuffix";
         } else {
             $msg='Failed to create';
             $nextURL="listLists.php?$urlSuffix";
         }
-        $_SESSION['message'][]="$msg {$check}list item: '{$values['title']}'";
+        $_SESSION['message'][]="$msg {$check}list: '{$values['title']}'";
         break;
     //-----------------------------------------------------------------------------------
     case 'listdelete':
