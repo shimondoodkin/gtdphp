@@ -169,6 +169,7 @@ $config['forceAllFields'] = false; // false | true - all fields will always be d
 $config['allowChangingTypes'] = false; // false | true - allows the user to change the types of any item (false=change only inbox items)
 $config['showAdmin'] = true; // false | true - adds the Admin option to the menu items
 $config['charset'] = 'ISO8859-15'; // the character-encoding for pages
+$config['withholdVersionInfo']=false; // true | false - if false, will send the version numbers of your installations of gtd-php, PHP and MySQL when you report a bug
 /*********  Developer Settings ************/
 
 /* The debug value is generally for the developers of the application.  You will probably want this to remain 0

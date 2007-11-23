@@ -1,6 +1,7 @@
 <?php
-define('_GTD_REVISION',444);
-define('_GTD_VERSION','0.8rc-4'); // defines the DATABASE version
+define('_GTD_REVISION',445);
+define('_GTD_VERSION','0.8rc-4'); // DATABASE version
+define('_GTDPHP_VERSION','0.8');  // gtd-php version, as per the TRAC system
 
 // binary debug flags, to combine with a logical "or": "|"
 define('_GTD_WAIT'    ,1);

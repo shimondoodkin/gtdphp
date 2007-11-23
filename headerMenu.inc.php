@@ -125,8 +125,13 @@ function makemenu($list) {
 		<li>Help
 			<ul>
 				<?php
+				$newbuglink="https://www.hosted-projects.com/trac/toae/gtdphp/newticket";
+				if (!$config['withholdVersionInfo']) $newbuglink.='?milestone='._GTDPHP_VERSION.'&amp;description='
+                    .urlencode('gtd-php='._GTD_REVISION.' , GTD-db='._GTD_VERSION
+                    .' , PHP='.PHP_VERSION.' , MySQL='.mysql_get_server_info()
+                    );
 				$thismenu[] = array("link"=>"http://www.gtd-php.com/Users/Documentation", 'title'=>"Documentation", 'label' => "Helpfile Wiki");
-				$thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp/newticket", 'title'=>"Report a bug on the gtd-php trac system", 'label' => "Report a bug");
+				$thismenu[] = array("link"=>$newbuglink, 'title'=>"Report a bug on the gtd-php trac system", 'label' => "Report a bug");
 				$thismenu[] = array("link"=>"http://toae.org/boards", 'title'=>"Help and development discussions", 'label' => "Support Forum");
 				$thismenu[] = array('link'=>'http://www.gtd-php.com/Developers/Contrib','title'=>'User-contributed enhancements','label'=>'Themes and add-ons');
 				$thismenu[] = array("link"=>"https://www.hosted-projects.com/trac/toae/gtdphp", 'title'=>"Bug tracking and project development", 'label' => "Developers' wiki");
