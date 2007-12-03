@@ -10,14 +10,15 @@
     unset($types[$type]);
     unset($types['s']);
 ?><h2>Change the Type of <?php echo "$typename: '$title'"; ?></h2>
-<form action='processItems.php' method='post'>
-<div class='formrow'>
+<div class='submitbuttons'>
     <?php foreach ($types as $key=>$val) { ?>
-        <button name="type" value="<?php echo $key; ?>" type="submit"><?php echo $val; ?></button>
+        <a href='processItems.php?itemId=<?php
+            echo $values['itemId'];
+            ?>&amp;action=changeType&amp;type=<?php
+            echo $key;
+            ?>&amp;referrer=item.php?itemId=<?php
+            echo $values['itemId'];
+            ?>'><?php echo $val; ?></a>
     <?php } ?>
-    <input type='hidden' name='itemId' value='<?php echo $values['itemId']; ?>' />
-    <input type='hidden' name='referrer' value='item.php?itemId=<?php echo $values['itemId']; ?>' />
-    <input type='hidden' name='action' value='changeType' />
 </div>
-</form>
 <?php include('footer.php') ?>

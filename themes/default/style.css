@@ -70,6 +70,20 @@ select, input, textarea {
 input[type="submit"], input[type="reset"] {
 	margin: 0px 10px;
 }
+.submitbuttons a[href] {
+    display:inline-block;
+    margin:0 5px 0 0;
+    background-color:#f5f5f5;
+    border:1px solid #ccb;
+    text-decoration:none;
+    color:#665;
+    cursor:pointer;
+    padding:5px;
+    font-weight: normal;
+}
+.submitbuttons a[href]:active {
+    border-color:black;
+}
 input.hasdate {
     margin-right:0;
     padding-right:0;

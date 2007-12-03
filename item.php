@@ -129,7 +129,7 @@ if (!empty($_REQUEST['createnote'])) { ?>
 <?php }
 $canchangetypesafely=array('a','r','w');
 $sep='<p>';
-if (in_array($values['type'],$canchangetypesafely))
+if (in_array($values['type'],$canchangetypesafely) && $values['itemId'])
     foreach ($canchangetypesafely as $totype)
         if ($totype!==$values['type']) {
             echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
