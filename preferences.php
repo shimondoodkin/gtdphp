@@ -35,7 +35,7 @@ if ($config['useLiveEnhancements']) {
 ?>
 
 <h2>Preference</h2>
-<form action="updatePreferences.php" method="post">
+<form action="processPreferences.php" method="post">
     <div class='formrow'>
         <label for='theme'>Theme:</label>
         <select id='theme' name="theme">
