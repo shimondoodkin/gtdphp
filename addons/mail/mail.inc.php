@@ -8,6 +8,19 @@ include_once 'header.inc.php';
 
 Initial page as main addon interface-- links to folder config, manual sync, autosync.
 
+User actions:
+	Data appears in users inbox
+	User reads emails in regular mail client
+	Deletes, files, replies in mail client as appropriate
+	For items that require further processing and/or later action (GTD 2 minute rule)
+		Selects specific folders as desired (ACTION and subfolders, WAITING and subfolders, etc) to synchronize	
+			would suggest users create specific folders for categories, contexts, projects, or whatever makes most sense to them, but to make it a limited number of folders for speed and simplicity
+		Switches to GTD-PHP to collect emails as items
+		    Advantage: empty inbox and convenient mirroring of categorization within the email client	
+		    Disadvantage: multiple folders in which actionable items may appear
+		        Tip: simplist to create only ACTION/WAITING (possibly ACTION-PROFESSIONAL and ACTION-PERSONAL) to limit the number of folders and potential for getting too finely-grained
+
+
 Retrieve connections to work with (from mailconfig)
 
 Retrieve options (ones that impact prgram flow and do not pertain to which folders to sync--e.g.: deleted messages-- delete item, mark completed, do nothing? etc)
@@ -61,10 +74,45 @@ Create a loop/function: for each account
 	
 	if item marked done-- what to do with item?
 
-		
+Emails associated with completed items can be deleted on next folder refresh
+    automatically, by preference setting
+    manually, by deleting emails marked with a completed icon
+    Would modify the backend to update this table on item completion
+        alternatively if this is developed as a plug-in, would have to query associated ItemIDs on plugin refresh
  
  
-  
+Importing item copies email subject into item title, date into date created field, and email body into the description field
+    Opens standard item editing screen for turning email into useful data
+        Can then change type (import as action, reference, etc)
+        Can modify subject to make more useful and can delete unnecessary data
+    Option: can map folder to item import type
+        requires preferences table for settings
+            folder name - item type
+            ACTION - ACTIONS
+            WAITING - WAITING ONs
+            Really important project - ACTIONS
+        if implemented properly, can also map specific folders to other settings, like category or context
+ 
+data imported into database as a new item, as usual
+    ItemID and IMAP message ID added to a lookup table to maintain association
+        messageID is now stored, and will be recognized upon IMAP folder refresh
+
+data is manipulated in GTD-PHP as usual
+
+Other saved emails in a folder can be ignored
+    belonging to the same email thread
+    unactionable
+    Ideally, neither of these will be used, as adherence to proper GTD-principles would require placing these items in a reference folder
+    However, many people would prefer to keep all material related to a specific project or construct in one place
+        Ideally, importing actionable emails into GTD-PHP as actions/projects, etc. will facilitate this, as you can then deal with them within GTD-PHP and leave the rest of the folder intact as emails.
+        alternatively, you could import the other emails as references associated with a project
+            these would then get tracking Ids as well
+    The "ignoring" would be done via a checkbox and a mass "ignore checked emails" button
+    Ignoring will not remove them from view, but rather mark them as ignored in the message listing, to prevent one from having to reprocess them again
+    Ignoring will add the message Ids to the known message ID table, but without a corresponding item ID
+these would then get tracking Ids as well
+
+
 loop
 
 close connection
@@ -73,12 +121,58 @@ display results per account/folder level
 
 rather than automatically sync everything statically in a folder, can there be a second step to modify the import result?  Use folder preferences to pre-fill items, then display items as like a mass-item addition page for editing?
 
+email headers contained in selected IMAP folder appear in a table
+    Subject
+    Sender
+    Date
+    Optional:variable length of body (configurable)
+    Tracking icons
+        New
+        Unread
+        Imported/Tracked/Mapped
+            Serves as link to item within GTD-PHP
+        Has attachment
+            Paperclip
+        Completed
+            Strike-out?
+
+Import/Track/Map button
+    Either mass-import with checkboxes
+    Likely initially alongside each email item
+
+
 user input to deal with conflicts?
 
 user input to manually sync one folder --> reruns script with single folderID
 	use selectbox dropdown to select folder from all folders in database set to ignore=n
 
 user input to manually sync all folders --> reruns script with all folders in database set to ignore=n
+
+Message Listing
+    Lists messages contained in folder
+        Icon for tracked items
+            Integration with checkbox selection will confuse interface
+            Tracking icon
+                Search against ID mapping table
+            New item icon
+                Search against known message ID table
+            Completed item icon
+                Search against completed item IDs with tracking map
+            Attachment icon
+                For future use when/if tracking item attachments
+            Unread icon
+                from IMAP data
+            Use flagged field as next action
+        Sort options
+            Date
+            Subject
+            To
+            From
+        Checkboxes
+            mass delete
+            mass import?
+
+
 
 */
 
